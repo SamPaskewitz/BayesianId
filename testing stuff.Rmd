@@ -11,145 +11,47 @@ library(BayesianId)
 data(mtcars)
 data("epilepsy")
 ```
-https://github.com/paul-buerkner/brms/issues/219
-See the second example in the documentation for "stanvar".
+
 ```{r}
-formula = count ~ Trt + zBase
-
-# This is based on the second example in the help file for "stanvar".
-intercept_prior = set_prior("", class = "Intercept")
-b_prior = set_prior("multi_student_t(1, rep_vector(0.0, Kc), r * sigma^2 * V)", class = "b")
-sigma_prior = set_prior("gamma(0.01, 0.01)", class = "sigma") # mimic a Jefferey's prior
-our_prior = intercept_prior + b_prior + sigma_prior
-
-stan_code = brms::stancode(object = formula,
-                             data = epilepsy,
-                             prior = our_prior,
-                             stanvars = stanvar(name = "V", scode = "matrix[Kc, Kc] V = inverse(Xc'*Xc);", block = "tdata", position = "end") + stanvar(r, name = "r", scode = "real<lower=0> r;", block = "data")
+fit1 <- brm(
+  count ~ zAge + zBase + Trt,
+  data = epilepsy, family = negbinomial(),
+  prior = prior(normal(0, 1), class = b),
+  save_all_pars = TRUE,
+  refresh = 0
 )
+summary(fit1)
 
-print(stan_code)
-#compiled_model = cmdstanr::cmdstan_model(cmdstanr::write_stan_file(stan_code))
-```
+# model without the treatment effect
+fit2 <- brm(
+  count ~ zAge + zBase,
+  data = epilepsy, family = negbinomial(),
+  prior = prior(normal(0, 1), class = b),
+  save_all_pars = TRUE,
+  refresh = 0
+)
+summary(fit2)
 
-```{r}
-r = 0.5
-#family = gaussian()
-#family = student()
-#family = lognormal()
-family = bernoulli()
-print(names(family))
-print(family$dpars)
-#family %in% c(gaussian, student, skew_normal, lognormal, gen_extreme_value)
-```
-
-```{r}
-
-fit = brm(count ~ Trt + zBase, 
-         data = epilepsy,
-         prior = set_prior("multi_student_t(1, rep_vector(0.0, Kc), r * sigma^2 * V)", class = "b"),
-         stanvars = stanvar(name = "V", scode = "matrix[Kc, Kc] V = inverse(Xc'*Xc);", block = "tdata", position = "end") + stanvar(r, name = "r", scode = "real<lower=0> r;", block = "data"))
-
-summary(fit)
-```
-
-```{r}
-library(BayesianId)
-
-fit = fit_model(count ~ Trt + zBase, data = epilepsy, r = 0.5)
-
-summary(fit)
-```
-
-```{r}
-plot(fit)
+# compute the bayes factor
+bayes_factor(fit1, fit2)
 ```
 
 
 ```{r}
-fit = brm(mpg ~ cyl + gear, 
-                data = mtcars, 
-                prior = set_prior("cauchy(0, 0.71*sigma)", class = "b"),
-                iter = 11000,
-                warmup = 1000,
-                chains = 4, # number of chains
-                cores = 2,
-                refresh = 0, # don't print those annoying iteration updates
-                seed = 1212
-                )
+fit1 <- brm_jzs(
+  count ~ zAge + zBase + Trt,
+  data = epilepsy, family = negbinomial()
+)
 ```
 
 ```{r}
-rmodels = restricted_models(fit$formula)
+inc_tests(fit1)
 ```
 
 ```{r}
-names(rmodels)
-```
-
-```{r}
-rmodels$included
-```
-
-```{r}
-rmodels$omitted
-```
-
-```{r}
-rmodels$included_table
-```
-
-```{r}
-model_list = rmodels
-
-model_probs = rep(0.0, times = model_list$n_models)
-names(model_probs) = model_list$formula_strings
-model_probs["count ~ Trt + zBase"] = 0.5
-model_probs["count ~ Trt"] = 0.0
-model_probs["count ~ zBase"] = 0.2
-model_probs["count ~ 1"] = 0.3
-print(model_probs)
-```
-
-```{r}
-par_probs = rep(0.0, times = model_list$n_fixed)
-names(par_probs) = model_list$fixed_names
-
-for(i in 1:model_list$n_fixed){
-  term = model_list$fixed_names[i]
-  includes_term = model_list$included_table[names(model_probs), term]
-  par_probs[i] = sum(model_probs[includes_term])
-}
-print(par_probs)
-```
-
-```{r}
-term = rmodels$fixed_names[1]
-print(term)
-includes_term = rmodels$included_table[,term]
-print(includes_term)
-```
-
-
-
-```{r}
-bfs = restricted_model_bfs_sdr(fit)
-```
-```{r}
-bfs$model_table %>% round(2)
-```
-
-### DOUBLE CHECK CALCULATIONS
-
-```{r}
-bfs$incl_table  %>% round(2)
-```
-
-
-
-```{r}
-bf_check = BayesFactor::regressionBF(mpg ~ cyl, data = mtcars)
-bf_check/bf_check[3]
+foo = data.frame("p(β≠0)" = rep(0, 3), check.names = FALSE)
+#names(foo)[1] = expression("p(β≠0)")
+foo
 ```
 
 

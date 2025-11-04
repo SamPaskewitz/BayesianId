@@ -1,23 +1,43 @@
-#' Conduct parameter inclusion tests. This is the most important function in the "BayesianId" package.
+#' Conduct term inclusion tests. This is the most important function in the "BayesianId" package.
 #'
-#' @param brmsfit A brmsfit object (fitted regression model).
-#' @param prior_par_probs Optional: a named vector giving the prior inclusion probabilities for parameters (names = parameters/terms). By default (if NULL) these are set to 0.5, which corresponds to uniform prior probabilities across models DOUBLE CHECK *.
-#' @param bf_method Specifies the method used for computing Bayes factors. Current options are ** LIST AND GIVE DETAILS
-#' @returns A list containing the following two elements: par_table (parameter prior and posterior probabilities/odds, Bayes factors), model_table (model prior and posterior probabilities/odds, Bayes factors)
+#' @param full_model A full_model object (fitted regression model) representing the full model, i.e. the model that includes all possible terms.
+#' @param prior_term_probs Optional: a named vector giving the prior inclusion probabilities for parameters (names = parameters/terms). By default (if NULL) these are set to 0.5, which corresponds to uniform prior probabilities across models DOUBLE CHECK *.
+#' @param digits_to_round Number of digits to round results to.
+#' @returns A list containing the following two elements: inc_table (term inclusion prior and posterior probabilities/odds, Bayes factors), model_table (model prior and posterior probabilities/odds, Bayes factors)
 #'
-par_tests = function(brmsfit,
-                     prior_par_probs = NULL
+inc_tests = function(full_model,
+                     prior_term_probs = NULL,
+                     digits_to_round = 2
                      ){
-  # get a list of models (full model plus restricted models)
-  model_list = restricted_models(brmsfit$formula)
+  # get a list of submodels (full model plus restricted models)
+  model_list = submodels(full_model$formula)
 
-  # NEED TO WRITE AND TEST CODE FOR EVERYTHING BELOW
+  # NEED TO TEST CODE FOR EVERYTHING BELOW
 
-  # convert parameter prior probs to model prior probs
-  prior_model_probs = probs_par_to_model(prior_par_probs, model_list$included_table)
+  # by default, give models equal prior probability
+  if(is.null(prior_term_probs)){
+    prior_model_probs = rep(1/model_list$n_models, times = model_list$n_models)
+    names(prior_model_probs) = model_list$model_names
+    prior_term_probs = probs_model_to_term(prior_model_probs, model_list)
+  }
+  # otherwise, convert parameter prior probs to model prior probs
+  else{
+    # * NEED TO UPDATE THIS TO WORK WITH INTERACTIONS
+    prior_model_probs = probs_term_to_model(prior_term_probs, model_list$included_table)
+  }
+
+  # fit all submodels
+  fit_list = list()
+  fit_list[[1]] = full_model
+  for(i in 2:model_list$n_models){
+    fit_list[[i]] = update(full_model,
+                           formula = model_list$formulas[[i]],
+                           refresh = 0)
+  }
+  names(fit_list) = model_list$model_names
 
   # compute Bayes factors for all models
-  bfs = model_bfs(brmsfit, method = bf_method)
+  bfs = model_bfs(fit_list)
 
   # compute model posterior probabilties
   prior_model_odds = prior_model_probs/prior_model_probs[1]
@@ -25,24 +45,28 @@ par_tests = function(brmsfit,
   post_model_probs = post_model_odds/sum(post_model_odds)
 
   # convert model posterior probs to parameter posterior probs
-  post_par_probs = probs_model_to_par(post_model_probs, model_list$included_table)
+  post_term_probs = probs_model_to_term(post_model_probs, model_list)
 
   # make nice output tables for parameters and models
-  par_table = data.frame("p(β≠0)" = prior_par_probs,
-                         "p(β≠0|D)" = post_par_probs,
-                         "prior odds" = prior_par_probs/(1 - prior_par_probs),
-                         "post odds" = post_par_probs/(1 - post_par_probs)
+  inc_table = data.frame("p(β≠0)" = prior_term_probs,
+                         "p(β≠0|D)" = post_term_probs,
+                         "prior odds" = prior_term_probs/(1 - prior_term_probs),
+                         "post odds" = post_term_probs/(1 - post_term_probs),
+                         check.names = FALSE # prevent names from getting messed up
                          )
-  par_table[, "BF"] = par_table[, "post odds"]/par_table[, "prior odds"]
-  row.names(par_table) = model_list$fixed_names
+  inc_table[, "BF"] = inc_table[, "post odds"]/inc_table[, "prior odds"]
+  row.names(inc_table) = model_list$fixed_names
+  inc_table = round(inc_table, digits = digits_to_round)
 
   model_table = data.frame("p(M)" = prior_model_probs,
                            "p(M | D)" = post_model_probs,
                            "prior odds" = prior_model_odds,
                            "post odds" = post_model_odds,
-                           "BF" = bfs
+                           "BF" = bfs,
+                           check.names = FALSE # prevent names from getting messed up
                            )
   row.names(model_table) = model_list$formula_strings
+  model_table = round(model_table, digits = digits_to_round)
 
-  return(list(par_table = par_table, model_table = model_table))
+  return(list(inc_table = inc_table, model_table = model_table))
 }

@@ -1,21 +1,22 @@
-model_bfs = function(){
-  # FINISH
+#' Compute Bayes factors for a list of models.
+#' @param model_list A list of brmsfit objects, i.e. fitted regression models.
+#' @returns A vector of Bayes factors.
+#' @details The first model in the list is used as the denominator for comparisons, i.e. the Bayes factor for model i is defined as p(D | first model)/p(D | model i). Currently the Bayes factors are computed using bridge sampling. I may change this or add other methods in the future.
 
-  # compile the model
-  compiled_model = cmdstanr::cmdstan_model(cmdstanr::write_stan_file(stan_code))
+model_bfs = function(fit_list){
+  n_models = length(fit_list)
 
-  # find MAP (fit the model by optimization)
-  optim_result = compiled_model$optimize(data = stan_data,
-                                         seed = seed,
-                                         sig_figs = 14,
-                                         refresh = 0,
-                                         algorithm = "lbfgs",
-                                         tol_obj = 1e-12,
-                                         tol_rel_obj = 10000,
-                                         tol_grad = 1e-08,
-                                         tol_rel_grad = 1e+07,
-                                         tol_param = 1e-08,
-                                         show_messages = FALSE,
-                                         jacobian = TRUE # do MAP fit instead of MLE
-  )
+  # compute log model evidence (log marginal likelihoods)
+  log_evidence = rep(0.0, times = n_models)
+  for(i in 1:n_models){
+    log_evidence[[i]] = brms::bridge_sampler(fit_list[[i]], silent = TRUE)$logml
+  }
+
+  bfs = rep(1.0, times = n_models)
+  # the first BF is always 1, so we start the loop from 2
+  for(i in 2:n_models){
+    bfs[i] = exp(log_evidence[[i]] - log_evidence[[1]])
+  }
+
+  return(bfs)
 }

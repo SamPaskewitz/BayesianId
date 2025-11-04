@@ -1,4 +1,4 @@
-model_list = restricted_models(formula(y ~ x1*x2))
+model_list = submodels(formula(y ~ x1*x2))
 
 test_that("model_names works", {
   expect_setequal(model_list$model_names,

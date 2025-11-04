@@ -11,7 +11,7 @@
 #' @returns A fitted brms model.
 #' @details This is a wrapper around the "brm" function from brms that adds a JZS prior on model parameters  REFS *.
 
-fit_model = function(formula, data, family = gaussian(), r = 0.5, sample = FALSE, seed = NA, chains = 4, iter = 2000, warmup = floor(iter/2)){
+brm_jzs = function(formula, data, family = gaussian(), r = 0.5, sample = FALSE, seed = NA, chains = 4, iter = 2000, warmup = floor(iter/2)){
   # TO DO:
   # Make sure that they're not trying to pass in a multivariate formula (mvbrmsformula).
   # Hyper-g Priors for Generalized Linear Models (Bove' & Held, 2011)
@@ -27,10 +27,10 @@ fit_model = function(formula, data, family = gaussian(), r = 0.5, sample = FALSE
   has_sigma = "sigma" %in% family$dpars
   if(has_sigma){ # families that have sigma as a parameter (e.g. normal for ordinary linear regression)
     b_prior = set_prior("multi_student_t(1, rep_vector(0.0, Kc), r * sigma^2 * V)", class = "b") # Cauchy hyper g-prior (Cauchy = Student's t with df = 1)
-    sigma_prior = set_prior("gamma(0.01, 0.01)", class = "sigma") # mimic a Jefferey's prior
+    sigma_prior = set_prior("gamma(0.01, 0.01)", class = "sigma") # mimic Jefferey's prior
     our_prior = intercept_prior + b_prior + sigma_prior
   }
-  else{ # families that don't have sigma as a parameter (e.g. bernoulli for logistic regression)
+  else{ # families that don't have sigma as a parameter (e.g. Bernoulli for logistic regression)
     b_prior = set_prior("multi_student_t(1, rep_vector(0.0, Kc), r * V)", class = "b")  # Cauchy hyper g-prior (Cauchy = Student's t with df = 1)
     our_prior = intercept_prior + b_prior
   }
@@ -48,7 +48,8 @@ fit_model = function(formula, data, family = gaussian(), r = 0.5, sample = FALSE
                   chains = chains,
                   iter = iter,
                   warmup = warmup,
-                  refresh = 0
+                  refresh = 0, # don't print annoying updates
+                  save_pars = save_pars(all = TRUE) # for bridge sampling
                   )
 
   return(fit)

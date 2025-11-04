@@ -1,9 +1,9 @@
-#' Find all the restricted models given a regression model formula.
+#' Find all the submodels (full model plus restricted models) given a regression model formula.
 #' @param formula An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the full model, i.e. the model including all terms being considered.
 #' @returns A list containing the following elements: model_names = model formulas as strings, formulas = model formulas, included = parameters (terms) included in each model, omitted = parameters omitted in each model, included_table = same info as "included" except in a data frame, n_models = number of models, n_terms = number of fixed effects, term_names = names of fixed effects. The models are listed in each component of the output in the same order, with the full model given first.
 #' @details GIVE DETAILS ABOUT THE PRINCIPLE OF MARGINALITY *
 #'
-restricted_models = function(formula){
+submodels = function(formula){
   # Parse the model formula
   model_parts = parse_formula(formula)
   n_terms = length(model_parts$fixed)
