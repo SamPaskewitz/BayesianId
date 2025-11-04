@@ -5,14 +5,14 @@
 #' @returns A named vector of parameter inclusion probabilities (names = model terms/parameters).
 #'
 
-probs_model_to_par = function(model_probs, model_list){
+probs_model_to_term = function(model_probs, model_list){
   # set up empty vector
-  par_probs = rep(0.0, times = model_list$n_fixed)
-  names(par_probs) = model_list$fixed_names
+  par_probs = rep(0.0, times = model_list$n_terms)
+  names(par_probs) = model_list$term_names
 
   # add up model probabilities to compute parameter probabilities
-  for(i in 1:model_list$n_fixed){
-    term = model_list$fixed_names[i]
+  for(i in 1:model_list$n_terms){
+    term = model_list$term_names[i]
     includes_term = model_list$included_table[names(model_probs), term]
     par_probs[i] = sum(model_probs[includes_term])
   }

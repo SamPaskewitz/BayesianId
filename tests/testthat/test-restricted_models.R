@@ -1,7 +1,7 @@
 model_list = restricted_models(formula(y ~ x1*x2))
 
-test_that("formula_strings works", {
-  expect_setequal(model_list$formula_strings,
+test_that("model_names works", {
+  expect_setequal(model_list$model_names,
                   list("y ~ x1 + x2 + x1:x2",
                        "y ~ x1 + x2",
                        "y ~ x1",

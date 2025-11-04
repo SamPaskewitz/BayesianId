@@ -1,17 +1,17 @@
 #' Find all the restricted models given a regression model formula.
 #' @param formula An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the full model, i.e. the model including all terms being considered.
-#' @returns A list containing the following elements: formula_strings = model formulas as strings, formulas = model formulas, included = parameters (terms) included in each model, omitted = parameters omitted in each model, included_table = same info as "included" except in a data frame, n_models = number of models, n_fixed = number of fixed effects, fixed_names = names of fixed effects. The models are listed in each component of the output in the same order, with the full model given first.
+#' @returns A list containing the following elements: model_names = model formulas as strings, formulas = model formulas, included = parameters (terms) included in each model, omitted = parameters omitted in each model, included_table = same info as "included" except in a data frame, n_models = number of models, n_terms = number of fixed effects, term_names = names of fixed effects. The models are listed in each component of the output in the same order, with the full model given first.
 #' @details GIVE DETAILS ABOUT THE PRINCIPLE OF MARGINALITY *
 #'
 restricted_models = function(formula){
   # Parse the model formula
   model_parts = parse_formula(formula)
-  n_fixed = length(model_parts$fixed)
+  n_terms = length(model_parts$fixed)
   all_fixed = model_parts$fixed
 
   # Obtain all combinations of model terms/effects
   combo_list = list()
-  for(m in n_fixed:1){
+  for(m in n_terms:1){
     combo_list = c(combo_list,
                    combn(all_fixed, m = m, simplify = FALSE))
   }
@@ -38,16 +38,16 @@ restricted_models = function(formula){
   }
 
   # Construct formulas for restricted models
-  formula_strings = c(); formula_list = list()
+  model_names = c(); formula_list = list()
   for(i in 1:length(combo_list)){
     rhs = paste(c(combo_list[[i]], model_parts$random), collapse = " + ")
-    formula_strings[i] = paste(c(model_parts$lhs, rhs), collapse = " ~ ")
-    formula_list[[i]] = formula(formula_strings[i])
+    model_names[i] = paste(c(model_parts$lhs, rhs), collapse = " ~ ")
+    formula_list[[i]] = formula(model_names[i])
   }
   # Add intercept-only model
-  formula_strings[length(formula_strings) + 1] = paste(c(model_parts$lhs, "1"), collapse = " ~ ")
-  formula_list[[length(formula_list) + 1]] = formula(formula_strings[i])
-  n_models = length(formula_strings) # count the number of models
+  model_names[length(model_names) + 1] = paste(c(model_parts$lhs, "1"), collapse = " ~ ")
+  formula_list[[length(formula_list) + 1]] = formula(model_names[i])
+  n_models = length(model_names) # count the number of models
   combo_list[n_models] = list(NULL)
 
   # Make a list of which terms from the full model are omitted in each restricted model
@@ -57,26 +57,26 @@ restricted_models = function(formula){
     omitted[[i]] = setdiff(all_fixed, combo_list[[i]])
   }
 
-  # Make a table indicating whether or not each fixed effect is present in each model
+  # Make a table indicating whether or not each term is present in each model
   included_table = data.frame()
   for(i in 1:n_models){
-    for(j in 1:n_fixed){
+    for(j in 1:n_terms){
       term = all_fixed[j]
       included_table[i, term] = term %in% combo_list[[i]]
     }
   }
-  row.names(included_table) = formula_strings
+  row.names(included_table) = model_names
 
   # Package results
   included = combo_list
-  result = list(formula_strings = formula_strings,
+  result = list(model_names = model_names,
                 formulas = formula_list,
                 included = combo_list,
                 omitted = omitted,
                 included_table = included_table,
                 n_models = n_models,
-                n_fixed = n_fixed,
-                fixed_names = all_fixed
+                n_terms = n_terms,
+                term_names = all_fixed
                 )
   return(result)
 }

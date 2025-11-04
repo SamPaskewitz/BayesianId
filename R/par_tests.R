@@ -3,7 +3,7 @@
 #' @param brmsfit A brmsfit object (fitted regression model).
 #' @param prior_par_probs Optional: a named vector giving the prior inclusion probabilities for parameters (names = parameters/terms). By default (if NULL) these are set to 0.5, which corresponds to uniform prior probabilities across models DOUBLE CHECK *.
 #' @param bf_method Specifies the method used for computing Bayes factors. Current options are ** LIST AND GIVE DETAILS
-#' @returns A list containing the following two elements: par_table (parameter prior and posterior probabilities/odds), model_table (model prior and posterior probabilities/odds, Bayes factors)
+#' @returns A list containing the following two elements: par_table (parameter prior and posterior probabilities/odds, Bayes factors), model_table (model prior and posterior probabilities/odds, Bayes factors)
 #'
 par_tests = function(brmsfit,
                      prior_par_probs = NULL
