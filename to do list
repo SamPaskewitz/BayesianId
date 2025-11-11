@@ -1,7 +1,8 @@
 - Write a more convenient posterior predictive plotting function that automatically chooses the appropriate type of plot based on the model family.
 
 - Write code (using "posterior_average" from brms) for getting posterior distribution plots, credible intervals, etc. averaging across models by posterior probability.
-- In the long term: switch to INLA instead of MCMC.
+
+- In the long term: consider switching to INLA instead of MCMC.
 
 - For submodels:
   - Get it to work properly with 3-way interactions.
@@ -12,6 +13,7 @@
 
 - For brm_jzs:
   - Make sure they're not passing in a multivariate formula or anything crazy like that.
+  - Give a warning if they're trying to pass in a formula with random effects.
   - Check the relevant paper (Hyper-g Priors for Generalized Linear Models, Bove' & Held, 2011, about JZS priors for GLMs) about "c" and the "weights", and fix things if needed.
   - Figure out what model families to support and have some idea about what they do.
   - Provide support for factors (proper contrast coding).

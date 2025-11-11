@@ -11,7 +11,7 @@
 #' @returns A fitted brms model.
 #' @details This is a wrapper around the "brm" function from brms that adds a JZS prior on model parameters  REFS *.
 
-brm_jzs = function(formula, data, family = gaussian(), r = 0.5, sample = FALSE, seed = NA, chains = 4, iter = 2000, warmup = floor(iter/2)){
+brm_jzs = function(formula, data, family = gaussian(), r = 0.5, seed = NA, chains = 4, iter = 2000, warmup = floor(iter/2)){
   # package data for stan
   stan_data = brms::standata(object = formula, data = data, family = family)
 
@@ -20,12 +20,11 @@ brm_jzs = function(formula, data, family = gaussian(), r = 0.5, sample = FALSE, 
   has_sigma = family$family %in% c("gaussian", "student", "lognormal", "shifted_lognormal", "skew_normal", "gen_extreme_value", "exgaussian", "logistic_normal", "asym_laplace", "hurdle_lognormal")
   if(has_sigma){ # families that have sigma as a parameter (e.g. normal for ordinary linear regression)
     b_prior = set_prior("multi_student_t(1, rep_vector(0.0, Kc), r * sigma^2 * V)", class = "b") # Cauchy hyper g-prior (Cauchy = Student's t with df = 1)
-    #sigma_prior = set_prior("gamma(0.01, 0.01)", class = "sigma") # mimic Jefferey's prior
     sigma_prior = set_prior("", "sigma") + set_prior("target += -2*log(sigma)", check = FALSE) # see https://discourse.mc-stan.org/t/setting-jeffreys-s-prior-on-sigma
     our_prior = intercept_prior + b_prior + sigma_prior
   }
   else{ # families that don't have sigma as a parameter (e.g. Bernoulli for logistic regression)
-    b_prior = set_prior("multi_student_t(1, rep_vector(0.0, Kc), r * V)", class = "b")  # Cauchy hyper g-prior (Cauchy = Student's t with df = 1)
+    b_prior = set_prior("multi_student_t(1, rep_vector(0.0, Kc), r * V)", class = "b") # Cauchy hyper g-prior (Cauchy = Student's t with df = 1)
     our_prior = intercept_prior + b_prior
   }
 

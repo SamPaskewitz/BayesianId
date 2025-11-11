@@ -54,21 +54,22 @@ I = diag(a)
 J = matrix(1.0, nrow = a, ncol = a)
 round(I - J/a, 2) %>% print()
 ```
-
-
-
-
 ```{r}
-contr_comp = matrix(c(0.89, -0.22, -0.22, -0.22, -0.22,
-                      0, 0.87, -0.29, -0.29, -0.29,
-                      0, 0, 0.82, -0.41, -0.41,
-                      0, 0, 0, 0.71, -0.71),
-                    nrow = 4,
-                    ncol = 5,
-                    byrow = TRUE) %>% t()
-print(contr_comp)
+data("penguins")
+levels(penguins$sex)
 ```
 
+```{r}
+X = model.matrix(~ flipper_len + sex, data = na.omit(penguins))
+X
+```
+
+```{r}
+X = model.matrix(~ disp + wt - 1, data = mtcars) %>% scale(center = TRUE, scale = FALSE)
+N = nrow(X)
+V = solve(t(X)%*%X/N)
+V
+```
 
 
 ```{r}
