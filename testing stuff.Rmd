@@ -56,13 +56,26 @@ round(I - J/a, 2) %>% print()
 ```
 ```{r}
 data("penguins")
-levels(penguins$sex)
+levels(penguins$island)
+
 ```
 
 ```{r}
-X = model.matrix(~ flipper_len + sex, data = na.omit(penguins))
-X
+nc = length(levels(penguins$island)) - 1
+contrasts(penguins$island) = contr_banova(nc + 1)
+contrasts(penguins$island)
+X = model.matrix(~ flipper_len + island, data = na.omit(penguins))
+head(X)
+colMeans(X)
 ```
+
+```{r}
+stancode(body_mass ~ flipper_len + bill_len + island, 
+         data = na.omit(penguins),
+         prior = set_prior("normal(0, 2)", class = "b", coef = paste0("island", 1:nc)) + set_prior("multi_student_t_lpdf(b | 1, rep_vector(0.0, 2), r * sigma^2 * diag(2))", class = "b")
+         )
+```
+
 
 ```{r}
 X = model.matrix(~ disp + wt - 1, data = mtcars) %>% scale(center = TRUE, scale = FALSE)

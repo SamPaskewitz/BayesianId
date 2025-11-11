@@ -1754,13 +1754,12 @@ display: none;
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHViR2xpY21GeWVTaGljbTF6S1Z4dWJHbGljbUZ5ZVNoMGFXUjVkbVZ5YzJVcFhHNXNhV0p5WVhKNUtFSmhlV1Z6Um1GamRHOXlLVnh1YkdsaWNtRnllU2hDWVhsbGMybGhia2xrS1Z4dWJHbGljbUZ5ZVNoSlRreEJLVnh1WEc1a1lYUmhLRzEwWTJGeWN5bGNibVJoZEdFb1hDSmxjR2xzWlhCemVWd2lLVnh1WUdCZ0luMD0gLS0+XG5cbmBgYHJcbmxpYnJhcnkoYnJtcylcbmxpYnJhcnkodGlkeXZlcnNlKVxubGlicmFyeShCYXllc0ZhY3RvcilcbmxpYnJhcnkoQmF5ZXNpYW5JZClcbmxpYnJhcnkoSU5MQSlcblxuZGF0YShtdGNhcnMpXG5kYXRhKFwiZXBpbGVwc3lcIilcbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShicm1zKVxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KEJheWVzRmFjdG9yKVxubGlicmFyeShCYXllc2lhbklkKVxubGlicmFyeShJTkxBKVxuXG5kYXRhKG10Y2FycylcbmRhdGEoXCJlcGlsZXBzeVwiKVxuYGBgIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHViR2xpY21GeWVTaGljbTF6S1Z4dWJHbGljbUZ5ZVNoMGFXUjVkbVZ5YzJVcFhHNXNhV0p5WVhKNUtFSmhlV1Z6Um1GamRHOXlLVnh1YkdsaWNtRnllU2hDWVhsbGMybGhia2xrS1Z4dVhHNWtZWFJoS0cxMFkyRnljeWxjYm1SaGRHRW9YQ0psY0dsc1pYQnplVndpS1Z4dVlHQmdJbjA9IC0tPlxuXG5gYGByXG5saWJyYXJ5KGJybXMpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkoQmF5ZXNGYWN0b3IpXG5saWJyYXJ5KEJheWVzaWFuSWQpXG5cbmRhdGEobXRjYXJzKVxuZGF0YShcImVwaWxlcHN5XCIpXG5gYGBcblxuPCEtLSBybmItc291cmNlLWVuZCAtLT5cbiJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShicm1zKVxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KEJheWVzRmFjdG9yKVxubGlicmFyeShCYXllc2lhbklkKVxuXG5kYXRhKG10Y2FycylcbmRhdGEoXCJlcGlsZXBzeVwiKVxuYGBgIn0= -->
 <pre class="r"><code>library(brms)
 library(tidyverse)
 library(BayesFactor)
 library(BayesianId)
-library(INLA)
 
 data(mtcars)
 data(&quot;epilepsy&quot;)</code></pre>
@@ -1775,12 +1774,6 @@ data(&quot;epilepsy&quot;)</code></pre>
 <pre class="r"><code>mtcars %&gt;% select(mpg, disp, wt) %&gt;% cor() %&gt;% round(2)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgIG1wZyAgZGlzcCAgICB3dFxubXBnICAgMS4wMCAtMC44NSAtMC44N1xuZGlzcCAtMC44NSAgMS4wMCAgMC44OVxud3QgICAtMC44NyAgMC44OSAgMS4wMFxuIn0= -->
-<pre><code>       mpg  disp    wt
-mpg   1.00 -0.85 -0.87
-disp -0.85  1.00  0.89
-wt   -0.87  0.89  1.00</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -1789,14 +1782,6 @@ wt   -0.87  0.89  1.00</code></pre>
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29udHIuaGVsbWVydCg1KVxuYGBgIn0= -->
 <pre class="r"><code>contr.helmert(5)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICBbLDFdIFssMl0gWywzXSBbLDRdXG4xICAgLTEgICAtMSAgIC0xICAgLTFcbjIgICAgMSAgIC0xICAgLTEgICAtMVxuMyAgICAwICAgIDIgICAtMSAgIC0xXG40ICAgIDAgICAgMCAgICAzICAgLTFcbjUgICAgMCAgICAwICAgIDAgICAgNFxuIn0= -->
-<pre><code>  [,1] [,2] [,3] [,4]
-1   -1   -1   -1   -1
-2    1   -1   -1   -1
-3    0    2   -1   -1
-4    0    0    3   -1
-5    0    0    0    4</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
@@ -1830,14 +1815,6 @@ contr_banova = function(a){
 <pre class="r"><code>fwd_helmert(5)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICBbLDFdICBbLDJdICAgICAgIFssM10gWyw0XVxuWzEsXSAgMC44ICAwLjAwICAwLjAwMDAwMDAgIDAuMFxuWzIsXSAtMC4yICAwLjc1ICAwLjAwMDAwMDAgIDAuMFxuWzMsXSAtMC4yIC0wLjI1ICAwLjY2NjY2NjcgIDAuMFxuWzQsXSAtMC4yIC0wLjI1IC0wLjMzMzMzMzMgIDAuNVxuWzUsXSAtMC4yIC0wLjI1IC0wLjMzMzMzMzMgLTAuNVxuIn0= -->
-<pre><code>     [,1]  [,2]       [,3] [,4]
-[1,]  0.8  0.00  0.0000000  0.0
-[2,] -0.2  0.75  0.0000000  0.0
-[3,] -0.2 -0.25  0.6666667  0.0
-[4,] -0.2 -0.25 -0.3333333  0.5
-[5,] -0.2 -0.25 -0.3333333 -0.5</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVZMjl1ZEhKZlltRnViM1poS0RVcFhHNWdZR0FpZlE9PSAtLT5cblxuYGBgclxuY29udHJfYmFub3ZhKDUpXG5gYGBcblxuPCEtLSBybmItc291cmNlLWVuZCAtLT5cbiJ9 -->
@@ -1845,405 +1822,128 @@ contr_banova = function(a){
 <pre class="r"><code>contr_banova(5)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICBbLDFdICAgICAgIFssMl0gICAgICAgWywzXSAgICAgICBbLDRdXG5bMSxdICAwLjg5NDQyNzIgIDAuMDAwMDAwMCAgMC4wMDAwMDAwICAwLjAwMDAwMDBcblsyLF0gLTAuMjIzNjA2OCAgMC44NjYwMjU0ICAwLjAwMDAwMDAgIDAuMDAwMDAwMFxuWzMsXSAtMC4yMjM2MDY4IC0wLjI4ODY3NTEgIDAuODE2NDk2NiAgMC4wMDAwMDAwXG5bNCxdIC0wLjIyMzYwNjggLTAuMjg4Njc1MSAtMC40MDgyNDgzICAwLjcwNzEwNjhcbls1LF0gLTAuMjIzNjA2OCAtMC4yODg2NzUxIC0wLjQwODI0ODMgLTAuNzA3MTA2OFxuIn0= -->
-<pre><code>           [,1]       [,2]       [,3]       [,4]
-[1,]  0.8944272  0.0000000  0.0000000  0.0000000
-[2,] -0.2236068  0.8660254  0.0000000  0.0000000
-[3,] -0.2236068 -0.2886751  0.8164966  0.0000000
-[4,] -0.2236068 -0.2886751 -0.4082483  0.7071068
-[5,] -0.2236068 -0.2886751 -0.4082483 -0.7071068</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVZU0E5SURSY2JsRWdQU0JqYjI1MGNsOWlZVzV2ZG1Fb1lTbGNibkp2ZFc1a0tGRWxLaVZrYVdGbktHRXRNU2tsS2lWMEtGRXBMQ0F5S1NBbFBpVWdjSEpwYm5Rb0tWeHVZR0JnSW4wPSAtLT5cblxuYGBgclxuYSA9IDRcblEgPSBjb250cl9iYW5vdmEoYSlcbnJvdW5kKFElKiVkaWFnKGEtMSklKiV0KFEpLCAyKSAlPiUgcHJpbnQoKVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYSA9IDRcblEgPSBjb250cl9iYW5vdmEoYSlcbnJvdW5kKFElKiVkaWFnKGEtMSklKiV0KFEpLCAyKSAlPiUgcHJpbnQoKVxuYGBgIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVZU0E5SURSY2JsRWdQU0JqYjI1MGNsOWlZVzV2ZG1Fb1lTbGNibkp2ZFc1a0tGRWxLaVZrYVdGbktHRXRNU2tsS2lWMEtGRXBMQ0F5S1NBbFBpVWdjSEpwYm5Rb0tWeHVTU0E5SUdScFlXY29ZU2xjYmtvZ1BTQnRZWFJ5YVhnb01TNHdMQ0J1Y205M0lEMGdZU3dnYm1OdmJDQTlJR0VwWEc1eWIzVnVaQ2hKSUMwZ1NpOWhMQ0F5S1NBbFBpVWdjSEpwYm5Rb0tWeHVZR0JnSW4wPSAtLT5cblxuYGBgclxuYSA9IDRcblEgPSBjb250cl9iYW5vdmEoYSlcbnJvdW5kKFElKiVkaWFnKGEtMSklKiV0KFEpLCAyKSAlPiUgcHJpbnQoKVxuSSA9IGRpYWcoYSlcbkogPSBtYXRyaXgoMS4wLCBucm93ID0gYSwgbmNvbCA9IGEpXG5yb3VuZChJIC0gSi9hLCAyKSAlPiUgcHJpbnQoKVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYSA9IDRcblEgPSBjb250cl9iYW5vdmEoYSlcbnJvdW5kKFElKiVkaWFnKGEtMSklKiV0KFEpLCAyKSAlPiUgcHJpbnQoKVxuSSA9IGRpYWcoYSlcbkogPSBtYXRyaXgoMS4wLCBucm93ID0gYSwgbmNvbCA9IGEpXG5yb3VuZChJIC0gSi9hLCAyKSAlPiUgcHJpbnQoKVxuYGBgIn0= -->
 <pre class="r"><code>a = 4
 Q = contr_banova(a)
-round(Q%*%diag(a-1)%*%t(Q), 2) %&gt;% print()</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgWywxXSAgWywyXSAgWywzXSAgWyw0XVxuWzEsXSAgMC43NSAtMC4yNSAtMC4yNSAtMC4yNVxuWzIsXSAtMC4yNSAgMC43NSAtMC4yNSAtMC4yNVxuWzMsXSAtMC4yNSAtMC4yNSAgMC43NSAtMC4yNVxuWzQsXSAtMC4yNSAtMC4yNSAtMC4yNSAgMC43NVxuIn0= -->
-<pre><code>      [,1]  [,2]  [,3]  [,4]
-[1,]  0.75 -0.25 -0.25 -0.25
-[2,] -0.25  0.75 -0.25 -0.25
-[3,] -0.25 -0.25  0.75 -0.25
-[4,] -0.25 -0.25 -0.25  0.75</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVTU0E5SUdScFlXY29ZU2xjYmtvZ1BTQnRZWFJ5YVhnb01TNHdMQ0J1Y205M0lEMGdZU3dnYm1OdmJDQTlJR0VwWEc1eWIzVnVaQ2hKSUMwZ1NpOWhMQ0F5S1NBbFBpVWdjSEpwYm5Rb0tWeHVZR0JnSW4wPSAtLT5cblxuYGBgclxuSSA9IGRpYWcoYSlcbkogPSBtYXRyaXgoMS4wLCBucm93ID0gYSwgbmNvbCA9IGEpXG5yb3VuZChJIC0gSi9hLCAyKSAlPiUgcHJpbnQoKVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuSSA9IGRpYWcoYSlcbkogPSBtYXRyaXgoMS4wLCBucm93ID0gYSwgbmNvbCA9IGEpXG5yb3VuZChJIC0gSi9hLCAyKSAlPiUgcHJpbnQoKVxuYGBgIn0= -->
-<pre class="r"><code>I = diag(a)
+round(Q%*%diag(a-1)%*%t(Q), 2) %&gt;% print()
+I = diag(a)
 J = matrix(1.0, nrow = a, ncol = a)
 round(I - J/a, 2) %&gt;% print()</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgWywxXSAgWywyXSAgWywzXSAgWyw0XVxuWzEsXSAgMC43NSAtMC4yNSAtMC4yNSAtMC4yNVxuWzIsXSAtMC4yNSAgMC43NSAtMC4yNSAtMC4yNVxuWzMsXSAtMC4yNSAtMC4yNSAgMC43NSAtMC4yNVxuWzQsXSAtMC4yNSAtMC4yNSAtMC4yNSAgMC43NVxuIn0= -->
-<pre><code>      [,1]  [,2]  [,3]  [,4]
-[1,]  0.75 -0.25 -0.25 -0.25
-[2,] -0.25  0.75 -0.25 -0.25
-[3,] -0.25 -0.25  0.75 -0.25
-[4,] -0.25 -0.25 -0.25  0.75</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVaR0YwWVNoY0luQmxibWQxYVc1elhDSXBYRzVzWlhabGJITW9jR1Z1WjNWcGJuTWtjMlY0S1Z4dVlHQmdJbjA9IC0tPlxuXG5gYGByXG5kYXRhKFwicGVuZ3VpbnNcIilcbmxldmVscyhwZW5ndWlucyRzZXgpXG5gYGBcblxuPCEtLSBybmItc291cmNlLWVuZCAtLT5cbiJ9 -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YShcInBlbmd1aW5zXCIpXG5sZXZlbHMocGVuZ3VpbnMkc2V4KVxuYGBgIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVaR0YwWVNoY0luQmxibWQxYVc1elhDSXBYRzVzWlhabGJITW9jR1Z1WjNWcGJuTWthWE5zWVc1a0tWeHVYRzVnWUdBaWZRPT0gLS0+XG5cbmBgYHJcbmRhdGEoXCJwZW5ndWluc1wiKVxubGV2ZWxzKHBlbmd1aW5zJGlzbGFuZClcblxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YShcInBlbmd1aW5zXCIpXG5sZXZlbHMocGVuZ3VpbnMkaXNsYW5kKVxuXG5gYGAifQ== -->
 <pre class="r"><code>data(&quot;penguins&quot;)
-levels(penguins$sex)</code></pre>
+levels(penguins$island)
+</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiZmVtYWxlXCIgXCJtYWxlXCIgIFxuIn0= -->
-<pre><code>[1] &quot;female&quot; &quot;male&quot;  </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVXQ0E5SUcxdlpHVnNMbTFoZEhKcGVDaCtJR1pzYVhCd1pYSmZiR1Z1SUNzZ2MyVjRMQ0JrWVhSaElEMGdibUV1YjIxcGRDaHdaVzVuZFdsdWN5a3BYRzVZWEc1Z1lHQWlmUT09IC0tPlxuXG5gYGByXG5YID0gbW9kZWwubWF0cml4KH4gZmxpcHBlcl9sZW4gKyBzZXgsIGRhdGEgPSBuYS5vbWl0KHBlbmd1aW5zKSlcblhcbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuWCA9IG1vZGVsLm1hdHJpeCh+IGZsaXBwZXJfbGVuICsgc2V4LCBkYXRhID0gbmEub21pdChwZW5ndWlucykpXG5YXG5gYGAifQ== -->
-<pre class="r"><code>X = model.matrix(~ flipper_len + sex, data = na.omit(penguins))
-X</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVibU1nUFNCc1pXNW5kR2dvYkdWMlpXeHpLSEJsYm1kMWFXNXpKR2x6YkdGdVpDa3BJQzBnTVZ4dVkyOXVkSEpoYzNSektIQmxibWQxYVc1ekpHbHpiR0Z1WkNrZ1BTQmpiMjUwY2w5aVlXNXZkbUVvYm1NZ0t5QXhLVnh1WTI5dWRISmhjM1J6S0hCbGJtZDFhVzV6SkdsemJHRnVaQ2xjYm1CZ1lDSjkgLS0+XG5cbmBgYHJcbm5jID0gbGVuZ3RoKGxldmVscyhwZW5ndWlucyRpc2xhbmQpKSAtIDFcbmNvbnRyYXN0cyhwZW5ndWlucyRpc2xhbmQpID0gY29udHJfYmFub3ZhKG5jICsgMSlcbmNvbnRyYXN0cyhwZW5ndWlucyRpc2xhbmQpXG5gYGBcblxuPCEtLSBybmItc291cmNlLWVuZCAtLT5cbiJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmMgPSBsZW5ndGgobGV2ZWxzKHBlbmd1aW5zJGlzbGFuZCkpIC0gMVxuY29udHJhc3RzKHBlbmd1aW5zJGlzbGFuZCkgPSBjb250cl9iYW5vdmEobmMgKyAxKVxuY29udHJhc3RzKHBlbmd1aW5zJGlzbGFuZClcbmBgYCJ9 -->
+<pre class="r"><code>nc = length(levels(penguins$island)) - 1
+contrasts(penguins$island) = contr_banova(nc + 1)
+contrasts(penguins$island)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgIChJbnRlcmNlcHQpIGZsaXBwZXJfbGVuIHNleG1hbGVcbjEgICAgICAgICAgICAgMSAgICAgICAgIDE4MSAgICAgICAxXG4yICAgICAgICAgICAgIDEgICAgICAgICAxODYgICAgICAgMFxuMyAgICAgICAgICAgICAxICAgICAgICAgMTk1ICAgICAgIDBcbjUgICAgICAgICAgICAgMSAgICAgICAgIDE5MyAgICAgICAwXG42ICAgICAgICAgICAgIDEgICAgICAgICAxOTAgICAgICAgMVxuNyAgICAgICAgICAgICAxICAgICAgICAgMTgxICAgICAgIDBcbjggICAgICAgICAgICAgMSAgICAgICAgIDE5NSAgICAgICAxXG4xMyAgICAgICAgICAgIDEgICAgICAgICAxODIgICAgICAgMFxuMTQgICAgICAgICAgICAxICAgICAgICAgMTkxICAgICAgIDFcbjE1ICAgICAgICAgICAgMSAgICAgICAgIDE5OCAgICAgICAxXG4xNiAgICAgICAgICAgIDEgICAgICAgICAxODUgICAgICAgMFxuMTcgICAgICAgICAgICAxICAgICAgICAgMTk1ICAgICAgIDBcbjE4ICAgICAgICAgICAgMSAgICAgICAgIDE5NyAgICAgICAxXG4xOSAgICAgICAgICAgIDEgICAgICAgICAxODQgICAgICAgMFxuMjAgICAgICAgICAgICAxICAgICAgICAgMTk0ICAgICAgIDFcbjIxICAgICAgICAgICAgMSAgICAgICAgIDE3NCAgICAgICAwXG4yMiAgICAgICAgICAgIDEgICAgICAgICAxODAgICAgICAgMVxuMjMgICAgICAgICAgICAxICAgICAgICAgMTg5ICAgICAgIDBcbjI0ICAgICAgICAgICAgMSAgICAgICAgIDE4NSAgICAgICAxXG4yNSAgICAgICAgICAgIDEgICAgICAgICAxODAgICAgICAgMVxuMjYgICAgICAgICAgICAxICAgICAgICAgMTg3ICAgICAgIDBcbjI3ICAgICAgICAgICAgMSAgICAgICAgIDE4MyAgICAgICAxXG4yOCAgICAgICAgICAgIDEgICAgICAgICAxODcgICAgICAgMFxuMjkgICAgICAgICAgICAxICAgICAgICAgMTcyICAgICAgIDBcbjMwICAgICAgICAgICAgMSAgICAgICAgIDE4MCAgICAgICAxXG4zMSAgICAgICAgICAgIDEgICAgICAgICAxNzggICAgICAgMFxuMzIgICAgICAgICAgICAxICAgICAgICAgMTc4ICAgICAgIDFcbjMzICAgICAgICAgICAgMSAgICAgICAgIDE4OCAgICAgICAwXG4zNCAgICAgICAgICAgIDEgICAgICAgICAxODQgICAgICAgMVxuMzUgICAgICAgICAgICAxICAgICAgICAgMTk1ICAgICAgIDBcbjM2ICAgICAgICAgICAgMSAgICAgICAgIDE5NiAgICAgICAxXG4zNyAgICAgICAgICAgIDEgICAgICAgICAxOTAgICAgICAgMVxuMzggICAgICAgICAgICAxICAgICAgICAgMTgwICAgICAgIDBcbjM5ICAgICAgICAgICAgMSAgICAgICAgIDE4MSAgICAgICAwXG40MCAgICAgICAgICAgIDEgICAgICAgICAxODQgICAgICAgMVxuNDEgICAgICAgICAgICAxICAgICAgICAgMTgyICAgICAgIDBcbjQyICAgICAgICAgICAgMSAgICAgICAgIDE5NSAgICAgICAxXG40MyAgICAgICAgICAgIDEgICAgICAgICAxODYgICAgICAgMFxuNDQgICAgICAgICAgICAxICAgICAgICAgMTk2ICAgICAgIDFcbjQ1ICAgICAgICAgICAgMSAgICAgICAgIDE4NSAgICAgICAwXG40NiAgICAgICAgICAgIDEgICAgICAgICAxOTAgICAgICAgMVxuNDcgICAgICAgICAgICAxICAgICAgICAgMTgyICAgICAgIDFcbjQ5ICAgICAgICAgICAgMSAgICAgICAgIDE5MCAgICAgICAwXG41MCAgICAgICAgICAgIDEgICAgICAgICAxOTEgICAgICAgMVxuNTEgICAgICAgICAgICAxICAgICAgICAgMTg2ICAgICAgIDBcbjUyICAgICAgICAgICAgMSAgICAgICAgIDE4OCAgICAgICAxXG41MyAgICAgICAgICAgIDEgICAgICAgICAxOTAgICAgICAgMFxuNTQgICAgICAgICAgICAxICAgICAgICAgMjAwICAgICAgIDFcbjU1ICAgICAgICAgICAgMSAgICAgICAgIDE4NyAgICAgICAwXG41NiAgICAgICAgICAgIDEgICAgICAgICAxOTEgICAgICAgMVxuNTcgICAgICAgICAgICAxICAgICAgICAgMTg2ICAgICAgIDBcbjU4ICAgICAgICAgICAgMSAgICAgICAgIDE5MyAgICAgICAxXG41OSAgICAgICAgICAgIDEgICAgICAgICAxODEgICAgICAgMFxuNjAgICAgICAgICAgICAxICAgICAgICAgMTk0ICAgICAgIDFcbjYxICAgICAgICAgICAgMSAgICAgICAgIDE4NSAgICAgICAwXG42MiAgICAgICAgICAgIDEgICAgICAgICAxOTUgICAgICAgMVxuNjMgICAgICAgICAgICAxICAgICAgICAgMTg1ICAgICAgIDBcbjY0ICAgICAgICAgICAgMSAgICAgICAgIDE5MiAgICAgICAxXG42NSAgICAgICAgICAgIDEgICAgICAgICAxODQgICAgICAgMFxuNjYgICAgICAgICAgICAxICAgICAgICAgMTkyICAgICAgIDFcbjY3ICAgICAgICAgICAgMSAgICAgICAgIDE5NSAgICAgICAwXG42OCAgICAgICAgICAgIDEgICAgICAgICAxODggICAgICAgMVxuNjkgICAgICAgICAgICAxICAgICAgICAgMTkwICAgICAgIDBcbjcwICAgICAgICAgICAgMSAgICAgICAgIDE5OCAgICAgICAxXG43MSAgICAgICAgICAgIDEgICAgICAgICAxOTAgICAgICAgMFxuNzIgICAgICAgICAgICAxICAgICAgICAgMTkwICAgICAgIDFcbjczICAgICAgICAgICAgMSAgICAgICAgIDE5NiAgICAgICAwXG43NCAgICAgICAgICAgIDEgICAgICAgICAxOTcgICAgICAgMVxuNzUgICAgICAgICAgICAxICAgICAgICAgMTkwICAgICAgIDBcbjc2ICAgICAgICAgICAgMSAgICAgICAgIDE5NSAgICAgICAxXG43NyAgICAgICAgICAgIDEgICAgICAgICAxOTEgICAgICAgMFxuNzggICAgICAgICAgICAxICAgICAgICAgMTg0ICAgICAgIDFcbjc5ICAgICAgICAgICAgMSAgICAgICAgIDE4NyAgICAgICAwXG44MCAgICAgICAgICAgIDEgICAgICAgICAxOTUgICAgICAgMVxuODEgICAgICAgICAgICAxICAgICAgICAgMTg5ICAgICAgIDBcbjgyICAgICAgICAgICAgMSAgICAgICAgIDE5NiAgICAgICAxXG44MyAgICAgICAgICAgIDEgICAgICAgICAxODcgICAgICAgMFxuODQgICAgICAgICAgICAxICAgICAgICAgMTkzICAgICAgIDFcbjg1ICAgICAgICAgICAgMSAgICAgICAgIDE5MSAgICAgICAwXG44NiAgICAgICAgICAgIDEgICAgICAgICAxOTQgICAgICAgMVxuODcgICAgICAgICAgICAxICAgICAgICAgMTkwICAgICAgIDFcbjg4ICAgICAgICAgICAgMSAgICAgICAgIDE4OSAgICAgICAwXG44OSAgICAgICAgICAgIDEgICAgICAgICAxODkgICAgICAgMVxuOTAgICAgICAgICAgICAxICAgICAgICAgMTkwICAgICAgIDBcbjkxICAgICAgICAgICAgMSAgICAgICAgIDIwMiAgICAgICAwXG45MiAgICAgICAgICAgIDEgICAgICAgICAyMDUgICAgICAgMVxuOTMgICAgICAgICAgICAxICAgICAgICAgMTg1ICAgICAgIDBcbjk0ICAgICAgICAgICAgMSAgICAgICAgIDE4NiAgICAgICAxXG45NSAgICAgICAgICAgIDEgICAgICAgICAxODcgICAgICAgMFxuOTYgICAgICAgICAgICAxICAgICAgICAgMjA4ICAgICAgIDFcbjk3ICAgICAgICAgICAgMSAgICAgICAgIDE5MCAgICAgICAwXG45OCAgICAgICAgICAgIDEgICAgICAgICAxOTYgICAgICAgMVxuOTkgICAgICAgICAgICAxICAgICAgICAgMTc4ICAgICAgIDBcbjEwMCAgICAgICAgICAgMSAgICAgICAgIDE5MiAgICAgICAxXG4xMDEgICAgICAgICAgIDEgICAgICAgICAxOTIgICAgICAgMFxuMTAyICAgICAgICAgICAxICAgICAgICAgMjAzICAgICAgIDFcbjEwMyAgICAgICAgICAgMSAgICAgICAgIDE4MyAgICAgICAwXG4xMDQgICAgICAgICAgIDEgICAgICAgICAxOTAgICAgICAgMVxuMTA1ICAgICAgICAgICAxICAgICAgICAgMTkzICAgICAgIDBcbjEwNiAgICAgICAgICAgMSAgICAgICAgIDE4NCAgICAgICAxXG4xMDcgICAgICAgICAgIDEgICAgICAgICAxOTkgICAgICAgMFxuMTA4ICAgICAgICAgICAxICAgICAgICAgMTkwICAgICAgIDFcbjEwOSAgICAgICAgICAgMSAgICAgICAgIDE4MSAgICAgICAwXG4xMTAgICAgICAgICAgIDEgICAgICAgICAxOTcgICAgICAgMVxuMTExICAgICAgICAgICAxICAgICAgICAgMTk4ICAgICAgIDBcbjExMiAgICAgICAgICAgMSAgICAgICAgIDE5MSAgICAgICAxXG4xMTMgICAgICAgICAgIDEgICAgICAgICAxOTMgICAgICAgMFxuMTE0ICAgICAgICAgICAxICAgICAgICAgMTk3ICAgICAgIDFcbjExNSAgICAgICAgICAgMSAgICAgICAgIDE5MSAgICAgICAwXG4xMTYgICAgICAgICAgIDEgICAgICAgICAxOTYgICAgICAgMVxuMTE3ICAgICAgICAgICAxICAgICAgICAgMTg4ICAgICAgIDBcbjExOCAgICAgICAgICAgMSAgICAgICAgIDE5OSAgICAgICAxXG4xMTkgICAgICAgICAgIDEgICAgICAgICAxODkgICAgICAgMFxuMTIwICAgICAgICAgICAxICAgICAgICAgMTg5ICAgICAgIDFcbjEyMSAgICAgICAgICAgMSAgICAgICAgIDE4NyAgICAgICAwXG4xMjIgICAgICAgICAgIDEgICAgICAgICAxOTggICAgICAgMVxuMTIzICAgICAgICAgICAxICAgICAgICAgMTc2ICAgICAgIDBcbjEyNCAgICAgICAgICAgMSAgICAgICAgIDIwMiAgICAgICAxXG4xMjUgICAgICAgICAgIDEgICAgICAgICAxODYgICAgICAgMFxuMTI2ICAgICAgICAgICAxICAgICAgICAgMTk5ICAgICAgIDFcbjEyNyAgICAgICAgICAgMSAgICAgICAgIDE5MSAgICAgICAwXG4xMjggICAgICAgICAgIDEgICAgICAgICAxOTUgICAgICAgMVxuMTI5ICAgICAgICAgICAxICAgICAgICAgMTkxICAgICAgIDBcbjEzMCAgICAgICAgICAgMSAgICAgICAgIDIxMCAgICAgICAxXG4xMzEgICAgICAgICAgIDEgICAgICAgICAxOTAgICAgICAgMFxuMTMyICAgICAgICAgICAxICAgICAgICAgMTk3ICAgICAgIDFcbjEzMyAgICAgICAgICAgMSAgICAgICAgIDE5MyAgICAgICAwXG4xMzQgICAgICAgICAgIDEgICAgICAgICAxOTkgICAgICAgMVxuMTM1ICAgICAgICAgICAxICAgICAgICAgMTg3ICAgICAgIDBcbjEzNiAgICAgICAgICAgMSAgICAgICAgIDE5MCAgICAgICAxXG4xMzcgICAgICAgICAgIDEgICAgICAgICAxOTEgICAgICAgMFxuMTM4ICAgICAgICAgICAxICAgICAgICAgMjAwICAgICAgIDFcbjEzOSAgICAgICAgICAgMSAgICAgICAgIDE4NSAgICAgICAwXG4xNDAgICAgICAgICAgIDEgICAgICAgICAxOTMgICAgICAgMVxuMTQxICAgICAgICAgICAxICAgICAgICAgMTkzICAgICAgIDBcbjE0MiAgICAgICAgICAgMSAgICAgICAgIDE4NyAgICAgICAxXG4xNDMgICAgICAgICAgIDEgICAgICAgICAxODggICAgICAgMFxuMTQ0ICAgICAgICAgICAxICAgICAgICAgMTkwICAgICAgIDFcbjE0NSAgICAgICAgICAgMSAgICAgICAgIDE5MiAgICAgICAwXG4xNDYgICAgICAgICAgIDEgICAgICAgICAxODUgICAgICAgMVxuMTQ3ICAgICAgICAgICAxICAgICAgICAgMTkwICAgICAgIDFcbjE0OCAgICAgICAgICAgMSAgICAgICAgIDE4NCAgICAgICAwXG4xNDkgICAgICAgICAgIDEgICAgICAgICAxOTUgICAgICAgMFxuMTUwICAgICAgICAgICAxICAgICAgICAgMTkzICAgICAgIDFcbjE1MSAgICAgICAgICAgMSAgICAgICAgIDE4NyAgICAgICAwXG4xNTIgICAgICAgICAgIDEgICAgICAgICAyMDEgICAgICAgMVxuMTUzICAgICAgICAgICAxICAgICAgICAgMjExICAgICAgIDBcbjE1NCAgICAgICAgICAgMSAgICAgICAgIDIzMCAgICAgICAxXG4xNTUgICAgICAgICAgIDEgICAgICAgICAyMTAgICAgICAgMFxuMTU2ICAgICAgICAgICAxICAgICAgICAgMjE4ICAgICAgIDFcbjE1NyAgICAgICAgICAgMSAgICAgICAgIDIxNSAgICAgICAxXG4xNTggICAgICAgICAgIDEgICAgICAgICAyMTAgICAgICAgMFxuMTU5ICAgICAgICAgICAxICAgICAgICAgMjExICAgICAgIDBcbjE2MCAgICAgICAgICAgMSAgICAgICAgIDIxOSAgICAgICAxXG4xNjEgICAgICAgICAgIDEgICAgICAgICAyMDkgICAgICAgMFxuMTYyICAgICAgICAgICAxICAgICAgICAgMjE1ICAgICAgIDFcbjE2MyAgICAgICAgICAgMSAgICAgICAgIDIxNCAgICAgICAwXG4xNjQgICAgICAgICAgIDEgICAgICAgICAyMTYgICAgICAgMVxuMTY1ICAgICAgICAgICAxICAgICAgICAgMjE0ICAgICAgIDBcbjE2NiAgICAgICAgICAgMSAgICAgICAgIDIxMyAgICAgICAxXG4xNjcgICAgICAgICAgIDEgICAgICAgICAyMTAgICAgICAgMFxuMTY4ICAgICAgICAgICAxICAgICAgICAgMjE3ICAgICAgIDFcbjE2OSAgICAgICAgICAgMSAgICAgICAgIDIxMCAgICAgICAwXG4xNzAgICAgICAgICAgIDEgICAgICAgICAyMjEgICAgICAgMVxuMTcxICAgICAgICAgICAxICAgICAgICAgMjA5ICAgICAgIDBcbjE3MiAgICAgICAgICAgMSAgICAgICAgIDIyMiAgICAgICAxXG4xNzMgICAgICAgICAgIDEgICAgICAgICAyMTggICAgICAgMVxuMTc0ICAgICAgICAgICAxICAgICAgICAgMjE1ICAgICAgIDBcbjE3NSAgICAgICAgICAgMSAgICAgICAgIDIxMyAgICAgICAwXG4xNzYgICAgICAgICAgIDEgICAgICAgICAyMTUgICAgICAgMVxuMTc3ICAgICAgICAgICAxICAgICAgICAgMjE1ICAgICAgIDBcbjE3OCAgICAgICAgICAgMSAgICAgICAgIDIxNSAgICAgICAxXG4xODAgICAgICAgICAgIDEgICAgICAgICAyMTUgICAgICAgMVxuMTgxICAgICAgICAgICAxICAgICAgICAgMjEwICAgICAgIDBcbjE4MiAgICAgICAgICAgMSAgICAgICAgIDIyMCAgICAgICAxXG4xODMgICAgICAgICAgIDEgICAgICAgICAyMjIgICAgICAgMVxuMTg0ICAgICAgICAgICAxICAgICAgICAgMjA5ICAgICAgIDBcbjE4NSAgICAgICAgICAgMSAgICAgICAgIDIwNyAgICAgICAwXG4xODYgICAgICAgICAgIDEgICAgICAgICAyMzAgICAgICAgMVxuMTg3ICAgICAgICAgICAxICAgICAgICAgMjIwICAgICAgIDBcbjE4OCAgICAgICAgICAgMSAgICAgICAgIDIyMCAgICAgICAxXG4xODkgICAgICAgICAgIDEgICAgICAgICAyMTMgICAgICAgMFxuMTkwICAgICAgICAgICAxICAgICAgICAgMjE5ICAgICAgIDFcbjE5MSAgICAgICAgICAgMSAgICAgICAgIDIwOCAgICAgICAwXG4xOTIgICAgICAgICAgIDEgICAgICAgICAyMDggICAgICAgMVxuMTkzICAgICAgICAgICAxICAgICAgICAgMjA4ICAgICAgIDBcbjE5NCAgICAgICAgICAgMSAgICAgICAgIDIyNSAgICAgICAxXG4xOTUgICAgICAgICAgIDEgICAgICAgICAyMTAgICAgICAgMFxuMTk2ICAgICAgICAgICAxICAgICAgICAgMjE2ICAgICAgIDFcbjE5NyAgICAgICAgICAgMSAgICAgICAgIDIyMiAgICAgICAxXG4xOTggICAgICAgICAgIDEgICAgICAgICAyMTcgICAgICAgMFxuMTk5ICAgICAgICAgICAxICAgICAgICAgMjEwICAgICAgIDBcbjIwMCAgICAgICAgICAgMSAgICAgICAgIDIyNSAgICAgICAxXG4yMDEgICAgICAgICAgIDEgICAgICAgICAyMTMgICAgICAgMFxuMjAyICAgICAgICAgICAxICAgICAgICAgMjE1ICAgICAgIDFcbjIwMyAgICAgICAgICAgMSAgICAgICAgIDIxMCAgICAgICAwXG4yMDQgICAgICAgICAgIDEgICAgICAgICAyMjAgICAgICAgMVxuMjA1ICAgICAgICAgICAxICAgICAgICAgMjEwICAgICAgIDBcbjIwNiAgICAgICAgICAgMSAgICAgICAgIDIyNSAgICAgICAxXG4yMDcgICAgICAgICAgIDEgICAgICAgICAyMTcgICAgICAgMFxuMjA4ICAgICAgICAgICAxICAgICAgICAgMjIwICAgICAgIDFcbjIwOSAgICAgICAgICAgMSAgICAgICAgIDIwOCAgICAgICAwXG4yMTAgICAgICAgICAgIDEgICAgICAgICAyMjAgICAgICAgMVxuMjExICAgICAgICAgICAxICAgICAgICAgMjA4ICAgICAgIDBcbjIxMiAgICAgICAgICAgMSAgICAgICAgIDIyNCAgICAgICAxXG4yMTMgICAgICAgICAgIDEgICAgICAgICAyMDggICAgICAgMFxuMjE0ICAgICAgICAgICAxICAgICAgICAgMjIxICAgICAgIDFcbjIxNSAgICAgICAgICAgMSAgICAgICAgIDIxNCAgICAgICAwXG4yMTYgICAgICAgICAgIDEgICAgICAgICAyMzEgICAgICAgMVxuMjE3ICAgICAgICAgICAxICAgICAgICAgMjE5ICAgICAgIDBcbjIxOCAgICAgICAgICAgMSAgICAgICAgIDIzMCAgICAgICAxXG4yMjAgICAgICAgICAgIDEgICAgICAgICAyMjkgICAgICAgMVxuMjIxICAgICAgICAgICAxICAgICAgICAgMjIwICAgICAgIDBcbjIyMiAgICAgICAgICAgMSAgICAgICAgIDIyMyAgICAgICAxXG4yMjMgICAgICAgICAgIDEgICAgICAgICAyMTYgICAgICAgMFxuMjI0ICAgICAgICAgICAxICAgICAgICAgMjIxICAgICAgIDFcbjIyNSAgICAgICAgICAgMSAgICAgICAgIDIyMSAgICAgICAxXG4yMjYgICAgICAgICAgIDEgICAgICAgICAyMTcgICAgICAgMFxuMjI3ICAgICAgICAgICAxICAgICAgICAgMjE2ICAgICAgIDBcbjIyOCAgICAgICAgICAgMSAgICAgICAgIDIzMCAgICAgICAxXG4yMjkgICAgICAgICAgIDEgICAgICAgICAyMDkgICAgICAgMFxuMjMwICAgICAgICAgICAxICAgICAgICAgMjIwICAgICAgIDFcbjIzMSAgICAgICAgICAgMSAgICAgICAgIDIxNSAgICAgICAwXG4yMzIgICAgICAgICAgIDEgICAgICAgICAyMjMgICAgICAgMVxuMjMzICAgICAgICAgICAxICAgICAgICAgMjEyICAgICAgIDBcbjIzNCAgICAgICAgICAgMSAgICAgICAgIDIyMSAgICAgICAxXG4yMzUgICAgICAgICAgIDEgICAgICAgICAyMTIgICAgICAgMFxuMjM2ICAgICAgICAgICAxICAgICAgICAgMjI0ICAgICAgIDFcbjIzNyAgICAgICAgICAgMSAgICAgICAgIDIxMiAgICAgICAwXG4yMzggICAgICAgICAgIDEgICAgICAgICAyMjggICAgICAgMVxuMjM5ICAgICAgICAgICAxICAgICAgICAgMjE4ICAgICAgIDBcbjI0MCAgICAgICAgICAgMSAgICAgICAgIDIxOCAgICAgICAxXG4yNDEgICAgICAgICAgIDEgICAgICAgICAyMTIgICAgICAgMFxuMjQyICAgICAgICAgICAxICAgICAgICAgMjMwICAgICAgIDFcbjI0MyAgICAgICAgICAgMSAgICAgICAgIDIxOCAgICAgICAwXG4yNDQgICAgICAgICAgIDEgICAgICAgICAyMjggICAgICAgMVxuMjQ1ICAgICAgICAgICAxICAgICAgICAgMjEyICAgICAgIDBcbjI0NiAgICAgICAgICAgMSAgICAgICAgIDIyNCAgICAgICAxXG4yNDcgICAgICAgICAgIDEgICAgICAgICAyMTQgICAgICAgMFxuMjQ4ICAgICAgICAgICAxICAgICAgICAgMjI2ICAgICAgIDFcbjI0OSAgICAgICAgICAgMSAgICAgICAgIDIxNiAgICAgICAxXG4yNTAgICAgICAgICAgIDEgICAgICAgICAyMjIgICAgICAgMFxuMjUxICAgICAgICAgICAxICAgICAgICAgMjAzICAgICAgIDBcbjI1MiAgICAgICAgICAgMSAgICAgICAgIDIyNSAgICAgICAxXG4yNTMgICAgICAgICAgIDEgICAgICAgICAyMTkgICAgICAgMFxuMjU0ICAgICAgICAgICAxICAgICAgICAgMjI4ICAgICAgIDFcbjI1NSAgICAgICAgICAgMSAgICAgICAgIDIxNSAgICAgICAwXG4yNTYgICAgICAgICAgIDEgICAgICAgICAyMjggICAgICAgMVxuMjU4ICAgICAgICAgICAxICAgICAgICAgMjE1ICAgICAgIDFcbjI1OSAgICAgICAgICAgMSAgICAgICAgIDIxMCAgICAgICAwXG4yNjAgICAgICAgICAgIDEgICAgICAgICAyMTkgICAgICAgMVxuMjYxICAgICAgICAgICAxICAgICAgICAgMjA4ICAgICAgIDBcbjI2MiAgICAgICAgICAgMSAgICAgICAgIDIwOSAgICAgICAxXG4yNjMgICAgICAgICAgIDEgICAgICAgICAyMTYgICAgICAgMFxuMjY0ICAgICAgICAgICAxICAgICAgICAgMjI5ICAgICAgIDFcbjI2NSAgICAgICAgICAgMSAgICAgICAgIDIxMyAgICAgICAwXG4yNjYgICAgICAgICAgIDEgICAgICAgICAyMzAgICAgICAgMVxuMjY3ICAgICAgICAgICAxICAgICAgICAgMjE3ICAgICAgIDBcbjI2OCAgICAgICAgICAgMSAgICAgICAgIDIzMCAgICAgICAxXG4yNzAgICAgICAgICAgIDEgICAgICAgICAyMjIgICAgICAgMVxuMjcxICAgICAgICAgICAxICAgICAgICAgMjE0ICAgICAgIDBcbjI3MyAgICAgICAgICAgMSAgICAgICAgIDIxNSAgICAgICAwXG4yNzQgICAgICAgICAgIDEgICAgICAgICAyMjIgICAgICAgMVxuMjc1ICAgICAgICAgICAxICAgICAgICAgMjEyICAgICAgIDBcbjI3NiAgICAgICAgICAgMSAgICAgICAgIDIxMyAgICAgICAxXG4yNzcgICAgICAgICAgIDEgICAgICAgICAxOTIgICAgICAgMFxuMjc4ICAgICAgICAgICAxICAgICAgICAgMTk2ICAgICAgIDFcbjI3OSAgICAgICAgICAgMSAgICAgICAgIDE5MyAgICAgICAxXG4yODAgICAgICAgICAgIDEgICAgICAgICAxODggICAgICAgMFxuMjgxICAgICAgICAgICAxICAgICAgICAgMTk3ICAgICAgIDFcbjI4MiAgICAgICAgICAgMSAgICAgICAgIDE5OCAgICAgICAwXG4yODMgICAgICAgICAgIDEgICAgICAgICAxNzggICAgICAgMFxuMjg0ICAgICAgICAgICAxICAgICAgICAgMTk3ICAgICAgIDFcbjI4NSAgICAgICAgICAgMSAgICAgICAgIDE5NSAgICAgICAwXG4yODYgICAgICAgICAgIDEgICAgICAgICAxOTggICAgICAgMVxuMjg3ICAgICAgICAgICAxICAgICAgICAgMTkzICAgICAgIDBcbjI4OCAgICAgICAgICAgMSAgICAgICAgIDE5NCAgICAgICAxXG4yODkgICAgICAgICAgIDEgICAgICAgICAxODUgICAgICAgMFxuMjkwICAgICAgICAgICAxICAgICAgICAgMjAxICAgICAgIDFcbjI5MSAgICAgICAgICAgMSAgICAgICAgIDE5MCAgICAgICAwXG4yOTIgICAgICAgICAgIDEgICAgICAgICAyMDEgICAgICAgMVxuMjkzICAgICAgICAgICAxICAgICAgICAgMTk3ICAgICAgIDFcbjI5NCAgICAgICAgICAgMSAgICAgICAgIDE4MSAgICAgICAwXG4yOTUgICAgICAgICAgIDEgICAgICAgICAxOTAgICAgICAgMFxuMjk2ICAgICAgICAgICAxICAgICAgICAgMTk1ICAgICAgIDFcbjI5NyAgICAgICAgICAgMSAgICAgICAgIDE4MSAgICAgICAwXG4yOTggICAgICAgICAgIDEgICAgICAgICAxOTEgICAgICAgMVxuMjk5ICAgICAgICAgICAxICAgICAgICAgMTg3ICAgICAgIDBcbjMwMCAgICAgICAgICAgMSAgICAgICAgIDE5MyAgICAgICAxXG4zMDEgICAgICAgICAgIDEgICAgICAgICAxOTUgICAgICAgMFxuMzAyICAgICAgICAgICAxICAgICAgICAgMTk3ICAgICAgIDFcbjMwMyAgICAgICAgICAgMSAgICAgICAgIDIwMCAgICAgICAwXG4zMDQgICAgICAgICAgIDEgICAgICAgICAyMDAgICAgICAgMVxuMzA1ICAgICAgICAgICAxICAgICAgICAgMTkxICAgICAgIDBcbjMwNiAgICAgICAgICAgMSAgICAgICAgIDIwNSAgICAgICAxXG4zMDcgICAgICAgICAgIDEgICAgICAgICAxODcgICAgICAgMFxuMzA4ICAgICAgICAgICAxICAgICAgICAgMjAxICAgICAgIDFcbjMwOSAgICAgICAgICAgMSAgICAgICAgIDE4NyAgICAgICAwXG4zMTAgICAgICAgICAgIDEgICAgICAgICAyMDMgICAgICAgMVxuMzExICAgICAgICAgICAxICAgICAgICAgMTk1ICAgICAgIDFcbjMxMiAgICAgICAgICAgMSAgICAgICAgIDE5OSAgICAgICAwXG4zMTMgICAgICAgICAgIDEgICAgICAgICAxOTUgICAgICAgMFxuMzE0ICAgICAgICAgICAxICAgICAgICAgMjEwICAgICAgIDFcbjMxNSAgICAgICAgICAgMSAgICAgICAgIDE5MiAgICAgICAwXG4zMTYgICAgICAgICAgIDEgICAgICAgICAyMDUgICAgICAgMVxuMzE3ICAgICAgICAgICAxICAgICAgICAgMjEwICAgICAgIDFcbjMxOCAgICAgICAgICAgMSAgICAgICAgIDE4NyAgICAgICAwXG4zMTkgICAgICAgICAgIDEgICAgICAgICAxOTYgICAgICAgMVxuMzIwICAgICAgICAgICAxICAgICAgICAgMTk2ICAgICAgIDBcbjMyMSAgICAgICAgICAgMSAgICAgICAgIDE5NiAgICAgICAwXG4zMjIgICAgICAgICAgIDEgICAgICAgICAyMDEgICAgICAgMVxuMzIzICAgICAgICAgICAxICAgICAgICAgMTkwICAgICAgIDBcbjMyNCAgICAgICAgICAgMSAgICAgICAgIDIxMiAgICAgICAxXG4zMjUgICAgICAgICAgIDEgICAgICAgICAxODcgICAgICAgMVxuMzI2ICAgICAgICAgICAxICAgICAgICAgMTk4ICAgICAgIDBcbjMyNyAgICAgICAgICAgMSAgICAgICAgIDE5OSAgICAgICAwXG4zMjggICAgICAgICAgIDEgICAgICAgICAyMDEgICAgICAgMVxuMzI5ICAgICAgICAgICAxICAgICAgICAgMTkzICAgICAgIDBcbjMzMCAgICAgICAgICAgMSAgICAgICAgIDIwMyAgICAgICAxXG4zMzEgICAgICAgICAgIDEgICAgICAgICAxODcgICAgICAgMFxuMzMyICAgICAgICAgICAxICAgICAgICAgMTk3ICAgICAgIDFcbjMzMyAgICAgICAgICAgMSAgICAgICAgIDE5MSAgICAgICAwXG4zMzQgICAgICAgICAgIDEgICAgICAgICAyMDMgICAgICAgMVxuMzM1ICAgICAgICAgICAxICAgICAgICAgMjAyICAgICAgIDFcbjMzNiAgICAgICAgICAgMSAgICAgICAgIDE5NCAgICAgICAwXG4zMzcgICAgICAgICAgIDEgICAgICAgICAyMDYgICAgICAgMVxuMzM4ICAgICAgICAgICAxICAgICAgICAgMTg5ICAgICAgIDBcbjMzOSAgICAgICAgICAgMSAgICAgICAgIDE5NSAgICAgICAwXG4zNDAgICAgICAgICAgIDEgICAgICAgICAyMDcgICAgICAgMVxuMzQxICAgICAgICAgICAxICAgICAgICAgMjAyICAgICAgIDBcbjM0MiAgICAgICAgICAgMSAgICAgICAgIDE5MyAgICAgICAxXG4zNDMgICAgICAgICAgIDEgICAgICAgICAyMTAgICAgICAgMVxuMzQ0ICAgICAgICAgICAxICAgICAgICAgMTk4ICAgICAgIDBcbmF0dHIoLFwiYXNzaWduXCIpXG5bMV0gMCAxIDJcbmF0dHIoLFwiY29udHJhc3RzXCIpXG5hdHRyKCxcImNvbnRyYXN0c1wiKSRzZXhcblsxXSBcImNvbnRyLnRyZWF0bWVudFwiXG4ifQ== -->
-<pre><code>    (Intercept) flipper_len sexmale
-1             1         181       1
-2             1         186       0
-3             1         195       0
-5             1         193       0
-6             1         190       1
-7             1         181       0
-8             1         195       1
-13            1         182       0
-14            1         191       1
-15            1         198       1
-16            1         185       0
-17            1         195       0
-18            1         197       1
-19            1         184       0
-20            1         194       1
-21            1         174       0
-22            1         180       1
-23            1         189       0
-24            1         185       1
-25            1         180       1
-26            1         187       0
-27            1         183       1
-28            1         187       0
-29            1         172       0
-30            1         180       1
-31            1         178       0
-32            1         178       1
-33            1         188       0
-34            1         184       1
-35            1         195       0
-36            1         196       1
-37            1         190       1
-38            1         180       0
-39            1         181       0
-40            1         184       1
-41            1         182       0
-42            1         195       1
-43            1         186       0
-44            1         196       1
-45            1         185       0
-46            1         190       1
-47            1         182       1
-49            1         190       0
-50            1         191       1
-51            1         186       0
-52            1         188       1
-53            1         190       0
-54            1         200       1
-55            1         187       0
-56            1         191       1
-57            1         186       0
-58            1         193       1
-59            1         181       0
-60            1         194       1
-61            1         185       0
-62            1         195       1
-63            1         185       0
-64            1         192       1
-65            1         184       0
-66            1         192       1
-67            1         195       0
-68            1         188       1
-69            1         190       0
-70            1         198       1
-71            1         190       0
-72            1         190       1
-73            1         196       0
-74            1         197       1
-75            1         190       0
-76            1         195       1
-77            1         191       0
-78            1         184       1
-79            1         187       0
-80            1         195       1
-81            1         189       0
-82            1         196       1
-83            1         187       0
-84            1         193       1
-85            1         191       0
-86            1         194       1
-87            1         190       1
-88            1         189       0
-89            1         189       1
-90            1         190       0
-91            1         202       0
-92            1         205       1
-93            1         185       0
-94            1         186       1
-95            1         187       0
-96            1         208       1
-97            1         190       0
-98            1         196       1
-99            1         178       0
-100           1         192       1
-101           1         192       0
-102           1         203       1
-103           1         183       0
-104           1         190       1
-105           1         193       0
-106           1         184       1
-107           1         199       0
-108           1         190       1
-109           1         181       0
-110           1         197       1
-111           1         198       0
-112           1         191       1
-113           1         193       0
-114           1         197       1
-115           1         191       0
-116           1         196       1
-117           1         188       0
-118           1         199       1
-119           1         189       0
-120           1         189       1
-121           1         187       0
-122           1         198       1
-123           1         176       0
-124           1         202       1
-125           1         186       0
-126           1         199       1
-127           1         191       0
-128           1         195       1
-129           1         191       0
-130           1         210       1
-131           1         190       0
-132           1         197       1
-133           1         193       0
-134           1         199       1
-135           1         187       0
-136           1         190       1
-137           1         191       0
-138           1         200       1
-139           1         185       0
-140           1         193       1
-141           1         193       0
-142           1         187       1
-143           1         188       0
-144           1         190       1
-145           1         192       0
-146           1         185       1
-147           1         190       1
-148           1         184       0
-149           1         195       0
-150           1         193       1
-151           1         187       0
-152           1         201       1
-153           1         211       0
-154           1         230       1
-155           1         210       0
-156           1         218       1
-157           1         215       1
-158           1         210       0
-159           1         211       0
-160           1         219       1
-161           1         209       0
-162           1         215       1
-163           1         214       0
-164           1         216       1
-165           1         214       0
-166           1         213       1
-167           1         210       0
-168           1         217       1
-169           1         210       0
-170           1         221       1
-171           1         209       0
-172           1         222       1
-173           1         218       1
-174           1         215       0
-175           1         213       0
-176           1         215       1
-177           1         215       0
-178           1         215       1
-180           1         215       1
-181           1         210       0
-182           1         220       1
-183           1         222       1
-184           1         209       0
-185           1         207       0
-186           1         230       1
-187           1         220       0
-188           1         220       1
-189           1         213       0
-190           1         219       1
-191           1         208       0
-192           1         208       1
-193           1         208       0
-194           1         225       1
-195           1         210       0
-196           1         216       1
-197           1         222       1
-198           1         217       0
-199           1         210       0
-200           1         225       1
-201           1         213       0
-202           1         215       1
-203           1         210       0
-204           1         220       1
-205           1         210       0
-206           1         225       1
-207           1         217       0
-208           1         220       1
-209           1         208       0
-210           1         220       1
-211           1         208       0
-212           1         224       1
-213           1         208       0
-214           1         221       1
-215           1         214       0
-216           1         231       1
-217           1         219       0
-218           1         230       1
-220           1         229       1
-221           1         220       0
-222           1         223       1
-223           1         216       0
-224           1         221       1
-225           1         221       1
-226           1         217       0
-227           1         216       0
-228           1         230       1
-229           1         209       0
-230           1         220       1
-231           1         215       0
-232           1         223       1
-233           1         212       0
-234           1         221       1
-235           1         212       0
-236           1         224       1
-237           1         212       0
-238           1         228       1
-239           1         218       0
-240           1         218       1
-241           1         212       0
-242           1         230       1
-243           1         218       0
-244           1         228       1
-245           1         212       0
-246           1         224       1
-247           1         214       0
-248           1         226       1
-249           1         216       1
-250           1         222       0
-251           1         203       0
-252           1         225       1
-253           1         219       0
-254           1         228       1
-255           1         215       0
-256           1         228       1
-258           1         215       1
-259           1         210       0
-260           1         219       1
-261           1         208       0
-262           1         209       1
-263           1         216       0
-264           1         229       1
-265           1         213       0
-266           1         230       1
-267           1         217       0
-268           1         230       1
-270           1         222       1
-271           1         214       0
-273           1         215       0
-274           1         222       1
-275           1         212       0
-276           1         213       1
-277           1         192       0
-278           1         196       1
-279           1         193       1
-280           1         188       0
-281           1         197       1
-282           1         198       0
-283           1         178       0
-284           1         197       1
-285           1         195       0
-286           1         198       1
-287           1         193       0
-288           1         194       1
-289           1         185       0
-290           1         201       1
-291           1         190       0
-292           1         201       1
-293           1         197       1
-294           1         181       0
-295           1         190       0
-296           1         195       1
-297           1         181       0
-298           1         191       1
-299           1         187       0
-300           1         193       1
-301           1         195       0
-302           1         197       1
-303           1         200       0
-304           1         200       1
-305           1         191       0
-306           1         205       1
-307           1         187       0
-308           1         201       1
-309           1         187       0
-310           1         203       1
-311           1         195       1
-312           1         199       0
-313           1         195       0
-314           1         210       1
-315           1         192       0
-316           1         205       1
-317           1         210       1
-318           1         187       0
-319           1         196       1
-320           1         196       0
-321           1         196       0
-322           1         201       1
-323           1         190       0
-324           1         212       1
-325           1         187       1
-326           1         198       0
-327           1         199       0
-328           1         201       1
-329           1         193       0
-330           1         203       1
-331           1         187       0
-332           1         197       1
-333           1         191       0
-334           1         203       1
-335           1         202       1
-336           1         194       0
-337           1         206       1
-338           1         189       0
-339           1         195       0
-340           1         207       1
-341           1         202       0
-342           1         193       1
-343           1         210       1
-344           1         198       0
-attr(,&quot;assign&quot;)
-[1] 0 1 2
-attr(,&quot;contrasts&quot;)
-attr(,&quot;contrasts&quot;)$sex
-[1] &quot;contr.treatment&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICAgIFssMV0gICAgICAgWywyXVxuQmlzY29lICAgICAwLjgxNjQ5NjYgIDAuMDAwMDAwMFxuRHJlYW0gICAgIC0wLjQwODI0ODMgIDAuNzA3MTA2OFxuVG9yZ2Vyc2VuIC0wLjQwODI0ODMgLTAuNzA3MTA2OFxuIn0= -->
+<pre><code>                [,1]       [,2]
+Biscoe     0.8164966  0.0000000
+Dream     -0.4082483  0.7071068
+Torgersen -0.4082483 -0.7071068</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVXQ0E5SUcxdlpHVnNMbTFoZEhKcGVDaCtJR1pzYVhCd1pYSmZiR1Z1SUNzZ2FYTnNZVzVrTENCa1lYUmhJRDBnYm1FdWIyMXBkQ2h3Wlc1bmRXbHVjeWtwWEc1b1pXRmtLRmdwWEc1Z1lHQWlmUT09IC0tPlxuXG5gYGByXG5YID0gbW9kZWwubWF0cml4KH4gZmxpcHBlcl9sZW4gKyBpc2xhbmQsIGRhdGEgPSBuYS5vbWl0KHBlbmd1aW5zKSlcbmhlYWQoWClcbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuWCA9IG1vZGVsLm1hdHJpeCh+IGZsaXBwZXJfbGVuICsgaXNsYW5kLCBkYXRhID0gbmEub21pdChwZW5ndWlucykpXG5oZWFkKFgpXG5gYGAifQ== -->
+<pre class="r"><code>X = model.matrix(~ flipper_len + island, data = na.omit(penguins))
+head(X)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAoSW50ZXJjZXB0KSBmbGlwcGVyX2xlbiAgICBpc2xhbmQxICAgIGlzbGFuZDJcbjEgICAgICAgICAgIDEgICAgICAgICAxODEgLTAuNDA4MjQ4MyAtMC43MDcxMDY4XG4yICAgICAgICAgICAxICAgICAgICAgMTg2IC0wLjQwODI0ODMgLTAuNzA3MTA2OFxuMyAgICAgICAgICAgMSAgICAgICAgIDE5NSAtMC40MDgyNDgzIC0wLjcwNzEwNjhcbjUgICAgICAgICAgIDEgICAgICAgICAxOTMgLTAuNDA4MjQ4MyAtMC43MDcxMDY4XG42ICAgICAgICAgICAxICAgICAgICAgMTkwIC0wLjQwODI0ODMgLTAuNzA3MTA2OFxuNyAgICAgICAgICAgMSAgICAgICAgIDE4MSAtMC40MDgyNDgzIC0wLjcwNzEwNjhcbiJ9 -->
+<pre><code>  (Intercept) flipper_len    island1    island2
+1           1         181 -0.4082483 -0.7071068
+2           1         186 -0.4082483 -0.7071068
+3           1         195 -0.4082483 -0.7071068
+5           1         193 -0.4082483 -0.7071068
+6           1         190 -0.4082483 -0.7071068
+7           1         181 -0.4082483 -0.7071068</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVZMjlzVFdWaGJuTW9XQ2xjYm1CZ1lDSjkgLS0+XG5cbmBgYHJcbmNvbE1lYW5zKFgpXG5gYGBcblxuPCEtLSBybmItc291cmNlLWVuZCAtLT5cbiJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29sTWVhbnMoWClcbmBgYCJ9 -->
+<pre class="r"><code>colMeans(X)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiKEludGVyY2VwdCkgZmxpcHBlcl9sZW4gICAgIGlzbGFuZDEgICAgIGlzbGFuZDIgXG4gIDEuMDAwMDAwMCAyMDAuOTY2OTY3MCAgIDAuMTkxMjUxNSAgIDAuMTYxMzgxNyBcbiJ9 -->
+<pre><code>(Intercept) flipper_len     island1     island2 
+  1.0000000 200.9669670   0.1912515   0.1613817 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVjM1JoYm1OdlpHVW9ZbTlrZVY5dFlYTnpJSDRnWm14cGNIQmxjbDlzWlc0Z0t5QmlhV3hzWDJ4bGJpQXJJR2x6YkdGdVpDd2dYRzRnSUNBZ0lDQWdJQ0JrWVhSaElEMGdibUV1YjIxcGRDaHdaVzVuZFdsdWN5a3NYRzRnSUNBZ0lDQWdJQ0J3Y21sdmNpQTlJSE5sZEY5d2NtbHZjaWhjSW01dmNtMWhiQ2d3TENBeUtWd2lMQ0JqYkdGemN5QTlJRndpWWx3aUxDQmpiMlZtSUQwZ2NHRnpkR1V3S0Z3aWFYTnNZVzVrWENJc0lERTZibU1wS1NBcklITmxkRjl3Y21sdmNpaGNJbTExYkhScFgzTjBkV1JsYm5SZmRGOXNjR1JtS0dJZ2ZDQXhMQ0J5WlhCZmRtVmpkRzl5S0RBdU1Dd2dNaWtzSUhJZ0tpQnphV2R0WVY0eUlDb2daR2xoWnlneUtTbGNJaXdnWTJ4aGMzTWdQU0JjSW1KY0lpbGNiaUFnSUNBZ0lDQWdJQ2xjYm1CZ1lDSjkgLS0+XG5cbmBgYHJcbnN0YW5jb2RlKGJvZHlfbWFzcyB+IGZsaXBwZXJfbGVuICsgYmlsbF9sZW4gKyBpc2xhbmQsIFxuICAgICAgICAgZGF0YSA9IG5hLm9taXQocGVuZ3VpbnMpLFxuICAgICAgICAgcHJpb3IgPSBzZXRfcHJpb3IoXCJub3JtYWwoMCwgMilcIiwgY2xhc3MgPSBcImJcIiwgY29lZiA9IHBhc3RlMChcImlzbGFuZFwiLCAxOm5jKSkgKyBzZXRfcHJpb3IoXCJtdWx0aV9zdHVkZW50X3RfbHBkZihiIHwgMSwgcmVwX3ZlY3RvcigwLjAsIDIpLCByICogc2lnbWFeMiAqIGRpYWcoMikpXCIsIGNsYXNzID0gXCJiXCIpXG4gICAgICAgICApXG5gYGBcblxuPCEtLSBybmItc291cmNlLWVuZCAtLT5cbiJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RhbmNvZGUoYm9keV9tYXNzIH4gZmxpcHBlcl9sZW4gKyBiaWxsX2xlbiArIGlzbGFuZCwgXG4gICAgICAgICBkYXRhID0gbmEub21pdChwZW5ndWlucyksXG4gICAgICAgICBwcmlvciA9IHNldF9wcmlvcihcIm5vcm1hbCgwLCAyKVwiLCBjbGFzcyA9IFwiYlwiLCBjb2VmID0gcGFzdGUwKFwiaXNsYW5kXCIsIDE6bmMpKSArIHNldF9wcmlvcihcIm11bHRpX3N0dWRlbnRfdF9scGRmKGIgfCAxLCByZXBfdmVjdG9yKDAuMCwgMiksIHIgKiBzaWdtYV4yICogZGlhZygyKSlcIiwgY2xhc3MgPSBcImJcIilcbiAgICAgICAgIClcbmBgYCJ9 -->
+<pre class="r"><code>stancode(body_mass ~ flipper_len + bill_len + island, 
+         data = na.omit(penguins),
+         prior = set_prior(&quot;normal(0, 2)&quot;, class = &quot;b&quot;, coef = paste0(&quot;island&quot;, 1:nc)) + set_prior(&quot;multi_student_t_lpdf(b | 1, rep_vector(0.0, 2), r * sigma^2 * diag(2))&quot;, class = &quot;b&quot;)
+         )</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiLy8gZ2VuZXJhdGVkIHdpdGggYnJtcyAyLjIzLjBcbmZ1bmN0aW9ucyB7XG59XG5kYXRhIHtcbiAgaW50PGxvd2VyPTE+IE47ICAvLyB0b3RhbCBudW1iZXIgb2Ygb2JzZXJ2YXRpb25zXG4gIHZlY3RvcltOXSBZOyAgLy8gcmVzcG9uc2UgdmFyaWFibGVcbiAgaW50PGxvd2VyPTE+IEs7ICAvLyBudW1iZXIgb2YgcG9wdWxhdGlvbi1sZXZlbCBlZmZlY3RzXG4gIG1hdHJpeFtOLCBLXSBYOyAgLy8gcG9wdWxhdGlvbi1sZXZlbCBkZXNpZ24gbWF0cml4XG4gIGludDxsb3dlcj0xPiBLYzsgIC8vIG51bWJlciBvZiBwb3B1bGF0aW9uLWxldmVsIGVmZmVjdHMgYWZ0ZXIgY2VudGVyaW5nXG4gIGludCBwcmlvcl9vbmx5OyAgLy8gc2hvdWxkIHRoZSBsaWtlbGlob29kIGJlIGlnbm9yZWQ/XG59XG50cmFuc2Zvcm1lZCBkYXRhIHtcbiAgbWF0cml4W04sIEtjXSBYYzsgIC8vIGNlbnRlcmVkIHZlcnNpb24gb2YgWCB3aXRob3V0IGFuIGludGVyY2VwdFxuICB2ZWN0b3JbS2NdIG1lYW5zX1g7ICAvLyBjb2x1bW4gbWVhbnMgb2YgWCBiZWZvcmUgY2VudGVyaW5nXG4gIGZvciAoaSBpbiAyOkspIHtcbiAgICBtZWFuc19YW2kgLSAxXSA9IG1lYW4oWFssIGldKTtcbiAgICBYY1ssIGkgLSAxXSA9IFhbLCBpXSAtIG1lYW5zX1hbaSAtIDFdO1xuICB9XG59XG5wYXJhbWV0ZXJzIHtcbiAgdmVjdG9yW0tjXSBiOyAgLy8gcmVncmVzc2lvbiBjb2VmZmljaWVudHNcbiAgcmVhbCBJbnRlcmNlcHQ7ICAvLyB0ZW1wb3JhcnkgaW50ZXJjZXB0IGZvciBjZW50ZXJlZCBwcmVkaWN0b3JzXG4gIHJlYWw8bG93ZXI9MD4gc2lnbWE7ICAvLyBkaXNwZXJzaW9uIHBhcmFtZXRlclxufVxudHJhbnNmb3JtZWQgcGFyYW1ldGVycyB7XG4gIC8vIHByaW9yIGNvbnRyaWJ1dGlvbnMgdG8gdGhlIGxvZyBwb3N0ZXJpb3JcbiAgcmVhbCBscHJpb3IgPSAwO1xuICBscHJpb3IgKz0gbXVsdGlfc3R1ZGVudF90X2xwZGZfbHBkZihiWzFdIHwgYiB8IDEsIHJlcF92ZWN0b3IoMC4wLCAyKSwgciAqIHNpZ21hXjIgKiBkaWFnKDIpKTtcbiAgbHByaW9yICs9IG11bHRpX3N0dWRlbnRfdF9scGRmX2xwZGYoYlsyXSB8IGIgfCAxLCByZXBfdmVjdG9yKDAuMCwgMiksIHIgKiBzaWdtYV4yICogZGlhZygyKSk7XG4gIGxwcmlvciArPSBub3JtYWxfbHBkZihiWzNdIHwgMCwgMik7XG4gIGxwcmlvciArPSBub3JtYWxfbHBkZihiWzRdIHwgMCwgMik7XG4gIGxwcmlvciArPSBzdHVkZW50X3RfbHBkZihJbnRlcmNlcHQgfCAzLCA0MDUwLCA4ODkuNik7XG4gIGxwcmlvciArPSBzdHVkZW50X3RfbHBkZihzaWdtYSB8IDMsIDAsIDg4OS42KVxuICAgIC0gMSAqIHN0dWRlbnRfdF9sY2NkZigwIHwgMywgMCwgODg5LjYpO1xufVxubW9kZWwge1xuICAvLyBsaWtlbGlob29kIGluY2x1ZGluZyBjb25zdGFudHNcbiAgaWYgKCFwcmlvcl9vbmx5KSB7XG4gICAgdGFyZ2V0ICs9IG5vcm1hbF9pZF9nbG1fbHBkZihZIHwgWGMsIEludGVyY2VwdCwgYiwgc2lnbWEpO1xuICB9XG4gIC8vIHByaW9ycyBpbmNsdWRpbmcgY29uc3RhbnRzXG4gIHRhcmdldCArPSBscHJpb3I7XG59XG5nZW5lcmF0ZWQgcXVhbnRpdGllcyB7XG4gIC8vIGFjdHVhbCBwb3B1bGF0aW9uLWxldmVsIGludGVyY2VwdFxuICByZWFsIGJfSW50ZXJjZXB0ID0gSW50ZXJjZXB0IC0gZG90X3Byb2R1Y3QobWVhbnNfWCwgYik7XG59XG4ifQ== -->
+<pre><code>// generated with brms 2.23.0
+functions {
+}
+data {
+  int&lt;lower=1&gt; N;  // total number of observations
+  vector[N] Y;  // response variable
+  int&lt;lower=1&gt; K;  // number of population-level effects
+  matrix[N, K] X;  // population-level design matrix
+  int&lt;lower=1&gt; Kc;  // number of population-level effects after centering
+  int prior_only;  // should the likelihood be ignored?
+}
+transformed data {
+  matrix[N, Kc] Xc;  // centered version of X without an intercept
+  vector[Kc] means_X;  // column means of X before centering
+  for (i in 2:K) {
+    means_X[i - 1] = mean(X[, i]);
+    Xc[, i - 1] = X[, i] - means_X[i - 1];
+  }
+}
+parameters {
+  vector[Kc] b;  // regression coefficients
+  real Intercept;  // temporary intercept for centered predictors
+  real&lt;lower=0&gt; sigma;  // dispersion parameter
+}
+transformed parameters {
+  // prior contributions to the log posterior
+  real lprior = 0;
+  lprior += multi_student_t_lpdf_lpdf(b[1] | b | 1, rep_vector(0.0, 2), r * sigma^2 * diag(2));
+  lprior += multi_student_t_lpdf_lpdf(b[2] | b | 1, rep_vector(0.0, 2), r * sigma^2 * diag(2));
+  lprior += normal_lpdf(b[3] | 0, 2);
+  lprior += normal_lpdf(b[4] | 0, 2);
+  lprior += student_t_lpdf(Intercept | 3, 4050, 889.6);
+  lprior += student_t_lpdf(sigma | 3, 0, 889.6)
+    - 1 * student_t_lccdf(0 | 3, 0, 889.6);
+}
+model {
+  // likelihood including constants
+  if (!prior_only) {
+    target += normal_id_glm_lpdf(Y | Xc, Intercept, b, sigma);
+  }
+  // priors including constants
+  target += lprior;
+}
+generated quantities {
+  // actual population-level intercept
+  real b_Intercept = Intercept - dot_product(means_X, b);
+}</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -2256,11 +1956,6 @@ N = nrow(X)
 V = solve(t(X)%*%X/N)
 V</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICBkaXNwICAgICAgICAgIHd0XG5kaXNwICAwLjAwMDMxNzc0NjggLTAuMDM1NzM5NTdcbnd0ICAgLTAuMDM1NzM5NTcwOCAgNS4wOTgxMzI5OVxuIn0= -->
-<pre><code>              disp          wt
-disp  0.0003177468 -0.03573957
-wt   -0.0357395708  5.09813299</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -2291,7 +1986,7 @@ Start sampling</code></pre>
 <pre class="r"><code>stancode(fit)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLy8gZ2VuZXJhdGVkIHdpdGggYnJtcyAyLjIzLjBcbmZ1bmN0aW9ucyB7XG59XG5kYXRhIHtcbiAgaW50PGxvd2VyPTE+IE47ICAvLyB0b3RhbCBudW1iZXIgb2Ygb2JzZXJ2YXRpb25zXG4gIHZlY3RvcltOXSBZOyAgLy8gcmVzcG9uc2UgdmFyaWFibGVcbiAgaW50PGxvd2VyPTE+IEs7ICAvLyBudW1iZXIgb2YgcG9wdWxhdGlvbi1sZXZlbCBlZmZlY3RzXG4gIG1hdHJpeFtOLCBLXSBYOyAgLy8gcG9wdWxhdGlvbi1sZXZlbCBkZXNpZ24gbWF0cml4XG4gIGludDxsb3dlcj0xPiBLYzsgIC8vIG51bWJlciBvZiBwb3B1bGF0aW9uLWxldmVsIGVmZmVjdHMgYWZ0ZXIgY2VudGVyaW5nXG4gIGludCBwcmlvcl9vbmx5OyAgLy8gc2hvdWxkIHRoZSBsaWtlbGlob29kIGJlIGlnbm9yZWQ/XG4gIHJlYWw8bG93ZXI9MD4gcjtcbn1cbnRyYW5zZm9ybWVkIGRhdGEge1xuICBtYXRyaXhbTiwgS2NdIFhjOyAgLy8gY2VudGVyZWQgdmVyc2lvbiBvZiBYIHdpdGhvdXQgYW4gaW50ZXJjZXB0XG4gIHZlY3RvcltLY10gbWVhbnNfWDsgIC8vIGNvbHVtbiBtZWFucyBvZiBYIGJlZm9yZSBjZW50ZXJpbmdcbiAgZm9yIChpIGluIDI6Sykge1xuICAgIG1lYW5zX1hbaSAtIDFdID0gbWVhbihYWywgaV0pO1xuICAgIFhjWywgaSAtIDFdID0gWFssIGldIC0gbWVhbnNfWFtpIC0gMV07XG4gIH1cbiAgbWF0cml4W0tjLCBLY10gViA9IGludmVyc2UoWGMnKlhjL04pO1xufVxucGFyYW1ldGVycyB7XG4gIHZlY3RvcltLY10gYjsgIC8vIHJlZ3Jlc3Npb24gY29lZmZpY2llbnRzXG4gIHJlYWwgSW50ZXJjZXB0OyAgLy8gdGVtcG9yYXJ5IGludGVyY2VwdCBmb3IgY2VudGVyZWQgcHJlZGljdG9yc1xuICByZWFsPGxvd2VyPTA+IHNpZ21hOyAgLy8gZGlzcGVyc2lvbiBwYXJhbWV0ZXJcbn1cbnRyYW5zZm9ybWVkIHBhcmFtZXRlcnMge1xuICAvLyBwcmlvciBjb250cmlidXRpb25zIHRvIHRoZSBsb2cgcG9zdGVyaW9yXG4gIHJlYWwgbHByaW9yID0gMDtcbiAgbHByaW9yICs9IG11bHRpX3N0dWRlbnRfdF9scGRmKGIgfCAxLCByZXBfdmVjdG9yKDAuMCwgS2MpLCByICogc2lnbWFeMiAqIFYpO1xufVxubW9kZWwge1xuICAvLyBsaWtlbGlob29kIGluY2x1ZGluZyBjb25zdGFudHNcbiAgaWYgKCFwcmlvcl9vbmx5KSB7XG4gICAgdGFyZ2V0ICs9IG5vcm1hbF9pZF9nbG1fbHBkZihZIHwgWGMsIEludGVyY2VwdCwgYiwgc2lnbWEpO1xuICB9XG4gIC8vIHByaW9ycyBpbmNsdWRpbmcgY29uc3RhbnRzXG4gIHRhcmdldCArPSBscHJpb3I7XG4gIHRhcmdldCArPSAtMipsb2coc2lnbWEpO1xufVxuZ2VuZXJhdGVkIHF1YW50aXRpZXMge1xuICAvLyBhY3R1YWwgcG9wdWxhdGlvbi1sZXZlbCBpbnRlcmNlcHRcbiAgcmVhbCBiX0ludGVyY2VwdCA9IEludGVyY2VwdCAtIGRvdF9wcm9kdWN0KG1lYW5zX1gsIGIpO1xufVxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiLy8gZ2VuZXJhdGVkIHdpdGggYnJtcyAyLjIzLjBcbmZ1bmN0aW9ucyB7XG59XG5kYXRhIHtcbiAgaW50PGxvd2VyPTE+IE47ICAvLyB0b3RhbCBudW1iZXIgb2Ygb2JzZXJ2YXRpb25zXG4gIHZlY3RvcltOXSBZOyAgLy8gcmVzcG9uc2UgdmFyaWFibGVcbiAgaW50PGxvd2VyPTE+IEs7ICAvLyBudW1iZXIgb2YgcG9wdWxhdGlvbi1sZXZlbCBlZmZlY3RzXG4gIG1hdHJpeFtOLCBLXSBYOyAgLy8gcG9wdWxhdGlvbi1sZXZlbCBkZXNpZ24gbWF0cml4XG4gIGludDxsb3dlcj0xPiBLYzsgIC8vIG51bWJlciBvZiBwb3B1bGF0aW9uLWxldmVsIGVmZmVjdHMgYWZ0ZXIgY2VudGVyaW5nXG4gIGludCBwcmlvcl9vbmx5OyAgLy8gc2hvdWxkIHRoZSBsaWtlbGlob29kIGJlIGlnbm9yZWQ/XG4gIHJlYWw8bG93ZXI9MD4gcjtcbn1cbnRyYW5zZm9ybWVkIGRhdGEge1xuICBtYXRyaXhbTiwgS2NdIFhjOyAgLy8gY2VudGVyZWQgdmVyc2lvbiBvZiBYIHdpdGhvdXQgYW4gaW50ZXJjZXB0XG4gIHZlY3RvcltLY10gbWVhbnNfWDsgIC8vIGNvbHVtbiBtZWFucyBvZiBYIGJlZm9yZSBjZW50ZXJpbmdcbiAgZm9yIChpIGluIDI6Sykge1xuICAgIG1lYW5zX1hbaSAtIDFdID0gbWVhbihYWywgaV0pO1xuICAgIFhjWywgaSAtIDFdID0gWFssIGldIC0gbWVhbnNfWFtpIC0gMV07XG4gIH1cbiAgbWF0cml4W0tjLCBLY10gViA9IGludmVyc2UoWGMnKlhjL04pO1xufVxucGFyYW1ldGVycyB7XG4gIHZlY3RvcltLY10gYjsgIC8vIHJlZ3Jlc3Npb24gY29lZmZpY2llbnRzXG4gIHJlYWwgSW50ZXJjZXB0OyAgLy8gdGVtcG9yYXJ5IGludGVyY2VwdCBmb3IgY2VudGVyZWQgcHJlZGljdG9yc1xuICByZWFsPGxvd2VyPTA+IHNpZ21hOyAgLy8gZGlzcGVyc2lvbiBwYXJhbWV0ZXJcbn1cbnRyYW5zZm9ybWVkIHBhcmFtZXRlcnMge1xuICAvLyBwcmlvciBjb250cmlidXRpb25zIHRvIHRoZSBsb2cgcG9zdGVyaW9yXG4gIHJlYWwgbHByaW9yID0gMDtcbn1cbm1vZGVsIHtcbiAgLy8gbGlrZWxpaG9vZCBpbmNsdWRpbmcgY29uc3RhbnRzXG4gIGlmICghcHJpb3Jfb25seSkge1xuICAgIHRhcmdldCArPSBub3JtYWxfaWRfZ2xtX2xwZGYoWSB8IFhjLCBJbnRlcmNlcHQsIGIsIHNpZ21hKTtcbiAgfVxuICAvLyBwcmlvcnMgaW5jbHVkaW5nIGNvbnN0YW50c1xuICB0YXJnZXQgKz0gbHByaW9yO1xuICB0YXJnZXQgKz0gbXVsdGlfc3R1ZGVudF90X2xwZGYoYiB8IDEsIHJlcF92ZWN0b3IoMC4wLCBLYyksIHIgKiBzaWdtYV4yICogVik7XG4gIHRhcmdldCArPSAtMipsb2coc2lnbWEpO1xufVxuZ2VuZXJhdGVkIHF1YW50aXRpZXMge1xuICAvLyBhY3R1YWwgcG9wdWxhdGlvbi1sZXZlbCBpbnRlcmNlcHRcbiAgcmVhbCBiX0ludGVyY2VwdCA9IEludGVyY2VwdCAtIGRvdF9wcm9kdWN0KG1lYW5zX1gsIGIpO1xufVxuIn0= -->
 <pre><code>// generated with brms 2.23.0
 functions {
 }
@@ -2321,7 +2016,6 @@ parameters {
 transformed parameters {
   // prior contributions to the log posterior
   real lprior = 0;
-  lprior += multi_student_t_lpdf(b | 1, rep_vector(0.0, Kc), r * sigma^2 * V);
 }
 model {
   // likelihood including constants
@@ -2330,6 +2024,7 @@ model {
   }
   // priors including constants
   target += lprior;
+  target += multi_student_t_lpdf(b | 1, rep_vector(0.0, Kc), r * sigma^2 * V);
   target += -2*log(sigma);
 }
 generated quantities {
@@ -2341,33 +2036,13 @@ generated quantities {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVJeUJKVkNCTVQwOUxVeUJNU1V0RklGUklSU0JRVWtsUFVpQlRRMEZNUlNBb1hDSnlYQ0lwSUVsVFRpZFVJRUZHUmtWRFZFbE9SeUJVU0VVZ1FrWlRYRzRqSUV4UFQwc2dTVTVVVHlCVVNFbFRYRzV5WlhOMWJIUWdQU0JwYm1OZmRHVnpkSE1vWm1sMEtWeHVZR0JnSW4wPSAtLT5cblxuYGBgclxuIyBJVCBMT09LUyBMSUtFIFRIRSBQUklPUiBTQ0FMRSAoXCJyXCIpIElTTidUIEFGRkVDVElORyBUSEUgQkZTXG4jIExPT0sgSU5UTyBUSElTXG5yZXN1bHQgPSBpbmNfdGVzdHMoZml0KVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBJVCBMT09LUyBMSUtFIFRIRSBQUklPUiBTQ0FMRSAoXCJyXCIpIElTTidUIEFGRkVDVElORyBUSEUgQkZTXG4jIExPT0sgSU5UTyBUSElTXG5yZXN1bHQgPSBpbmNfdGVzdHMoZml0KVxuYGBgIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVJeUJKVkNCTVQwOUxVeUJNU1V0RklGUklSU0JRVWtsUFVpQlRRMEZNUlNBb1hDSnlYQ0lwSUVsVFRpZFVJRUZHUmtWRFZFbE9SeUJVU0VVZ1FrWlRYRzRqSUV4UFQwc2dTVTVVVHlCVVNFbFRYRzV5WlhOMWJIUWdQU0JwYm1OZmRHVnpkSE1vWm1sMEtWeHVjSEpwYm5Rb2NtVnpkV3gwSkdsdVkxOTBZV0pzWlNsY2JtQmdZQ0o5IC0tPlxuXG5gYGByXG4jIElUIExPT0tTIExJS0UgVEhFIFBSSU9SIFNDQUxFIChcInJcIikgSVNOJ1QgQUZGRUNUSU5HIFRIRSBCRlNcbiMgTE9PSyBJTlRPIFRISVNcbnJlc3VsdCA9IGluY190ZXN0cyhmaXQpXG5wcmludChyZXN1bHQkaW5jX3RhYmxlKVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBJVCBMT09LUyBMSUtFIFRIRSBQUklPUiBTQ0FMRSAoXCJyXCIpIElTTidUIEFGRkVDVElORyBUSEUgQkZTXG4jIExPT0sgSU5UTyBUSElTXG5yZXN1bHQgPSBpbmNfdGVzdHMoZml0KVxucHJpbnQocmVzdWx0JGluY190YWJsZSlcbmBgYCJ9 -->
 <pre class="r"><code># IT LOOKS LIKE THE PRIOR SCALE (&quot;r&quot;) ISN&#39;T AFFECTING THE BFS
 # LOOK INTO THIS
-result = inc_tests(fit)</code></pre>
+result = inc_tests(fit)
+print(result$inc_table)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiU3RhcnQgc2FtcGxpbmdcblN0YXJ0IHNhbXBsaW5nXG5UaGUgZGVzaXJlZCB1cGRhdGVzIHJlcXVpcmUgcmVjb21waWxpbmcgdGhlIG1vZGVsXG5Db21waWxpbmcgU3RhbiBwcm9ncmFtLi4uXG5TdGFydCBzYW1wbGluZ1xuIn0= -->
-<pre><code>Start sampling
-Start sampling
-The desired updates require recompiling the model
-Compiling Stan program...
-Start sampling</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVjSEpwYm5Rb2NtVnpkV3gwSkdsdVkxOTBZV0pzWlNsY2JtQmdZQ0o5IC0tPlxuXG5gYGByXG5wcmludChyZXN1bHQkaW5jX3RhYmxlKVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJpbnQocmVzdWx0JGluY190YWJsZSlcbmBgYCJ9 -->
-<pre class="r"><code>print(result$inc_table)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1mcmFtZS1iZWdpbiBleUp0WlhSaFpHRjBZU0k2ZXlKamJHRnpjMlZ6SWpwYkltUmhkR0V1Wm5KaGJXVWlYU3dpYm5KdmR5STZNaXdpYm1OdmJDSTZOU3dpYzNWdGJXRnllU0k2ZXlKRVpYTmpjbWx3ZEdsdmJpSTZXeUprWmlCYk1pRERseUExWFNKZGZYMHNJbkprWmlJNklrZzBjMGxCUVVGQlFVRkJRVUYzZEhscFZFUnRhWFZDYVZsSFFtZGFiVUpvV2xkU1oxcG5WWGxIVm1oRVVUbDRNRXhTWjFsWFNtbEJTRVZaUjBabldrOUZSakJDVmtOUlRXdG5WbWxRYVVKdGMyNHZRVUZCV1hkSGFUVXJOWGQzU1c1TVZpOVhOMFEwVDNCa2RFbFdlamhCTVZRNVFucFVNVXd5WlVOM1EzZElPVlpoTlVoWlIzWlhNMGRNYjNwcFNVNVRPSGhPTjFWWmVVSkRRVTlMYjBKS1RXaGFiMGhHZFRBMlVFOUNVV0ZoVlVGR2RXMUZRMDVwZVZwVlNURmtRbFZYV2l0clZVb3JVMnR2ZUZaSlUzcEpUQ3MwUWtadFFYbGphMDU2VkdKUGIzWjRlVkJYVVdKdFlVRlRURU50V25oUlZYZGlaVlZzTmtrMVRYcHJhM05vYlcxQ1ExaExiRXBLV1dzMmNWVldRVlV3UkRoMk5taGhWMGhRVEhscVNucE5PRVJoYlVsRFFsUmpZbTF0WWtkSmFsRkNaMlJKT0d0TWRGTmtTazE2VTNaUGVXUlJNVTR3WlZOYVF5OU1VMUZhWVVOb1UwTlpSakJ2ZWtsaVJscEpZelZuSzJjdlZucG5ZbFo2Y0dGaGJEVTJXbXgzY25wVU1EVnBWVzF2VDNwUFUxVXhSRWx2YTNjNFdWQlBSRkV3VVUxSFltdzBTbnBMVGtFd1YwczVhM1o1VTFKS1oxZHlkVlE0U0VwblNUSlBjMDB2ZDBKR2JqWjBObWhCU1VGQlFUMDlJbjA9IC0tPlxuXG48ZGl2IGRhdGEtcGFnZWR0YWJsZT1cImZhbHNlXCI+XG4gIDxzY3JpcHQgZGF0YS1wYWdlZHRhYmxlLXNvdXJjZSB0eXBlPVwiYXBwbGljYXRpb24vanNvblwiPlxue1wiY29sdW1uc1wiOlt7XCJsYWJlbFwiOltcIlwiXSxcIm5hbWVcIjpbXCJfcm5fXCJdLFwidHlwZVwiOltcIlwiXSxcImFsaWduXCI6W1wibGVmdFwiXX0se1wibGFiZWxcIjpbXCJwKM6y4omgMClcIl0sXCJuYW1lXCI6WzFdLFwidHlwZVwiOltcImRibFwiXSxcImFsaWduXCI6W1wicmlnaHRcIl19LHtcImxhYmVsXCI6W1wicCjOsuKJoDB8RClcIl0sXCJuYW1lXCI6WzJdLFwidHlwZVwiOltcImRibFwiXSxcImFsaWduXCI6W1wicmlnaHRcIl19LHtcImxhYmVsXCI6W1wicHJpb3Igb2Rkc1wiXSxcIm5hbWVcIjpbM10sXCJ0eXBlXCI6W1wiZGJsXCJdLFwiYWxpZ25cIjpbXCJyaWdodFwiXX0se1wibGFiZWxcIjpbXCJwb3N0IG9kZHNcIl0sXCJuYW1lXCI6WzRdLFwidHlwZVwiOltcImRibFwiXSxcImFsaWduXCI6W1wicmlnaHRcIl19LHtcImxhYmVsXCI6W1wiQkZcIl0sXCJuYW1lXCI6WzVdLFwidHlwZVwiOltcImRibFwiXSxcImFsaWduXCI6W1wicmlnaHRcIl19XSxcImRhdGFcIjpbe1wiMVwiOlwiMC41XCIsXCIyXCI6XCIwLjQ1XCIsXCIzXCI6XCIxXCIsXCI0XCI6XCIwLjgwXCIsXCI1XCI6XCIwLjgwXCIsXCJfcm5fXCI6XCJkaXNwXCJ9LHtcIjFcIjpcIjAuNVwiLFwiMlwiOlwiMC45MlwiLFwiM1wiOlwiMVwiLFwiNFwiOlwiMTEuNzZcIixcIjVcIjpcIjExLjc2XCIsXCJfcm5fXCI6XCJ3dFwifV0sXCJvcHRpb25zXCI6e1wiY29sdW1uc1wiOntcIm1pblwiOnt9LFwibWF4XCI6WzEwXSxcInRvdGFsXCI6WzVdfSxcInJvd3NcIjp7XCJtaW5cIjpbMTBdLFwibWF4XCI6WzEwXSxcInRvdGFsXCI6WzJdfSxcInBhZ2VzXCI6e319fVxuICA8XC9zY3JpcHQ+XG48XC9kaXY+XG5cbjwhLS0gcm5iLWZyYW1lLWVuZCAtLT5cbiJ9 -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MiwibmNvbCI6NSwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZiBbMiDDlyA1XSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUF3dHlpVERtaXVCaVlHQmdabUJoWldSZ1pnVXlHVmhEUTl4MExSZ1lXSmlBSEVZR0ZnWk9FRjBCVkNRTWtnVmlQaUJtc24vQUFBWXdHaTUrNXd3SW5MVi9XN0Q0T3BkdElWejhBMVQ5QnpUMUwyZUN3Q3dIOVZhNUhZR3ZXM0dMb3ppSU5TOHhON1VZeUJDQU9Lb0JKTWhab0hGdTA2UE9CUWFhVUFGdW1FQ05peVpVSTFkQlVXWitrVUorU2tveFZJU3pJTCs0QkZtQXlja056VGJPb3Z4eVBXUWJtYUFTTENtWnhRVXdiZVVsNkk1TXpra3NobW1CQ1hLbEpKWWs2cVVWQVUwRDh2NmhhV0hQTHlqSnpNOERhbUlDQlRjYm1tYkdJalFCZ2RJOGtMdFNkSk16U3ZPeWRRMU4wZVNaQy9MU1FaYUNoU0NZRjBvekliRlpJYzVnK2cvVnpnYlZ6cGFhbDU2Wmx3cnpUMDVpVW1vT3pPU1UxRElva3c4WVBPRFEwUU1HYmw0SnpLTkEwV0s5a3Z5U1JKZ1dydVQ4SEpnSTJPc00vd0JGbjZ0NmhBSUFBQT09In0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["p(β≠0)"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["p(β≠0|D)"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["prior odds"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["post odds"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["BF"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.5","2":"0.45","3":"1","4":"0.80","5":"0.80","_rn_":"disp"},{"1":"0.5","2":"0.92","3":"1","4":"11.76","5":"11.76","_rn_":"wt"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[2]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
@@ -2376,57 +2051,21 @@ Start sampling</code></pre>
 <pre class="r"><code>print(result$model_table)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1mcmFtZS1iZWdpbiBleUp0WlhSaFpHRjBZU0k2ZXlKamJHRnpjMlZ6SWpwYkltUmhkR0V1Wm5KaGJXVWlYU3dpYm5KdmR5STZOQ3dpYm1OdmJDSTZOU3dpYzNWdGJXRnllU0k2ZXlKRVpYTmpjbWx3ZEdsdmJpSTZXeUprWmlCYk5DRERseUExWFNKZGZYMHNJbkprWmlJNklrZzBjMGxCUVVGQlFVRkJRVUYzZEhscFZFUnRhWFZDYVZsSFFtZGFiVUpvV2xkU1oxcG5WWGxIVm1oRVVUbDRNRXhTWjFsWFNtbEJTRVZaUjBabldrOUZSakJDVmtOUlRXdG5WbWxRYVVKdGMySXZRVUZCWVRSaFRHazJOaXQwUlhGb05qWnlOMUJtUVdsS1JuRjFNR1o2WjFOQ1YxRjNUV0ZQYnl0UlVGaHFiMFJJVlc1UlNWcFdMMWhSTDI5bVJ6RXdVRGxOV204MGVtTlBjRVJ6VjBSeVNHMUtkV0Z1UmxGSldVRXlTazFSVVZwWlEwUldPVTVMU25ORWVVWmhiMVZZUTBJNFltdExhV3BNZW1sNFZIbFZNVXRMYjFOTFkwSm1ia1pLWTJkRFZFVTFkV0ZNV25kR2RWZFlObmxJWW5oQlMxWTBUVGgwVTBabGIxVXdha3BNUXpWUk1FWlpiMHcwUmxwbmFFTkhUMUZOYVVGc1prSkVkVVZpYjI1emJrOVRaWGhIUjFsS1ZFcEJja3BpUld0VlV5dDBRMGRuTDJ0UVkxQlVVWFEzWm10R1NscHVOR1ZWUWsxVVMwdE1XakJFVVhwR2NVVktRMHBVYldkWWVWTnZjSFZqVlZweFdISlhkRzlvYVdKUVdFcERXRVJ5U1ZWTVFWUkNka1pEWVVKWmJrNURia1ZITURNcmIyUnFZVzlrY21KVmRsQlVUWFpHVTFsbU0wbFRhekZLZWxsRFlXNXdTbHBDYlZoNlFVRkJWMGh3ZURSM1QzWk1aM2RSV1ZWTVpGbHllVk01U21oSGJtaFRjemRRWjFsdFFYWmpOM2RFZDBFcmJGRjVPQzluU1VGQlFUMDlJbjA9IC0tPlxuXG48ZGl2IGRhdGEtcGFnZWR0YWJsZT1cImZhbHNlXCI+XG4gIDxzY3JpcHQgZGF0YS1wYWdlZHRhYmxlLXNvdXJjZSB0eXBlPVwiYXBwbGljYXRpb24vanNvblwiPlxue1wiY29sdW1uc1wiOlt7XCJsYWJlbFwiOltcIlwiXSxcIm5hbWVcIjpbXCJfcm5fXCJdLFwidHlwZVwiOltcIlwiXSxcImFsaWduXCI6W1wibGVmdFwiXX0se1wibGFiZWxcIjpbXCJwKE0pXCJdLFwibmFtZVwiOlsxXSxcInR5cGVcIjpbXCJkYmxcIl0sXCJhbGlnblwiOltcInJpZ2h0XCJdfSx7XCJsYWJlbFwiOltcInAoTSB8IEQpXCJdLFwibmFtZVwiOlsyXSxcInR5cGVcIjpbXCJkYmxcIl0sXCJhbGlnblwiOltcInJpZ2h0XCJdfSx7XCJsYWJlbFwiOltcInByaW9yIG9kZHNcIl0sXCJuYW1lXCI6WzNdLFwidHlwZVwiOltcImRibFwiXSxcImFsaWduXCI6W1wicmlnaHRcIl19LHtcImxhYmVsXCI6W1wicG9zdCBvZGRzXCJdLFwibmFtZVwiOls0XSxcInR5cGVcIjpbXCJkYmxcIl0sXCJhbGlnblwiOltcInJpZ2h0XCJdfSx7XCJsYWJlbFwiOltcIkJGXCJdLFwibmFtZVwiOls1XSxcInR5cGVcIjpbXCJkYmxcIl0sXCJhbGlnblwiOltcInJpZ2h0XCJdfV0sXCJkYXRhXCI6W3tcIjFcIjpcIjAuMjVcIixcIjJcIjpcIjAuMzdcIixcIjNcIjpcIjFcIixcIjRcIjpcIjEuMDBcIixcIjVcIjpcIjEuMDBcIixcIl9ybl9cIjpcIm1wZyB+IGRpc3AgKyB3dFwifSx7XCIxXCI6XCIwLjI1XCIsXCIyXCI6XCIwLjA4XCIsXCIzXCI6XCIxXCIsXCI0XCI6XCIwLjIxXCIsXCI1XCI6XCIwLjIxXCIsXCJfcm5fXCI6XCJtcGcgfiBkaXNwXCJ9LHtcIjFcIjpcIjAuMjVcIixcIjJcIjpcIjAuNTVcIixcIjNcIjpcIjFcIixcIjRcIjpcIjEuNTFcIixcIjVcIjpcIjEuNTFcIixcIl9ybl9cIjpcIm1wZyB+IHd0XCJ9LHtcIjFcIjpcIjAuMjVcIixcIjJcIjpcIjAuMDBcIixcIjNcIjpcIjFcIixcIjRcIjpcIjAuMDBcIixcIjVcIjpcIjAuMDBcIixcIl9ybl9cIjpcIm1wZyB+IDFcIn1dLFwib3B0aW9uc1wiOntcImNvbHVtbnNcIjp7XCJtaW5cIjp7fSxcIm1heFwiOlsxMF0sXCJ0b3RhbFwiOls1XX0sXCJyb3dzXCI6e1wibWluXCI6WzEwXSxcIm1heFwiOlsxMF0sXCJ0b3RhbFwiOls0XX0sXCJwYWdlc1wiOnt9fX1cbiAgPFwvc2NyaXB0PlxuPFwvZGl2PlxuXG48IS0tIHJuYi1mcmFtZS1lbmQgLS0+XG4ifQ== -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6NCwibmNvbCI6NSwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZiBbNCDDlyA1XSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUF3dHlpVERtaXVCaVlHQmdabUJoWldSZ1pnVXlHVmhEUTl4MExSZ1lXSmlBSEVZR0ZnWk9FRjBCVkNRTWtnVmlQaUJtc2IvQUFBYTRhTGk2Nit0RXFoNjZyN1BmQWlKRnF1MGZ6Z1NCV1F3TWFPbytRUFhqb0RIVW5RSVpWL1hRL29mRzEwUDlNWm80emNPcERzV0RySG1KdWFuRlFJWUEySk1RUVpZQ0RWOU5LSnNEeUZhb1VYQ0I4YmtLaWpMeml4VHlVMUtLb1NLY0JmbkZKY2dDVEU1dWFMWndGdVdYNnlIYnhBS1Y0TTh0U0Zlb1UwakpMQzVRMEZZb0w0RlpnaENHT1FNaUFsZkJEdUVib25zbk9TZXhHR1lKVEpBckpiRWtVUyt0Q0dnL2tQY1BUUXQ3ZmtGSlpuNGVVQk1US0tMWjBEUXpGcUVKQ0pUbWdYeVNvcHVjVVpxWHJXdG9oaWJQWEpDWERySVVMQVRCdkZDYUJZbk5DbkVHMDMrb2RqYW9kcmJVdlBUTXZGU1lmM0lTazFKellDYW5wSlpCbVh6QUFBV0hweDR3T3ZMZ3dRWVVMZFlyeVM5SmhHbmhTczdQZ1ltQXZjN3dEd0ErbFF5OC9nSUFBQT09In0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["p(M)"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["p(M | D)"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["prior odds"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["post odds"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["BF"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.25","2":"0.37","3":"1","4":"1.00","5":"1.00","_rn_":"mpg ~ disp + wt"},{"1":"0.25","2":"0.08","3":"1","4":"0.21","5":"0.21","_rn_":"mpg ~ disp"},{"1":"0.25","2":"0.55","3":"1","4":"1.51","5":"1.51","_rn_":"mpg ~ wt"},{"1":"0.25","2":"0.00","3":"1","4":"0.00","5":"0.00","_rn_":"mpg ~ 1"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[4]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVjbVZ6ZFd4MFgyTnZiWEFnUFNCeVpXZHlaWE56YVc5dVFrWW9iWEJuSUg0Z1pHbHpjQ0FySUhkMExDQmtZWFJoSUQwZ2JYUmpZWEp6TENCeWMyTmhiR1ZEYjI1MElEMGdNU2xjYm1CZ1lDSjkgLS0+XG5cbmBgYHJcbnJlc3VsdF9jb21wID0gcmVncmVzc2lvbkJGKG1wZyB+IGRpc3AgKyB3dCwgZGF0YSA9IG10Y2FycywgcnNjYWxlQ29udCA9IDEpXG5gYGBcblxuPCEtLSBybmItc291cmNlLWVuZCAtLT5cbiJ9 -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0X2NvbXAgPSByZWdyZXNzaW9uQkYobXBnIH4gZGlzcCArIHd0LCBkYXRhID0gbXRjYXJzLCByc2NhbGVDb250ID0gMSlcbmBgYCJ9 -->
-<pre class="r"><code>result_comp = regressionBF(mpg ~ disp + wt, data = mtcars, rscaleCont = 1)</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVjbVZ6ZFd4MFgyTnZiWEFnUFNCeVpXZHlaWE56YVc5dVFrWW9iWEJuSUg0Z1pHbHpjQ0FySUhkMExDQmtZWFJoSUQwZ2JYUmpZWEp6TENCeWMyTmhiR1ZEYjI1MElEMGdNU2xjYm5KbGMzVnNkRjlqYjIxd0wzSmxjM1ZzZEY5amIyMXdXek5kWEc1Z1lHQWlmUT09IC0tPlxuXG5gYGByXG5yZXN1bHRfY29tcCA9IHJlZ3Jlc3Npb25CRihtcGcgfiBkaXNwICsgd3QsIGRhdGEgPSBtdGNhcnMsIHJzY2FsZUNvbnQgPSAxKVxucmVzdWx0X2NvbXAvcmVzdWx0X2NvbXBbM11cbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0X2NvbXAgPSByZWdyZXNzaW9uQkYobXBnIH4gZGlzcCArIHd0LCBkYXRhID0gbXRjYXJzLCByc2NhbGVDb250ID0gMSlcbnJlc3VsdF9jb21wL3Jlc3VsdF9jb21wWzNdXG5gYGAifQ== -->
+<pre class="r"><code>result_comp = regressionBF(mpg ~ disp + wt, data = mtcars, rscaleCont = 1)
+result_comp/result_comp[3]</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG4gIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAwJVxuICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG4gIHw9PT09PT09PT09PT09PT09PT09ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAzMyVcbiAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuICB8PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gICAgICAgICAgICAgICAgICAgfCAgNjclXG4gIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgfD09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PXwgMTAwJVxuIn0= -->
-<pre><code>
-  |                                                               
-  |                                                         |   0%
-  |                                                               
-  |===================                                      |  33%
-  |                                                               
-  |======================================                   |  67%
-  |                                                               
-  |=========================================================| 100%</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVjbVZ6ZFd4MFgyTnZiWEF2Y21WemRXeDBYMk52YlhCYk0xMWNibUJnWUNKOSAtLT5cblxuYGBgclxucmVzdWx0X2NvbXAvcmVzdWx0X2NvbXBbM11cbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0X2NvbXAvcmVzdWx0X2NvbXBbM11cbmBgYCJ9 -->
-<pre class="r"><code>result_comp/result_comp[3]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQmF5ZXMgZmFjdG9yIGFuYWx5c2lzXG4tLS0tLS0tLS0tLS0tLVxuWzFdIGRpc3AgICAgICA6IDAuMjM4MDEyNSDCsTAuMDElXG5bMl0gd3QgICAgICAgIDogMS41ODgwMDMgIMKxMC4wMSVcblszXSBkaXNwICsgd3QgOiAxICAgICAgICAgwrEwJVxuXG5BZ2FpbnN0IGRlbm9taW5hdG9yOlxuICBtcGcgfiBkaXNwICsgd3QgXG4tLS1cbkJheWVzIGZhY3RvciB0eXBlOiBCRmxpbmVhck1vZGVsLCBKWlNcbiJ9 -->
-<pre><code>Bayes factor analysis
---------------
-[1] disp      : 0.2380125 ±0.01%
-[2] wt        : 1.588003  ±0.01%
-[3] disp + wt : 1         ±0%
-
-Against denominator:
-  mpg ~ disp + wt 
----
-Bayes factor type: BFlinearModel, JZS</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkoYnJtcykKbGlicmFyeSh0aWR5dmVyc2UpCmxpYnJhcnkoQmF5ZXNGYWN0b3IpCmxpYnJhcnkoQmF5ZXNpYW5JZCkKCmRhdGEobXRjYXJzKQpkYXRhKCJlcGlsZXBzeSIpCmBgYAoKYGBge3J9Cm10Y2FycyAlPiUgc2VsZWN0KG1wZywgZGlzcCwgd3QpICU+JSBjb3IoKSAlPiUgcm91bmQoMikKYGBgCgpgYGB7cn0KY29udHIuaGVsbWVydCg1KQpgYGAKYGBge3J9CmZ3ZF9oZWxtZXJ0ID0gZnVuY3Rpb24oYSl7CiAgY29udHIgPSBtYXRyaXgoMC4wLCBucm93ID0gYSwgbmNvbCA9IGEgLSAxKQogIGZvcihjbCBpbiAxOihhLTEpKXsKICAgIG4gPSBhIC0gY2wgKyAxCiAgICBjb250cltjbCwgY2xdID0gKG4tMSkvbgogICAgY29udHJbKGNsKzEpOmEsIGNsXSA9IC0xL24KICB9CiAgcmV0dXJuKGNvbnRyKQp9Cgpjb250cl9iYW5vdmEgPSBmdW5jdGlvbihhKXsKICBjb250ciA9IGZ3ZF9oZWxtZXJ0KGEpCiAgZm9yKGNsIGluIDE6KGEtMSkpewogICAgY29udHJbLGNsXSA9IGNvbnRyWyxjbF0vc3FydChzdW0oY29udHJbLGNsXV4yKSkKICB9CiAgcmV0dXJuKGNvbnRyKQp9CmBgYAoKYGBge3J9CmZ3ZF9oZWxtZXJ0KDUpCmBgYApgYGB7cn0KY29udHJfYmFub3ZhKDUpCmBgYApgYGB7cn0KYSA9IDQKUSA9IGNvbnRyX2Jhbm92YShhKQpyb3VuZChRJSolZGlhZyhhLTEpJSoldChRKSwgMikgJT4lIHByaW50KCkKSSA9IGRpYWcoYSkKSiA9IG1hdHJpeCgxLjAsIG5yb3cgPSBhLCBuY29sID0gYSkKcm91bmQoSSAtIEovYSwgMikgJT4lIHByaW50KCkKYGBgCmBgYHtyfQpkYXRhKCJwZW5ndWlucyIpCmxldmVscyhwZW5ndWlucyRzZXgpCmBgYAoKYGBge3J9ClggPSBtb2RlbC5tYXRyaXgofiBmbGlwcGVyX2xlbiArIHNleCwgZGF0YSA9IG5hLm9taXQocGVuZ3VpbnMpKQpYCmBgYAoKYGBge3J9ClggPSBtb2RlbC5tYXRyaXgofiBkaXNwICsgd3QgLSAxLCBkYXRhID0gbXRjYXJzKSAlPiUgc2NhbGUoY2VudGVyID0gVFJVRSwgc2NhbGUgPSBGQUxTRSkKTiA9IG5yb3coWCkKViA9IHNvbHZlKHQoWCklKiVYL04pClYKYGBgCgoKYGBge3J9CmZpdCA8LSBicm1fanpzKG1wZyB+IGRpc3AgKyB3dCwKICAgICAgICAgICAgICAgI21wZyB+IGRpc3AgKyB3dCArIGRpc3A6d3QsIAogICAgICAgICAgICAgICBkYXRhID0gbXRjYXJzLCAKICAgICAgICAgICAgICAgZmFtaWx5ID0gZ2F1c3NpYW4oKSwKICAgICAgICAgICAgICAgI3IgPSBzcXJ0KDIpLzQsCiAgICAgICAgICAgICAgIHIgPSAxLAogICAgICAgICAgICAgICBpdGVyID0gMTAwMDAsCiAgICAgICAgICAgICAgICkKYGBgCgpgYGB7cn0Kc3RhbmNvZGUoZml0KQpgYGAKCmBgYHtyfQojIElUIExPT0tTIExJS0UgVEhFIFBSSU9SIFNDQUxFICgiciIpIElTTidUIEFGRkVDVElORyBUSEUgQkZTCiMgTE9PSyBJTlRPIFRISVMKcmVzdWx0ID0gaW5jX3Rlc3RzKGZpdCkKcHJpbnQocmVzdWx0JGluY190YWJsZSkKYGBgCmBgYHtyfQpwcmludChyZXN1bHQkbW9kZWxfdGFibGUpCmBgYAoKYGBge3J9CnJlc3VsdF9jb21wID0gcmVncmVzc2lvbkJGKG1wZyB+IGRpc3AgKyB3dCwgZGF0YSA9IG10Y2FycywgcnNjYWxlQ29udCA9IDEpCnJlc3VsdF9jb21wL3Jlc3VsdF9jb21wWzNdCmBgYAoKCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkoYnJtcykKbGlicmFyeSh0aWR5dmVyc2UpCmxpYnJhcnkoQmF5ZXNGYWN0b3IpCmxpYnJhcnkoQmF5ZXNpYW5JZCkKCmRhdGEobXRjYXJzKQpkYXRhKCJlcGlsZXBzeSIpCmBgYAoKYGBge3J9Cm10Y2FycyAlPiUgc2VsZWN0KG1wZywgZGlzcCwgd3QpICU+JSBjb3IoKSAlPiUgcm91bmQoMikKYGBgCgpgYGB7cn0KY29udHIuaGVsbWVydCg1KQpgYGAKYGBge3J9CmZ3ZF9oZWxtZXJ0ID0gZnVuY3Rpb24oYSl7CiAgY29udHIgPSBtYXRyaXgoMC4wLCBucm93ID0gYSwgbmNvbCA9IGEgLSAxKQogIGZvcihjbCBpbiAxOihhLTEpKXsKICAgIG4gPSBhIC0gY2wgKyAxCiAgICBjb250cltjbCwgY2xdID0gKG4tMSkvbgogICAgY29udHJbKGNsKzEpOmEsIGNsXSA9IC0xL24KICB9CiAgcmV0dXJuKGNvbnRyKQp9Cgpjb250cl9iYW5vdmEgPSBmdW5jdGlvbihhKXsKICBjb250ciA9IGZ3ZF9oZWxtZXJ0KGEpCiAgZm9yKGNsIGluIDE6KGEtMSkpewogICAgY29udHJbLGNsXSA9IGNvbnRyWyxjbF0vc3FydChzdW0oY29udHJbLGNsXV4yKSkKICB9CiAgcmV0dXJuKGNvbnRyKQp9CmBgYAoKYGBge3J9CmZ3ZF9oZWxtZXJ0KDUpCmBgYApgYGB7cn0KY29udHJfYmFub3ZhKDUpCmBgYApgYGB7cn0KYSA9IDQKUSA9IGNvbnRyX2Jhbm92YShhKQpyb3VuZChRJSolZGlhZyhhLTEpJSoldChRKSwgMikgJT4lIHByaW50KCkKSSA9IGRpYWcoYSkKSiA9IG1hdHJpeCgxLjAsIG5yb3cgPSBhLCBuY29sID0gYSkKcm91bmQoSSAtIEovYSwgMikgJT4lIHByaW50KCkKYGBgCmBgYHtyfQpkYXRhKCJwZW5ndWlucyIpCmxldmVscyhwZW5ndWlucyRpc2xhbmQpCgpgYGAKCmBgYHtyfQpuYyA9IGxlbmd0aChsZXZlbHMocGVuZ3VpbnMkaXNsYW5kKSkgLSAxCmNvbnRyYXN0cyhwZW5ndWlucyRpc2xhbmQpID0gY29udHJfYmFub3ZhKG5jICsgMSkKY29udHJhc3RzKHBlbmd1aW5zJGlzbGFuZCkKWCA9IG1vZGVsLm1hdHJpeCh+IGZsaXBwZXJfbGVuICsgaXNsYW5kLCBkYXRhID0gbmEub21pdChwZW5ndWlucykpCmhlYWQoWCkKY29sTWVhbnMoWCkKYGBgCgpgYGB7cn0Kc3RhbmNvZGUoYm9keV9tYXNzIH4gZmxpcHBlcl9sZW4gKyBiaWxsX2xlbiArIGlzbGFuZCwgCiAgICAgICAgIGRhdGEgPSBuYS5vbWl0KHBlbmd1aW5zKSwKICAgICAgICAgcHJpb3IgPSBzZXRfcHJpb3IoIm5vcm1hbCgwLCAyKSIsIGNsYXNzID0gImIiLCBjb2VmID0gcGFzdGUwKCJpc2xhbmQiLCAxOm5jKSkgKyBzZXRfcHJpb3IoIm11bHRpX3N0dWRlbnRfdF9scGRmKGIgfCAxLCByZXBfdmVjdG9yKDAuMCwgMiksIHIgKiBzaWdtYV4yICogZGlhZygyKSkiLCBjbGFzcyA9ICJiIikKICAgICAgICAgKQpgYGAKCgpgYGB7cn0KWCA9IG1vZGVsLm1hdHJpeCh+IGRpc3AgKyB3dCAtIDEsIGRhdGEgPSBtdGNhcnMpICU+JSBzY2FsZShjZW50ZXIgPSBUUlVFLCBzY2FsZSA9IEZBTFNFKQpOID0gbnJvdyhYKQpWID0gc29sdmUodChYKSUqJVgvTikKVgpgYGAKCgpgYGB7cn0KZml0IDwtIGJybV9qenMobXBnIH4gZGlzcCArIHd0LAogICAgICAgICAgICAgICAjbXBnIH4gZGlzcCArIHd0ICsgZGlzcDp3dCwgCiAgICAgICAgICAgICAgIGRhdGEgPSBtdGNhcnMsIAogICAgICAgICAgICAgICBmYW1pbHkgPSBnYXVzc2lhbigpLAogICAgICAgICAgICAgICAjciA9IHNxcnQoMikvNCwKICAgICAgICAgICAgICAgciA9IDEsCiAgICAgICAgICAgICAgIGl0ZXIgPSAxMDAwMCwKICAgICAgICAgICAgICAgKQpgYGAKCmBgYHtyfQpzdGFuY29kZShmaXQpCmBgYAoKYGBge3J9CiMgSVQgTE9PS1MgTElLRSBUSEUgUFJJT1IgU0NBTEUgKCJyIikgSVNOJ1QgQUZGRUNUSU5HIFRIRSBCRlMKIyBMT09LIElOVE8gVEhJUwpyZXN1bHQgPSBpbmNfdGVzdHMoZml0KQpwcmludChyZXN1bHQkaW5jX3RhYmxlKQpgYGAKYGBge3J9CnByaW50KHJlc3VsdCRtb2RlbF90YWJsZSkKYGBgCgpgYGB7cn0KcmVzdWx0X2NvbXAgPSByZWdyZXNzaW9uQkYobXBnIH4gZGlzcCArIHd0LCBkYXRhID0gbXRjYXJzLCByc2NhbGVDb250ID0gMSkKcmVzdWx0X2NvbXAvcmVzdWx0X2NvbXBbM10KYGBgCgoK</div>
 
 
 
