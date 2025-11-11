@@ -1,7 +1,7 @@
 #' Find all the submodels (full model plus restricted models) given a regression model formula.
 #' @param formula An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the full model, i.e. the model including all terms being considered.
-#' @returns A list containing the following elements: model_names = model formulas as strings, formulas = model formulas, included = parameters (terms) included in each model, omitted = parameters omitted in each model, included_table = same info as "included" except in a data frame, n_models = number of models, n_terms = number of fixed effects, term_names = names of fixed effects. The models are listed in each component of the output in the same order, with the full model given first.
-#' @details GIVE DETAILS ABOUT THE PRINCIPLE OF MARGINALITY *
+#' @returns A list containing the following elements: model_names = model formulas as strings, formulas = model formulas, included = parameters (terms) included in each model, omitted = parameters omitted in each model, random_effects = list of random effects (NULL from this function but can be added to), included_table = same info as "included" except in a data frame, n_models = number of models, n_terms = number of fixed effects, term_names = names of fixed effects. The models are listed in each component of the output in the same order, with the full model given first.
+#' @details This function ignores random effects; appropriate random effects for submodels can be obtained using the "add_random_effects" function. GIVE FURTHER DETAILS**
 #'
 submodels = function(formula){
   # Parse the model formula
@@ -40,14 +40,14 @@ submodels = function(formula){
   # Construct formulas for restricted models
   model_names = c(); formula_list = list()
   for(i in 1:length(combo_list)){
-    rhs = paste(c(combo_list[[i]], model_parts$random), collapse = " + ")
+    rhs = paste(combo_list[[i]], collapse = " + ")
     model_names[i] = paste(c(model_parts$lhs, rhs), collapse = " ~ ")
     formula_list[[i]] = formula(model_names[i])
   }
   # Add intercept-only model
   model_names[length(model_names) + 1] = paste(c(model_parts$lhs, "1"), collapse = " ~ ")
-  formula_list[[length(formula_list) + 1]] = formula(model_names[i])
   n_models = length(model_names) # count the number of models
+  formula_list[[n_models]] = formula(model_names[n_models])
   combo_list[n_models] = list(NULL)
 
   # Make a list of which terms from the full model are omitted in each restricted model
@@ -73,6 +73,7 @@ submodels = function(formula){
                 formulas = formula_list,
                 included = combo_list,
                 omitted = omitted,
+                random_effects = NULL,
                 included_table = included_table,
                 n_models = n_models,
                 n_terms = n_terms,

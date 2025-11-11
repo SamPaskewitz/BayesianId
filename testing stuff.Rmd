@@ -6,6 +6,7 @@ output: html_notebook
 ```{r}
 library(brms)
 library(tidyverse)
+library(BayesFactor)
 library(BayesianId)
 
 data(mtcars)
@@ -13,48 +14,91 @@ data("epilepsy")
 ```
 
 ```{r}
-fit1 <- brm(
-  count ~ zAge + zBase + Trt,
-  data = epilepsy, family = negbinomial(),
-  prior = prior(normal(0, 1), class = b),
-  save_all_pars = TRUE,
-  refresh = 0
-)
-summary(fit1)
-
-# model without the treatment effect
-fit2 <- brm(
-  count ~ zAge + zBase,
-  data = epilepsy, family = negbinomial(),
-  prior = prior(normal(0, 1), class = b),
-  save_all_pars = TRUE,
-  refresh = 0
-)
-summary(fit2)
-
-# compute the bayes factor
-bayes_factor(fit1, fit2)
-```
-
-
-```{r}
-fit1 <- brm_jzs(
-  count ~ zAge + zBase + Trt,
-  data = epilepsy, family = negbinomial()
-)
+mtcars %>% select(mpg, disp, wt) %>% cor() %>% round(2)
 ```
 
 ```{r}
-inc_tests(fit1)
+contr.helmert(5)
+```
+```{r}
+fwd_helmert = function(a){
+  contr = matrix(0.0, nrow = a, ncol = a - 1)
+  for(cl in 1:(a-1)){
+    n = a - cl + 1
+    contr[cl, cl] = (n-1)/n
+    contr[(cl+1):a, cl] = -1/n
+  }
+  return(contr)
+}
+
+contr_banova = function(a){
+  contr = fwd_helmert(a)
+  for(cl in 1:(a-1)){
+    contr[,cl] = contr[,cl]/sqrt(sum(contr[,cl]^2))
+  }
+  return(contr)
+}
 ```
 
 ```{r}
-foo = data.frame("p(β≠0)" = rep(0, 3), check.names = FALSE)
-#names(foo)[1] = expression("p(β≠0)")
-foo
+fwd_helmert(5)
+```
+```{r}
+contr_banova(5)
+```
+```{r}
+a = 4
+Q = contr_banova(a)
+round(Q%*%diag(a-1)%*%t(Q), 2) %>% print()
+I = diag(a)
+J = matrix(1.0, nrow = a, ncol = a)
+round(I - J/a, 2) %>% print()
 ```
 
 
 
+
+```{r}
+contr_comp = matrix(c(0.89, -0.22, -0.22, -0.22, -0.22,
+                      0, 0.87, -0.29, -0.29, -0.29,
+                      0, 0, 0.82, -0.41, -0.41,
+                      0, 0, 0, 0.71, -0.71),
+                    nrow = 4,
+                    ncol = 5,
+                    byrow = TRUE) %>% t()
+print(contr_comp)
+```
+
+
+
+```{r}
+fit <- brm_jzs(mpg ~ disp + wt,
+               #mpg ~ disp + wt + disp:wt, 
+               data = mtcars, 
+               family = gaussian(),
+               #r = sqrt(2)/4,
+               r = 1,
+               iter = 10000,
+               )
+```
+
+```{r}
+stancode(fit)
+```
+
+```{r}
+# IT LOOKS LIKE THE PRIOR SCALE ("r") ISN'T AFFECTING THE BFS
+# LOOK INTO THIS
+result = inc_tests(fit)
+print(result$inc_table)
+```
+```{r}
+print(result$model_table)
+```
+
+```{r}
+result_comp = regressionBF(mpg ~ disp + wt, data = mtcars, rscaleCont = 1)
+result_comp/result_comp[3]
+```
 
 

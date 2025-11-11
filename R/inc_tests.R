@@ -12,8 +12,6 @@ inc_tests = function(full_model,
   # get a list of submodels (full model plus restricted models)
   model_list = submodels(full_model$formula)
 
-  # NEED TO TEST CODE FOR EVERYTHING BELOW
-
   # by default, give models equal prior probability
   if(is.null(prior_term_probs)){
     prior_model_probs = rep(1/model_list$n_models, times = model_list$n_models)
@@ -29,10 +27,20 @@ inc_tests = function(full_model,
   # fit all submodels
   fit_list = list()
   fit_list[[1]] = full_model
+  # * MAKE SURE THAT USING "UPDATE" PROPERLY UPDATES THE JZS PRIOR, AND FIX IF NOT *
   for(i in 2:model_list$n_models){
-    fit_list[[i]] = update(full_model,
-                           formula = model_list$formulas[[i]],
-                           refresh = 0)
+    if(!is.null(model_list$included[[i]])){ # models with predictors
+      fit_list[[i]] = update(full_model,
+                             formula = model_list$formulas[[i]],
+                             refresh = 0)
+    }
+    else{ # intercept-only model
+      fit_list[[i]] = update(full_model,
+                             formula = model_list$formulas[[i]],
+                             stanvars = NULL, # remove stanvars for intercept-only model
+                             refresh = 0)
+    }
+
   }
   names(fit_list) = model_list$model_names
 
@@ -55,8 +63,8 @@ inc_tests = function(full_model,
                          check.names = FALSE # prevent names from getting messed up
                          )
   inc_table[, "BF"] = inc_table[, "post odds"]/inc_table[, "prior odds"]
-  row.names(inc_table) = model_list$fixed_names
   inc_table = round(inc_table, digits = digits_to_round)
+  row.names(inc_table) = model_list$term_names
 
   model_table = data.frame("p(M)" = prior_model_probs,
                            "p(M | D)" = post_model_probs,
@@ -65,8 +73,8 @@ inc_tests = function(full_model,
                            "BF" = bfs,
                            check.names = FALSE # prevent names from getting messed up
                            )
-  row.names(model_table) = model_list$formula_strings
   model_table = round(model_table, digits = digits_to_round)
+  row.names(model_table) = model_list$model_names
 
-  return(list(inc_table = inc_table, model_table = model_table))
+  return(list(inc_table = inc_table, model_table = model_table, fit_list = fit_list))
 }

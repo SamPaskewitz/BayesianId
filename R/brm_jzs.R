@@ -12,22 +12,16 @@
 #' @details This is a wrapper around the "brm" function from brms that adds a JZS prior on model parameters  REFS *.
 
 brm_jzs = function(formula, data, family = gaussian(), r = 0.5, sample = FALSE, seed = NA, chains = 4, iter = 2000, warmup = floor(iter/2)){
-  # TO DO:
-  # Make sure that they're not trying to pass in a multivariate formula (mvbrmsformula).
-  # Hyper-g Priors for Generalized Linear Models (Bove' & Held, 2011)
-  # FIGURE OUT THE "WEIGHTS"
-  # FIGURE OUT "C"
-  # Check that the prior on sigma really properly mimics the Jefferey's prior.
-
   # package data for stan
   stan_data = brms::standata(object = formula, data = data, family = family)
 
   # define prior
   intercept_prior = set_prior("", class = "Intercept") # improper flat prior
-  has_sigma = "sigma" %in% family$dpars
+  has_sigma = family$family %in% c("gaussian", "student", "lognormal", "shifted_lognormal", "skew_normal", "gen_extreme_value", "exgaussian", "logistic_normal", "asym_laplace", "hurdle_lognormal")
   if(has_sigma){ # families that have sigma as a parameter (e.g. normal for ordinary linear regression)
     b_prior = set_prior("multi_student_t(1, rep_vector(0.0, Kc), r * sigma^2 * V)", class = "b") # Cauchy hyper g-prior (Cauchy = Student's t with df = 1)
-    sigma_prior = set_prior("gamma(0.01, 0.01)", class = "sigma") # mimic Jefferey's prior
+    #sigma_prior = set_prior("gamma(0.01, 0.01)", class = "sigma") # mimic Jefferey's prior
+    sigma_prior = set_prior("", "sigma") + set_prior("target += -2*log(sigma)", check = FALSE) # see https://discourse.mc-stan.org/t/setting-jeffreys-s-prior-on-sigma
     our_prior = intercept_prior + b_prior + sigma_prior
   }
   else{ # families that don't have sigma as a parameter (e.g. Bernoulli for logistic regression)
@@ -36,12 +30,13 @@ brm_jzs = function(formula, data, family = gaussian(), r = 0.5, sample = FALSE, 
   }
 
   # define extra variables (stanvars) for computing the prior
-  v_stanvar = stanvar(name = "V", scode = "matrix[Kc, Kc] V = inverse(Xc'*Xc);", block = "tdata", position = "end") # the matrix (X'X)^-1 used in the Cauchy hyper g-prior
+  v_stanvar = stanvar(name = "V", scode = "matrix[Kc, Kc] V = inverse(Xc'*Xc/N);", block = "tdata", position = "end") # the matrix (X'X/N)^-1 used in the Cauchy hyper g-prior
   r_stanvar = stanvar(r, name = "r", scode = "real<lower=0> r;", block = "data") # the scale hyperparameter of the Cauchy hyper g-prior
   our_stanvars = v_stanvar + r_stanvar
 
   # fit the model using brms
   fit = brms::brm(formula = formula,
+                  family = family,
                   data = data,
                   prior = our_prior,
                   stanvars = our_stanvars,
