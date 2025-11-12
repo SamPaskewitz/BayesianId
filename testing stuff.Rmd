@@ -18,46 +18,8 @@ mtcars %>% select(mpg, disp, wt) %>% cor() %>% round(2)
 ```
 
 ```{r}
-contr.helmert(5)
-```
-```{r}
-fwd_helmert = function(a){
-  contr = matrix(0.0, nrow = a, ncol = a - 1)
-  for(cl in 1:(a-1)){
-    n = a - cl + 1
-    contr[cl, cl] = (n-1)/n
-    contr[(cl+1):a, cl] = -1/n
-  }
-  return(contr)
-}
-
-contr_banova = function(a){
-  contr = fwd_helmert(a)
-  for(cl in 1:(a-1)){
-    contr[,cl] = contr[,cl]/sqrt(sum(contr[,cl]^2))
-  }
-  return(contr)
-}
-```
-
-```{r}
-fwd_helmert(5)
-```
-```{r}
-contr_banova(5)
-```
-```{r}
-a = 4
-Q = contr_banova(a)
-round(Q%*%diag(a-1)%*%t(Q), 2) %>% print()
-I = diag(a)
-J = matrix(1.0, nrow = a, ncol = a)
-round(I - J/a, 2) %>% print()
-```
-```{r}
 data("penguins")
 levels(penguins$island)
-
 ```
 
 ```{r}
@@ -68,13 +30,49 @@ X = model.matrix(~ flipper_len + island, data = na.omit(penguins))
 head(X)
 colMeans(X)
 ```
+```{r}
+x_names = parse_formula(body_mass ~ flipper_len + bill_len + island)$fixed_main
+is_factor = rep(FALSE, times = length(x_names))
+for(i in 1:length(x_names)){
+  is_factor[i] = is.factor(penguins[, x_names[i]]) | is.character(penguins[, x_names[i]])
+}
+is_factor
+```
+
 
 ```{r}
+sd_code = "
+  vector[Kc] sd_X;
+  for (i in 2:K) {
+    sd_X[i - 1] = sd(X[, i]);
+  }
+"
 stancode(body_mass ~ flipper_len + bill_len + island, 
          data = na.omit(penguins),
-         prior = set_prior("normal(0, 2)", class = "b", coef = paste0("island", 1:nc)) + set_prior("multi_student_t_lpdf(b | 1, rep_vector(0.0, 2), r * sigma^2 * diag(2))", class = "b")
+         prior = set_prior("normal(0, sigma/sd_X)", class = "b"),
+         stanvars = stanvar(name = "sd_X", scode = sd_code, block = "tdata", position = "end")
          )
 ```
+```{r}
+bar = brm(body_mass ~ flipper_len + bill_len, 
+         data = na.omit(penguins),
+         prior = set_prior("normal(0, sigma/sd_X)", class = "b"),
+         stanvars = stanvar(name = "sd_X", scode = sd_code, block = "tdata", position = "end"),
+         refresh = 0,
+         seed = 1212)
+
+summary(bar)
+```
+
+```{r}
+barbar = brm(body_mass ~ flipper_len + bill_len, 
+         data = na.omit(penguins),
+         prior = set_prior(paste0("normal(0, sigma/", sd(na.omit(penguins)$flipper_len), ")"), class = "b", coef = "flipper_len") + set_prior(paste0("normal(0, sigma/", sd(na.omit(penguins)$bill_len), ")"), class = "b", coef = "bill_len"),
+         refresh = 0,
+         seed = 1212)
+summary(barbar)
+```
+
 
 
 ```{r}
@@ -97,22 +95,21 @@ fit <- brm_jzs(mpg ~ disp + wt,
 ```
 
 ```{r}
-stancode(fit)
-```
-
-```{r}
-# IT LOOKS LIKE THE PRIOR SCALE ("r") ISN'T AFFECTING THE BFS
-# LOOK INTO THIS
 result = inc_tests(fit)
 print(result$inc_table)
 ```
+
 ```{r}
 print(result$model_table)
 ```
 
 ```{r}
-result_comp = regressionBF(mpg ~ disp + wt, data = mtcars, rscaleCont = 1)
-result_comp/result_comp[3]
+result_comp = regressionBF(mpg ~ disp + wt,
+               #mpg ~ disp + wt + disp:wt, 
+               data = mtcars,
+               #rscaleCont = sqrt(2)/4,
+               rscaleCont = 1)
+print(result_comp/result_comp[3])
 ```
 
 
