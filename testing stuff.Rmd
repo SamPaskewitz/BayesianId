@@ -92,33 +92,40 @@ names(fit)
 
 ```{r}
 #foo = bf(y ~ x1 + x2 + (1 + x1 | g1 + g2))
-foo = y ~ x1 + x2 + (1 + x1 | g1 + g2) + (x1 + x2 | g2)
+foo = y ~ x1*x2 + (x1 + x2 | g2) + (1 | g1)
+#foo = y ~ x1*x2
 bar = brmsterms(foo)
 ```
 
 ```{r}
-random = list()
-for(i in 1:length(bar[["dpars"]]$mu$re$group)){
-  random[[bar[["dpars"]]$mu$re$group[i]]] = c("1", attr(terms(bar[["dpars"]]$mu$re$form[[i]]), which = "term.labels"))
+sm = submodels(foo)
+sm$formulas
+```
+```{r}
+random_included = list()
+random = parse_formula(foo)$random
+if(is.null(random)){
+  random_included = NULL
+} else{
+  group = names(random)
+  for(j in 1:sm$n_models){
+    rexpr = list()
+    for(i in 1:length(group)){
+      rterms = intersect(random[[i]], c(sm$included[[j]], "1"))
+      rexpr[[i]] = paste0("(", paste(rterms, collapse = "+"), "|", group[[i]], ")")
+    }
+    random_included[[j]] = paste(rexpr, collapse = "+")
+  }
 }
-random
+
+random_included
 ```
 
 ```{r}
-class(bar[["dpars"]]$mu$re$form[1])
+rterms = list()
+paste0("(", paste(random_included[[1]]$g2, collapse = "+"), "|", group[[1]], ")")
 ```
 
-
-```{r}
-split1 = strsplit(as.character(bar[["dpars"]]$mu$re$form[[1]]), "\\s*\\~\\s*")[[2]]
-split2 = unlist(strsplit(split1, "\\ +"))
-split2 = c("1", attr(terms(bar[["dpars"]]$mu$re$form[[1]]), which = "term.labels"))
-split2
-```
-
-```{r}
-
-```
 
 
 

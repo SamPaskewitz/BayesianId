@@ -18,7 +18,6 @@ parse_formula = function(formula){
   is_random = grepl("\\|", rhs_terms)
   if(any(is_random)){ # there are random terms
     fixed = rhs_terms[!is_random]
-    #random = paste0("(", rhs_terms[is_random], ")")
     random = list()
     brm_parse = brms::brmsterms(formula)
     group = brm_parse$dpars$mu$re$group
