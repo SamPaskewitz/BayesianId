@@ -11,14 +11,21 @@ parse_formula = function(formula){
   # Get the complete left hand side (split around "~", then take part 1)
   lhs = strsplit(as.character(formula), "\\s*\\~\\s*")[[2]]
 
-  # Split the right hand side into terms (split around "+")
+  # Split the right hand side into terms
   rhs_terms = attr(terms(formula), which = "term.labels")
 
   # Split the right hand side terms into fixed and random (identify random terms by "|")
   is_random = grepl("\\|", rhs_terms)
   if(any(is_random)){ # there are random terms
     fixed = rhs_terms[!is_random]
-    random = paste0("(", rhs_terms[is_random], ")")
+    #random = paste0("(", rhs_terms[is_random], ")")
+    random = list()
+    brm_parse = brms::brmsterms(formula)
+    group = brm_parse$dpars$mu$re$group
+    form = brm_parse$dpars$mu$re$form
+    for(i in 1:length(group)){
+      random[[group[i]]] = c("1", attr(terms(form[[i]]), which = "term.labels"))
+    }
   }
   else{ # there are no random terms (all terms are fixed)
     fixed = rhs_terms

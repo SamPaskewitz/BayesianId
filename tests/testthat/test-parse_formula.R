@@ -1,4 +1,4 @@
-fmla1 = formula(y | cens(is_censored) ~ x1 + x2 + x3 + x1:x2 + (1 | g) + (1 | kitten))
+fmla1 = formula(y | cens(is_censored) ~ x1 + x2 + x3 + x1:x2 + (x3 | g1) + (x1*x2 | g2))
 fmla2 = formula("sqrt(y) ~ x1 + x2")
 fmla3 = formula(y ~ x1*x2*x3 + (x1 | g))
 fmla4 = brms::brmsformula(formula = fmla2)
@@ -18,9 +18,11 @@ test_that("fixed_works", {
 })
 
 test_that("random_works", {
-  expect_setequal(parse_formula(fmla1)$random, c("(1 | g)", "(1 | kitten)"))
+  expect_equal(parse_formula(fmla1)$random,
+               list(g1 = c("1", "x3"), g2 = c("1", "x1", "x2", "x1:x2")))
   expect_null(parse_formula(fmla2)$random)
-  expect_setequal(parse_formula(fmla3)$random, c("(x1 | g)"))
+  expect_equal(parse_formula(fmla3)$random,
+               list(g = c("1", "x1")))
   expect_null(parse_formula(fmla4)$random)
 })
 

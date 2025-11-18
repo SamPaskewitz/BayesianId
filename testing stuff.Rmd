@@ -8,9 +8,6 @@ library(brms)
 library(tidyverse)
 library(BayesFactor)
 library(BayesianId)
-
-data(mtcars)
-data("epilepsy")
 ```
 
 ```{r}
@@ -41,23 +38,108 @@ is_factor
 
 
 ```{r}
-sd_code = "
-  vector[Kc] sd_X;
-  for (i in 2:K) {
-    sd_X[i - 1] = sd(X[, i]);
-  }
-"
-stancode(body_mass ~ flipper_len + bill_len + island, 
-         data = na.omit(penguins),
-         prior = set_prior("normal(0, sigma/sd_X)", class = "b"),
-         stanvars = stanvar(name = "sd_X", scode = sd_code, block = "tdata", position = "end")
-         )
+prep = data.frame(y = c(-2, 9, 1, 8, -3, 1, 7),
+                       x1 = factor(c("a", "b", "b", "a", "c", "a", "c")),
+                       x2 = c(1, 2, 3, 1, 1, 0, 2),
+                       x = c(-1.4, 0.1, 0.8, -0.9, 0.5, -2.4, 12.0)) %>%
+  prepare_data(formula = y ~ x1 + x2 + x)
+  #prepare_data(formula = y ~ x1 + x2 + x3 + x1:x2 + x2:x3)
+
+X = model.matrix(y ~ x1 + x2 + x,
+                 data = prep$data)
+head(X)
 ```
+
 ```{r}
-bar = brm(body_mass ~ flipper_len + bill_len, 
+# initialize prior adjustment vector
+prior_adjust = rep(1.0, times = ncol(X))
+names(prior_adjust) = colnames(X)
+
+# loop through numeric predictor variables and adjust the prior by their SDs
+# this is equivalent to z-scoring the numeric predictors
+for(i in 1:length(prep$x_numeric_names)){ 
+  x_name = prep$x_numeric_names[i] # current numeric predictor variables
+  has_x = grepl(x_name, colnames(X)) # Is the predictor part of each column in the design matrix?
+  print(x_name)
+  names(has_x) = colnames(X)
+  print(has_x)
+  print("")
+  prior_adjust[has_x] = prior_adjust[has_x]/sd(X[,x_name]) # if so, adjust for that predictor's standard deviation
+}
+
+print(adjust)
+```
+
+```{r}
+foo = parse_formula(y ~ x1 + x2*x)
+```
+
+```{r}
+foo
+```
+
+
+
+```{r}
+fit = brm_indprior(body_mass ~ flipper_len*bill_len + bill_dep + island, 
+         data = na.omit(penguins),
+         seed = 1212)
+```
+
+```{r}
+names(fit)
+```
+
+```{r}
+#foo = bf(y ~ x1 + x2 + (1 + x1 | g1 + g2))
+foo = y ~ x1 + x2 + (1 + x1 | g1 + g2) + (x1 + x2 | g2)
+bar = brmsterms(foo)
+```
+
+```{r}
+random = list()
+for(i in 1:length(bar[["dpars"]]$mu$re$group)){
+  random[[bar[["dpars"]]$mu$re$group[i]]] = c("1", attr(terms(bar[["dpars"]]$mu$re$form[[i]]), which = "term.labels"))
+}
+random
+```
+
+```{r}
+class(bar[["dpars"]]$mu$re$form[1])
+```
+
+
+```{r}
+split1 = strsplit(as.character(bar[["dpars"]]$mu$re$form[[1]]), "\\s*\\~\\s*")[[2]]
+split2 = unlist(strsplit(split1, "\\ +"))
+split2 = c("1", attr(terms(bar[["dpars"]]$mu$re$form[[1]]), which = "term.labels"))
+split2
+```
+
+```{r}
+
+```
+
+
+
+```{r}
+fit$stanvars$prior_adjust$sdata
+```
+
+
+
+```{r}
+summary(fit)
+```
+
+
+
+
+```{r}
+bar = brm(body_mass ~ flipper_len + bill_len + bill_dep + island, 
          data = na.omit(penguins),
          prior = set_prior("normal(0, sigma/sd_X)", class = "b"),
-         stanvars = stanvar(name = "sd_X", scode = sd_code, block = "tdata", position = "end"),
+         stanvars = stanvar(c(sd(na.omit(penguins)$flipper_len), sd(na.omit(penguins)$bill_len), sd(na.omit(penguins)$bill_dep)), name = "sd_X", scode = "vector[Kc] sd_X;", block = "data"),
          refresh = 0,
          seed = 1212)
 
@@ -65,15 +147,20 @@ summary(bar)
 ```
 
 ```{r}
-barbar = brm(body_mass ~ flipper_len + bill_len, 
-         data = na.omit(penguins),
-         prior = set_prior(paste0("normal(0, sigma/", sd(na.omit(penguins)$flipper_len), ")"), class = "b", coef = "flipper_len") + set_prior(paste0("normal(0, sigma/", sd(na.omit(penguins)$bill_len), ")"), class = "b", coef = "bill_len"),
-         refresh = 0,
-         seed = 1212)
-summary(barbar)
+stancode(bar)
 ```
 
 
+```{r}
+barbar = update(bar,
+                formula = body_mass ~ flipper_len + bill_len,
+                stanvars = stanvar(c(sd(na.omit(penguins)$flipper_len), sd(na.omit(penguins)$bill_len)), name = "sd_X", block = "data"),
+                recompile = FALSE)
+summary(barbar)
+```
+```{r}
+stancode(barbar)
+```
 
 ```{r}
 X = model.matrix(~ disp + wt - 1, data = mtcars) %>% scale(center = TRUE, scale = FALSE)
@@ -104,12 +191,10 @@ print(result$model_table)
 ```
 
 ```{r}
-result_comp = regressionBF(mpg ~ disp + wt,
-               #mpg ~ disp + wt + disp:wt, 
-               data = mtcars,
-               #rscaleCont = sqrt(2)/4,
-               rscaleCont = 1)
-print(result_comp/result_comp[3])
+result_comp = generalTestBF(body_mass ~ bill_len*sex,
+                            data = na.omit(penguins),
+                            rscaleCont = 1)
+print(result_comp/result_comp[4])
 ```
 
 

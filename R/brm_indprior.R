@@ -12,20 +12,55 @@
 #' @details This is a wrapper around the "brm" function from brms that ADD DETAILS **
 
 brm_indprior = function(formula, data, family = gaussian(), r = 0.5, seed = NA, chains = 4, iter = 2000, warmup = floor(iter/2)){
-  # prepare data
-  prep_data = prepare_data(data)
+  # ** prepare data **
+  prep = prepare_data(data, formula)
 
-  # define prior
+  # ** define prior **
   intercept_prior = set_prior("", class = "Intercept") # improper flat prior
   has_sigma = family$family %in% c("gaussian", "student", "lognormal", "shifted_lognormal", "skew_normal", "gen_extreme_value", "exgaussian", "logistic_normal", "asym_laplace", "hurdle_lognormal")
-  if(has_sigma){ # families that have sigma as a parameter (e.g. normal for ordinary linear regression)
-    # ** FIGURE THIS OUT **
-    b_prior = set_prior("", "b") + set_prior("target += cauchy_lpdf(b | 0, r*sigma)", check = FALSE)
+  if(has_sigma){ # families that have sigma as a parameter
+    b_prior = set_prior("", "b") + set_prior("target += cauchy_lpdf(b | 0, r*sigma/prior_adjust)", check = FALSE)
     sigma_prior = set_prior("", "sigma") + set_prior("target += -2*log(sigma)", check = FALSE) # see https://discourse.mc-stan.org/t/setting-jeffreys-s-prior-on-sigma
     our_prior = intercept_prior + b_prior + sigma_prior
   }
-  else{ # families that don't have sigma as a parameter (e.g. Bernoulli for logistic regression)
-    b_prior = set_prior("", "b") + set_prior("target += cauchy_lpdf(b | 0, r)", check = FALSE)
+  else{ # families that don't have sigma as a parameter
+    b_prior = set_prior("", "b") + set_prior("target += cauchy_lpdf(b | 0, r/prior_adjust)", check = FALSE)
     our_prior = intercept_prior + b_prior
   }
+
+  # ** set up prior adjustments (based on the SDs of numeric predictors) **
+  # design matrix (without intercept)
+  X = model.matrix(formula, data)[,-1]
+
+  # initialize prior adjustment vector
+  prior_adjust = rep(1.0, times = ncol(X))
+  names(prior_adjust) = colnames(X)
+
+  # loop through numeric predictor variables and adjust the prior by their SDs
+  # TO DO: Fix this so that it works if one variable name is a subset of another variable's name, e.g. "x" and "x1".
+  for(i in 1:length(prep$x_numeric_names)){
+    has_x = grepl(prep$x_numeric_names[i], colnames(X))
+    prior_adjust[has_x] = prior_adjust[has_x]/sd(X[,prep$x_numeric_names[i]])
+  }
+
+  # ** define extra variables (stanvars) **
+  prior_adjust_stanvar = stanvar(prior_adjust, name = "prior_adjust", scode = "vector[Kc] prior_adjust;", block = "data")
+  r_stanvar = stanvar(r, name = "r", scode = "real<lower=0> r;", block = "data") # the scale hyperparameter of the Cauchy hyper g-prior
+  our_stanvars = prior_adjust_stanvar + r_stanvar
+
+  # ** fit the model using brms **
+  fit = brms::brm(formula = formula,
+                  family = family,
+                  data = prep$data,
+                  prior = our_prior,
+                  stanvars = our_stanvars,
+                  seed = seed,
+                  chains = chains,
+                  iter = iter,
+                  warmup = warmup,
+                  refresh = 0, # don't print annoying updates
+                  save_pars = save_pars(all = TRUE) # for bridge sampling
+  )
+
+  return(fit)
 }

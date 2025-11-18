@@ -36,6 +36,7 @@ brm_jzs = function(formula, data, family = gaussian(), r = 0.5, seed = NA, chain
                   data = data,
                   prior = our_prior,
                   stanvars = our_stanvars,
+                  seed = seed,
                   chains = chains,
                   iter = iter,
                   warmup = warmup,

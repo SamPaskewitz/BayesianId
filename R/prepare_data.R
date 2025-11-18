@@ -2,7 +2,10 @@
 #' @param data A data frame.
 #' @param formula An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the model to be fitted. The details of model specification are explained in brmsformula.
 #' @param center Should the numeric (non-factor) predictor variables be mean-centered? Defaults to TRUE.
-#' @returns A modified data frame that is ready for regression.
+#' @returns A list with the following elements:
+#' data: a modified data frame that is ready for regression
+#' x_numeric_names: names of data variables that are numeric
+#' x_factor_names: names of data variables that are factors
 #' @details
 #' * DESCRIBE THE CONTRAST CODES ETC
 #'
@@ -11,7 +14,7 @@ prepare_data = function(data, formula, center = TRUE){
   # make a copy of the data
   prep_data = data
 
-  # figure out the names of predictor variables and which ones are factors
+  # figure out which predictors are factors
   # also convert character variables to factors
   x_names = parse_formula(formula)$fixed_main
   is_factor = rep(FALSE, times = length(x_names))
@@ -21,6 +24,7 @@ prepare_data = function(data, formula, center = TRUE){
     }
     is_factor[i] = is.factor(prep_data[, x_names[i]])
   }
+  x_factor_names = x_names[is_factor]
 
   # give factors proper contrast codes (Rouder et al 2012)
   if(any(is_factor)){
@@ -30,11 +34,21 @@ prepare_data = function(data, formula, center = TRUE){
     }
   }
 
-  # mean-center numeric predictors (optionally)
-  if(any(!is_factor) & center){
-    non_factor_names = x_names[which(!is_factor)]
-    prep_data = prep_data |> dplyr::mutate(dplyr::across(non_factor_names, ~ .x - mean(.x)))
+  # find numeric predictors and mean-center them (optionally)
+  if(any(!is_factor)){
+    x_numeric_names = x_names[which(!is_factor)]
+    if(center){
+      prep_data = prep_data |> dplyr::mutate(dplyr::across(x_numeric_names, ~ .x - mean(.x)))
+    }
+  }
+  else{
+    x_numeric_names = NULL
   }
 
-  return(prep_data)
+  # collect function output
+  output = list(data = prep_data,
+                x_numeric_names = x_numeric_names,
+                x_factor_names = x_factor_names)
+
+  return(output)
 }
