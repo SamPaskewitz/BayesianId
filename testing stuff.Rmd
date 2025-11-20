@@ -77,131 +77,36 @@ foo = parse_formula(y ~ x1 + x2*x)
 ```{r}
 foo
 ```
-
-
+```{r}
+head(penguins)
+```
 
 ```{r}
-fit = brm_indprior(body_mass ~ flipper_len*bill_len + bill_dep + island, 
+fit = brm_indprior(body_mass ~ flipper_len*bill_len + (flipper_len*bill_len | island), 
          data = na.omit(penguins),
+         chains = 2,
          seed = 1212)
 ```
+
+```{r}
+bar = fit_submodels(fit, submodels(fit$formula))
+```
+
+```{r}
+library(lme4)
+fit_lmer = lmer(body_mass ~ flipper_len*bill_len + (flipper_len*bill_len | island), 
+                data = na.omit(penguins))
+VarCorr(fit_lmer)
+```
+
+
+
 
 ```{r}
 names(fit)
 ```
 
 ```{r}
-#foo = bf(y ~ x1 + x2 + (1 + x1 | g1 + g2))
-foo = y ~ x1*x2 + (x1 + x2 | g2) + (1 | g1)
-#foo = y ~ x1*x2
-bar = brmsterms(foo)
+head(fit$data)
 ```
-
-```{r}
-sm = submodels(foo)
-sm$formulas
-```
-```{r}
-random_included = list()
-random = parse_formula(foo)$random
-if(is.null(random)){
-  random_included = NULL
-} else{
-  group = names(random)
-  for(j in 1:sm$n_models){
-    rexpr = list()
-    for(i in 1:length(group)){
-      rterms = intersect(random[[i]], c(sm$included[[j]], "1"))
-      rexpr[[i]] = paste0("(", paste(rterms, collapse = "+"), "|", group[[i]], ")")
-    }
-    random_included[[j]] = paste(rexpr, collapse = "+")
-  }
-}
-
-random_included
-```
-
-```{r}
-rterms = list()
-paste0("(", paste(random_included[[1]]$g2, collapse = "+"), "|", group[[1]], ")")
-```
-
-
-
-
-```{r}
-fit$stanvars$prior_adjust$sdata
-```
-
-
-
-```{r}
-summary(fit)
-```
-
-
-
-
-```{r}
-bar = brm(body_mass ~ flipper_len + bill_len + bill_dep + island, 
-         data = na.omit(penguins),
-         prior = set_prior("normal(0, sigma/sd_X)", class = "b"),
-         stanvars = stanvar(c(sd(na.omit(penguins)$flipper_len), sd(na.omit(penguins)$bill_len), sd(na.omit(penguins)$bill_dep)), name = "sd_X", scode = "vector[Kc] sd_X;", block = "data"),
-         refresh = 0,
-         seed = 1212)
-
-summary(bar)
-```
-
-```{r}
-stancode(bar)
-```
-
-
-```{r}
-barbar = update(bar,
-                formula = body_mass ~ flipper_len + bill_len,
-                stanvars = stanvar(c(sd(na.omit(penguins)$flipper_len), sd(na.omit(penguins)$bill_len)), name = "sd_X", block = "data"),
-                recompile = FALSE)
-summary(barbar)
-```
-```{r}
-stancode(barbar)
-```
-
-```{r}
-X = model.matrix(~ disp + wt - 1, data = mtcars) %>% scale(center = TRUE, scale = FALSE)
-N = nrow(X)
-V = solve(t(X)%*%X/N)
-V
-```
-
-
-```{r}
-fit <- brm_jzs(mpg ~ disp + wt,
-               #mpg ~ disp + wt + disp:wt, 
-               data = mtcars, 
-               family = gaussian(),
-               #r = sqrt(2)/4,
-               r = 1,
-               iter = 10000,
-               )
-```
-
-```{r}
-result = inc_tests(fit)
-print(result$inc_table)
-```
-
-```{r}
-print(result$model_table)
-```
-
-```{r}
-result_comp = generalTestBF(body_mass ~ bill_len*sex,
-                            data = na.omit(penguins),
-                            rscaleCont = 1)
-print(result_comp/result_comp[4])
-```
-
 

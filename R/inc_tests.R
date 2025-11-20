@@ -1,6 +1,6 @@
 #' Conduct term inclusion tests. This is the most important function in the "BayesianId" package.
 #'
-#' @param full_model A full_model object (fitted regression model) representing the full model, i.e. the model that includes all possible terms.
+#' @param full_model A brmsfit object (fitted regression model) representing the full model, i.e. the model that includes all possible terms.
 #' @param prior_term_probs Optional: a named vector giving the prior inclusion probabilities for parameters (names = parameters/terms). By default (if NULL) these are set to 0.5, which corresponds to uniform prior probabilities across models DOUBLE CHECK *.
 #' @param digits_to_round Number of digits to round results to.
 #' @returns A list containing the following two elements: inc_table (term inclusion prior and posterior probabilities/odds, Bayes factors), model_table (model prior and posterior probabilities/odds, Bayes factors)
@@ -27,7 +27,6 @@ inc_tests = function(full_model,
   # fit all submodels
   fit_list = list()
   fit_list[[1]] = full_model
-  # * MAKE SURE THAT USING "UPDATE" PROPERLY UPDATES THE JZS PRIOR, AND FIX IF NOT *
   for(i in 2:model_list$n_models){
     if(!is.null(model_list$included[[i]])){ # models with predictors
       fit_list[[i]] = update(full_model,
