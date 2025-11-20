@@ -10,7 +10,7 @@ inc_tests = function(full_model,
                      digits_to_round = 2
                      ){
   # get a list of submodels (full model plus restricted models)
-  model_list = submodels(full_model$formula)
+  model_list = submodels(formula(full_model))
 
   # by default, give models equal prior probability
   if(is.null(prior_term_probs)){
@@ -25,23 +25,7 @@ inc_tests = function(full_model,
   }
 
   # fit all submodels
-  fit_list = list()
-  fit_list[[1]] = full_model
-  for(i in 2:model_list$n_models){
-    if(!is.null(model_list$included[[i]])){ # models with predictors
-      fit_list[[i]] = update(full_model,
-                             formula = model_list$formulas[[i]],
-                             refresh = 0)
-    }
-    else{ # intercept-only model
-      fit_list[[i]] = update(full_model,
-                             formula = model_list$formulas[[i]],
-                             stanvars = NULL, # remove stanvars for intercept-only model
-                             refresh = 0)
-    }
-
-  }
-  names(fit_list) = model_list$model_names
+  fit_list = fit_submodels(full_model, model_list)
 
   # compute Bayes factors for all models
   bfs = model_bfs(fit_list)

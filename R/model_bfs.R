@@ -8,15 +8,18 @@ model_bfs = function(fit_list){
 
   # compute log model evidence (log marginal likelihoods)
   log_evidence = rep(0.0, times = n_models)
-  for(i in 1:n_models){
-    log_evidence[[i]] = brms::bridge_sampler(fit_list[[i]], silent = TRUE)$logml
+  if(class(fit_list[[1]]) == "brmsfit"){
+    # use bridge sampling for MCMC
+    for(i in 1:n_models){
+      log_evidence[i] = brms::bridge_sampler(fit_list[[i]], silent = TRUE)$logml
+    }
+  } else{
+    # otherwise use the BIC approximation for MLE
+    log_evidence = -0.5*(lapply(fit_list, BIC) |> unlist())
   }
 
-  bfs = rep(1.0, times = n_models)
-  # the first BF is always 1, so we start the loop from 2
-  for(i in 2:n_models){
-    bfs[i] = exp(log_evidence[[i]] - log_evidence[[1]])
-  }
+  # compute Bayes factors, with the first model in the denominator
+  bfs = exp(log_evidence - log_evidence[1])
 
   return(bfs)
 }

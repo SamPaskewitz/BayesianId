@@ -19,12 +19,12 @@ brm_indprior = function(formula, data, family = gaussian(), r = 0.5, seed = NA, 
   intercept_prior = set_prior("", class = "Intercept") # improper flat prior
   has_sigma = family$family %in% c("gaussian", "student", "lognormal", "shifted_lognormal", "skew_normal", "gen_extreme_value", "exgaussian", "logistic_normal", "asym_laplace", "hurdle_lognormal")
   if(has_sigma){ # families that have sigma as a parameter
-    b_prior = set_prior("", "b") + set_prior("target += cauchy_lpdf(b | 0, r*sigma*prior_adjust)", check = FALSE)
+    b_prior = set_prior("cauchy(0, r*sigma*prior_adjust)", class = "b")
     sigma_prior = set_prior("", "sigma") + set_prior("target += -2*log(sigma)", check = FALSE) # see https://discourse.mc-stan.org/t/setting-jeffreys-s-prior-on-sigma
     our_prior = intercept_prior + b_prior + sigma_prior
   }
   else{ # families that don't have sigma as a parameter
-    b_prior = set_prior("", "b") + set_prior("target += cauchy_lpdf(b | 0, r*prior_adjust)", check = FALSE)
+    b_prior = set_prior("cauchy(0, r*prior_adjust)", class = "b")
     our_prior = intercept_prior + b_prior
   }
 

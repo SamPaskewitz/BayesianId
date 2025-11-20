@@ -11,19 +11,16 @@ library(BayesianId)
 ```
 
 ```{r}
-mtcars %>% select(mpg, disp, wt) %>% cor() %>% round(2)
-```
-
-```{r}
 data("penguins")
-levels(penguins$island)
+test_data = na.omit(penguins) %>% mutate(across(where(is.numeric), scale))
+levels(test_data$island)
 ```
 
 ```{r}
-nc = length(levels(penguins$island)) - 1
-contrasts(penguins$island) = contr_banova(nc + 1)
-contrasts(penguins$island)
-X = model.matrix(~ flipper_len + island, data = na.omit(penguins))
+nc = length(levels(test_data$island)) - 1
+contrasts(test_data$island) = contr_banova(nc + 1)
+contrasts(test_data$island)
+X = model.matrix(~ flipper_len + island, data = test_data)
 head(X)
 colMeans(X)
 ```
@@ -83,24 +80,61 @@ head(penguins)
 
 ```{r}
 fit = brm_indprior(body_mass ~ flipper_len*bill_len + (flipper_len*bill_len | island), 
-         data = na.omit(penguins),
+         data = test_data,
          chains = 2,
          seed = 1212)
 ```
 
 ```{r}
-bar = fit_submodels(fit, submodels(fit$formula))
+formula(fit)$formula |> findbars()
+```
+
+
+```{r}
+bar = fit_submodels(fit, submodels(formula(fit)))
 ```
 
 ```{r}
 library(lme4)
-fit_lmer = lmer(body_mass ~ flipper_len*bill_len + (flipper_len*bill_len | island), 
-                data = na.omit(penguins))
-VarCorr(fit_lmer)
+fit_lmer = lmer(body_mass ~ flipper_len*bill_len + (1 | island), 
+                data = test_data,
+                REML = FALSE)
+inc_tests(fit_lmer)
+```
+
+```{r}
+fit_lm = lm(body_mass ~ flipper_len*bill_len,
+            data = test_data)
+inc_tests(fit_lm)
+```
+
+```{r}
+bic_bayes_factors(fit_lm) %>% mutate(across(where(is.numeric), ~ round(.x, digits = 2)))
 ```
 
 
 
+```{r}
+fit_blmer = blmer(body_mass ~ flipper_len*bill_len + (flipper_len*bill_len | island),
+                  data = test_data,
+                  REML = FALSE,
+                  fixef.prior = normal,
+                  cov.prior = gamma)
+summary(fit_blmer)
+```
+
+```{r}
+fit_blmer2 = update(fit_blmer, formula = body_mass ~ flipper_len + bill_len + (flipper_len + bill_len | island))
+```
+
+```{r}
+fit_list = list(fit_lmer, fit_lmer2)
+lapply(fit_list, BIC) |> unlist()
+```
+
+```{r}
+print(fit_blmer)
+```
 
 ```{r}
 names(fit)
