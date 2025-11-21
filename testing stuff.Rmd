@@ -25,16 +25,6 @@ head(X)
 colMeans(X)
 ```
 ```{r}
-x_names = parse_formula(body_mass ~ flipper_len + bill_len + island)$fixed_main
-is_factor = rep(FALSE, times = length(x_names))
-for(i in 1:length(x_names)){
-  is_factor[i] = is.factor(penguins[, x_names[i]]) | is.character(penguins[, x_names[i]])
-}
-is_factor
-```
-
-
-```{r}
 prep = data.frame(y = c(-2, 9, 1, 8, -3, 1, 7),
                        x1 = factor(c("a", "b", "b", "a", "c", "a", "c")),
                        x2 = c(1, 2, 3, 1, 1, 0, 2),
@@ -46,34 +36,6 @@ X = model.matrix(y ~ x1 + x2 + x,
                  data = prep$data)
 head(X)
 ```
-
-```{r}
-# initialize prior adjustment vector
-prior_adjust = rep(1.0, times = ncol(X))
-names(prior_adjust) = colnames(X)
-
-# loop through numeric predictor variables and adjust the prior by their SDs
-# this is equivalent to z-scoring the numeric predictors
-for(i in 1:length(prep$x_numeric_names)){ 
-  x_name = prep$x_numeric_names[i] # current numeric predictor variables
-  has_x = grepl(x_name, colnames(X)) # Is the predictor part of each column in the design matrix?
-  print(x_name)
-  names(has_x) = colnames(X)
-  print(has_x)
-  print("")
-  prior_adjust[has_x] = prior_adjust[has_x]/sd(X[,x_name]) # if so, adjust for that predictor's standard deviation
-}
-
-print(adjust)
-```
-
-```{r}
-foo = parse_formula(y ~ x1 + x2*x)
-```
-
-```{r}
-foo
-```
 ```{r}
 head(penguins)
 ```
@@ -84,11 +46,21 @@ fit = brm_indprior(body_mass ~ flipper_len*bill_len + (flipper_len*bill_len | is
          chains = 2,
          seed = 1212)
 ```
+```{r}
+summary(fit)
+```
+
+
+```{r}
+library(bayesplot)
+
+mcmc_dens(fit, pars = vars(starts_with("SD")), adjust = 2)
+```
+
 
 ```{r}
 formula(fit)$formula |> findbars()
 ```
-
 
 ```{r}
 bar = fit_submodels(fit, submodels(formula(fit)))
@@ -99,8 +71,33 @@ library(lme4)
 fit_lmer = lmer(body_mass ~ flipper_len*bill_len + (1 | island), 
                 data = test_data,
                 REML = FALSE)
-inc_tests(fit_lmer)
+results = inc_tests(fit_lmer)
 ```
+
+```{r}
+results$inc_tabl
+```
+
+
+```{r}
+vcov(results$fit_list[[1]])
+```
+
+```{r}
+confint(results$fit_list[[1]], method = "Wald")
+```
+```{r}
+print(fixef(results$fit_list[[1]])["flipper_len"] - 1.96*sqrt(vcov(results$fit_list[[1]])["flipper_len", "flipper_len"]))
+
+print(fixef(results$fit_list[[1]])["flipper_len"] + 1.96*sqrt(vcov(results$fit_list[[1]])["flipper_len", "flipper_len"]))
+```
+
+
+```{r}
+coef(results$fit_list[[1]])
+```
+
+
 
 ```{r}
 fit_lm = lm(body_mass ~ flipper_len*bill_len,
@@ -109,10 +106,8 @@ inc_tests(fit_lm)
 ```
 
 ```{r}
-bic_bayes_factors(fit_lm) %>% mutate(across(where(is.numeric), ~ round(.x, digits = 2)))
+vcov(fit_lm)
 ```
-
-
 
 ```{r}
 fit_blmer = blmer(body_mass ~ flipper_len*bill_len + (flipper_len*bill_len | island),
@@ -136,11 +131,34 @@ lapply(fit_list, BIC) |> unlist()
 print(fit_blmer)
 ```
 
+
 ```{r}
-names(fit)
+test_marginality = function(terms){
+  is_interaction = grepl("\\:", terms)
+  all_okay = terms[is_interaction] |> sapply(function(intr){has_needed(terms, intr)}) |> all()
+  return(all_okay)
+}
 ```
 
 ```{r}
-head(fit$data)
+is_interaction = grepl("\\:", terms)
+terms[is_interaction] |> sapply(function(intr){has_needed(terms, intr)})
 ```
+
+```{r}
+test_marginality(c("a", "b", "c", "a:b", "b:c", "a:c", "a:b:c")) |> print()
+test_marginality(c("a", "b", "c", "a:b", "b:c", "a:b:c")) |> print()
+```
+
+```{r}
+has_needed = function(terms, intr){
+  parts = strsplit(intr, "\\:") |> unlist()
+  ord = length(parts)
+  what_needed = combn(parts, ord - 1, simplify = FALSE) |> lapply(function(x){paste(x, collapse = ":")}) |> unlist()
+  return(all(what_needed %in% terms))
+}
+```
+
+
+
 

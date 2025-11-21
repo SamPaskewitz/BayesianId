@@ -25,28 +25,8 @@ submodels = function(formula){
                    combn(all_fixed, m = m, simplify = FALSE))
   }
 
-  # Remove combinations where there is an interaction without all relevant main effects
-  to_remove = c() # list of combos to remove
-  for(i in 1:length(combo_list)){ # loop through combos
-    is_interaction = grepl("\\:", combo_list[[i]])
-    if(any(is_interaction)){
-      interactions = combo_list[[i]][is_interaction] # interactions in current combo
-      mains = combo_list[[i]][!is_interaction] # main effects in current combo
-      n_interactions = length(interactions)
-      for(j in 1:n_interactions){ # loop through interactions in the current combo
-        needed_mains = strsplit(interactions[j], "\\s*\\:\\s*")[[1]] # main effects that should be in the model
-        has_needed_mains = all(needed_mains %in% mains)
-        if(!has_needed_mains){ # check if has all needed main effects
-          to_remove = c(to_remove, i) # mark the combo to be removed
-        }
-      }
-    }
-  }
-  if(length(to_remove) > 0){
-    included = combo_list[-to_remove] # remove combinations if without all needed main effects
-  } else{
-    included = combo_list
-  }
+  # Only keep combinations that respect the principle of marginality
+  included = Filter(test_marginality, combo_list)
   included[length(included) + 1] = list(NULL) # for intercept-only model
   n_models = length(included)
 
