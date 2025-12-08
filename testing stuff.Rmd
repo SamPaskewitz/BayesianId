@@ -17,26 +17,6 @@ levels(test_data$island)
 ```
 
 ```{r}
-nc = length(levels(test_data$island)) - 1
-contrasts(test_data$island) = contr_banova(nc + 1)
-contrasts(test_data$island)
-X = model.matrix(~ flipper_len + island, data = test_data)
-head(X)
-colMeans(X)
-```
-```{r}
-prep = data.frame(y = c(-2, 9, 1, 8, -3, 1, 7),
-                       x1 = factor(c("a", "b", "b", "a", "c", "a", "c")),
-                       x2 = c(1, 2, 3, 1, 1, 0, 2),
-                       x = c(-1.4, 0.1, 0.8, -0.9, 0.5, -2.4, 12.0)) %>%
-  prepare_data(formula = y ~ x1 + x2 + x)
-  #prepare_data(formula = y ~ x1 + x2 + x3 + x1:x2 + x2:x3)
-
-X = model.matrix(y ~ x1 + x2 + x,
-                 data = prep$data)
-head(X)
-```
-```{r}
 head(penguins)
 ```
 
@@ -57,9 +37,147 @@ library(bayesplot)
 mcmc_dens(fit, pars = vars(starts_with("SD")), adjust = 2)
 ```
 
+```{r}
+library(ks)
+post <- as_draws_matrix(fit)[, c("b_flipper_len", "b_bill_len")]
+fit_kde <- kde(post)
+
+# Evaluate at a point:
+point <- c(0.2, -1.0)
+predict(fit_kde, x = point)
+```
 
 ```{r}
-formula(fit)$formula |> findbars()
+post = as_draws_matrix(fit)
+colnames(post)
+```
+```{r}
+post %>% as.data.frame() %>% select(c("b_flipper_len", "sd_island__flipper_len")) %>% cor() %>% round(2)
+```
+
+
+```{r}
+#library(rvinecopulib)
+library(kde1d)
+
+#theta = abs(rnorm(10000, mean = 0, sd = 4))
+#print(2*dnorm(0, mean = 0, sd = 4))
+theta = rgamma(10000, shape = 1, rate = 1)
+print(dgamma(0, shape = 1, rate = 1))
+print("")
+aprx_dens = kde1d(theta, xmin = 0, mult = 2)
+print(dkde1d(0, aprx_dens))
+print("")
+aprx_dens = kde1d(theta)
+aprx_dens_refl = kde1d(-theta)
+print(dkde1d(0, aprx_dens) + dkde1d(0, aprx_dens_refl))
+print("")
+n <- length(theta); h <- 1.06*sd(theta)*n^(-1/5); f0_hat <- (2/(n*h))*sum(dnorm(theta/h))
+print(f0_hat)
+```
+
+```{r}
+#library(kde1d)
+## bounded data, log-linear
+x <- rgamma(20000, shape = 1) # simulate data
+#fit <- kde1d::kde1d(x, xmin = 0, deg = 2, mult = 7) # estimate density
+fit <- rkdevine::kde1d(x, xmin = 0, deg = 2, mult = 7) # estimate density
+dkde1d(0, fit) # evaluate density estimate
+dgamma(0, shape = 1) 
+summary(fit) # information about the estimate
+plot(fit, col = "blue") # plot the density estimate
+curve(dgamma(x, shape = 1), # add true density
+  add = TRUE, col = "red",
+  from = 0
+)
+```
+
+
+```{r}
+x <- rgamma(100, shape = 0.5, rate = 3)        # simulate data
+fit <- kdevine::kde1d(x, xmin = 0) # estimate density
+kdevine::dkde1d(seq(0, 5, by = 1), fit)     # evaluate density estimate
+#summary(fit)                       # information about the estimate
+plot(fit, col = "blue")            # plot the density estimate
+curve(dgamma(x, shape = 0.5, rate = 3),        # add true density
+      add = TRUE, col = "red",
+      from = 0)
+```
+
+```{r}
+n = 10000
+n_sim = 2000
+sim = expand.grid(i = 1:n_sim,
+                  package = c("kdevine", "kde1d"))
+sim$est = 0.0
+shape = 5
+rate = 3
+
+for(i in 1:n_sim){
+  x = rgamma(n, shape = shape, rate = rate)
+  sim[sim$i == i & sim$package == "kdevine", "est"] = kdevine::kde1d(x, xmin = 0) |> kdevine::dkde1d(x = 0)
+  sim[sim$i == i & sim$package == "kde1d", "est"] = kde1d::kde1d(x, xmin = 0) |> kde1d::dkde1d(x = 0)
+}
+sim$error = sim$est - dgamma(0.0, shape = shape, rate = rate)
+
+sim |> dplyr::group_by(package) |> dplyr::summarize(mse = mean(error^2), bias = mean(error))
+
+# CONCLUSION: The package "kdevine" is MUCH better for bounded data, despite being older.
+```
+
+```{r}
+hist(x)
+```
+
+
+```{r}
+library(mvtnorm)
+
+theta = rgamma(1000, shape = 3, rate = 2)
+mu = rnorm(1000, mean = -theta, sd = 2)
+data.frame(mu, theta) |> cor() |> round(2) |> print()
+
+fit = data.frame(mu, theta) |> kdevine::kdevine(xmin = c(-Inf, 0))
+plot(fit)
+```
+
+```{r}
+drectnorm = function(x, mu, sigma, log = FALSE){
+  #dens = (x < 0)*ifelse(log, yes = -Inf, no = 0) + (x == 0)*pnorm(0, mean = mu, sd = sigma, log.p = log) + (x > 0)*dnorm(x, mean = mu, sd = sigma, log = log)
+  dens = case_when(x < 0 ~ ifelse(log, yes = -Inf, no = 0),
+                   x == 0 ~ pnorm(0, mean = mu, sd = sigma, log.p = log),
+                   x > 0 ~ dnorm(x, mean = mu, sd = sigma, log = log))
+  return(dens)
+}
+
+print(drectnorm(c(-1, 0, 2), mu = 0, sigma = 1, log = TRUE))
+```
+
+
+```{r}
+ll = function(x, pars){
+  return(sum(drectnorm(x, mu = pars[1], sigma = exp(pars[2]), log = TRUE)))
+}
+```
+
+```{r}
+theta = rnorm(1000, mean = -2, sd = 1)
+theta = ifelse(theta > 0, theta, 0)
+
+est = optim(par = c(0, 0), fn = function(pars){-ll(theta, pars)})
+
+print(c(mean(theta), sd(theta)))
+print(c(est$par[1], exp(est$par[2])))
+```
+```{r}
+hist(theta)
+```
+
+
+
+
+```{r}
+
 ```
 
 ```{r}
@@ -97,8 +215,6 @@ print(fixef(results$fit_list[[1]])["flipper_len"] + 1.96*sqrt(vcov(results$fit_l
 coef(results$fit_list[[1]])
 ```
 
-
-
 ```{r}
 fit_lm = lm(body_mass ~ flipper_len*bill_len,
             data = test_data)
@@ -121,44 +237,3 @@ summary(fit_blmer)
 ```{r}
 fit_blmer2 = update(fit_blmer, formula = body_mass ~ flipper_len + bill_len + (flipper_len + bill_len | island))
 ```
-
-```{r}
-fit_list = list(fit_lmer, fit_lmer2)
-lapply(fit_list, BIC) |> unlist()
-```
-
-```{r}
-print(fit_blmer)
-```
-
-
-```{r}
-test_marginality = function(terms){
-  is_interaction = grepl("\\:", terms)
-  all_okay = terms[is_interaction] |> sapply(function(intr){has_needed(terms, intr)}) |> all()
-  return(all_okay)
-}
-```
-
-```{r}
-is_interaction = grepl("\\:", terms)
-terms[is_interaction] |> sapply(function(intr){has_needed(terms, intr)})
-```
-
-```{r}
-test_marginality(c("a", "b", "c", "a:b", "b:c", "a:c", "a:b:c")) |> print()
-test_marginality(c("a", "b", "c", "a:b", "b:c", "a:b:c")) |> print()
-```
-
-```{r}
-has_needed = function(terms, intr){
-  parts = strsplit(intr, "\\:") |> unlist()
-  ord = length(parts)
-  what_needed = combn(parts, ord - 1, simplify = FALSE) |> lapply(function(x){paste(x, collapse = ":")}) |> unlist()
-  return(all(what_needed %in% terms))
-}
-```
-
-
-
-

@@ -1,10 +1,10 @@
 #' Use the Savage-Dickey Ratio with a brms model to compute Bayes factors for restricted models.
 #'
-#' @param brms_model A fitted brms model.
+#' @param brmsfit A fitted brms model.
 #' @returns A table (data frame) of approximate Bayes factors.
-#' @details Uses a multivariate normal approximation with medians and robust covariance estimation.
+#' @details ADD THESE
 
-restricted_model_bfs_sdr = function(brms_model){
+restricted_model_bfs_sdr = function(brmsfit){
   # set up empty table for model Bayes factors etc.
   rmodels = restricted_models(brms_model$formula)
   model_table = data.frame(BF = rep(1, times = rmodels$n_models))

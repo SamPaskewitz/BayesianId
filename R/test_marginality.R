@@ -2,7 +2,6 @@
 #' This is only intended to be used in the function "submodels".
 
 test_marginality = function(terms){
-  is_interaction = grepl("\\:", terms)
-  all_okay = terms[is_interaction] |> sapply(function(intr){has_needed(terms, intr)}) |> all()
+  all_okay = terms[is_interaction(terms)] |> sapply(function(intr){has_needed(terms, intr)}) |> all()
   return(all_okay)
 }

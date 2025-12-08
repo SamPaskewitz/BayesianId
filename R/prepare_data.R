@@ -38,7 +38,7 @@ prepare_data = function(data, formula, center = TRUE){
   if(any(!is_factor)){
     x_numeric_names = x_names[which(!is_factor)]
     if(center){
-      prep_data = prep_data |> dplyr::mutate(dplyr::across(x_numeric_names, ~ .x - mean(.x)))
+      prep_data = prep_data |> dplyr::mutate(dplyr::across(all_of(x_numeric_names), ~ .x - mean(.x)))
     }
   }
   else{

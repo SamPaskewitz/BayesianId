@@ -1,5 +1,5 @@
 #' Find all the submodels (full model plus restricted models) given a regression model formula.
-#' @param formula An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the full model, i.e. the model including all terms being considered.
+#' @param formula An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the full model, i.e. the model including all terms being considered. This could also be a string representing the formula.
 #' @returns A list containing the following elements:
 #' model_names = model formulas as strings
 #' formulas = model formulas
@@ -10,8 +10,14 @@
 #' n_terms = number of fixed effects
 #' term_names = names of fixed effects. The models are listed in each component of the output in the same order, with the full model given first.
 #' @details This function ignores random effects; appropriate random effects for submodels can be obtained using the "add_random_effects" function. GIVE FURTHER DETAILS**
+#' @export
 #'
 submodels = function(formula){
+  # If the formula is a string, convert it to a brmsformula
+  if(is.character(formula)){
+    formula = brms::bf(formula)
+  }
+
   # Parse the model formula
   model_parts = parse_formula(formula)
   n_terms = length(model_parts$fixed)
@@ -61,7 +67,7 @@ submodels = function(formula){
     } else{
       rhs = paste(c(rhs_fixed, random_included[[i]]), collapse = " + ")
     }
-    formula_list[[i]] = formula(paste(c(model_parts$lhs, rhs), collapse = " ~ "))
+    formula_list[[i]] = brms::bf(paste(c(model_parts$lhs, rhs), collapse = " ~ "))
   }
 
   # Construct model names
@@ -96,7 +102,11 @@ submodels = function(formula){
                 included_table = included_table,
                 n_models = n_models,
                 n_terms = n_terms,
-                term_names = all_fixed
+                term_names = all_fixed,
+                intr_names = Filter(is_interaction, all_fixed),
+                main_names = Filter(function(x){!is_interaction(x)}, all_fixed),
+                n_intr = sum(is_interaction(all_fixed)),
+                n_main = sum(!is_interaction(all_fixed))
                 )
   return(result)
 }

@@ -10,6 +10,7 @@
 #' @param warmup A positive integer specifying number of warmup (aka burnin) iterations. This also specifies the number of iterations used for stepsize adaptation, so warmup draws should not be used for inference. The number of warmup should not be larger than iter and the default is iter/2.
 #' @returns A fitted brms model.
 #' @details This is a wrapper around the "brm" function from brms that ADD DETAILS **
+#' @export
 
 brm_indprior = function(formula, data, family = gaussian(), r = 0.5, seed = NA, chains = 4, iter = 2000, warmup = floor(iter/2)){
   # ** prepare data **

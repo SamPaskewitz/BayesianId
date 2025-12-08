@@ -7,7 +7,7 @@
 inc_tests(full_model, prior_term_probs = NULL, digits_to_round = 2)
 }
 \arguments{
-\item{full_model}{A full_model object (fitted regression model) representing the full model, i.e. the model that includes all possible terms.}
+\item{full_model}{A brmsfit object (fitted regression model) representing the full model, i.e. the model that includes all possible terms.}
 
 \item{prior_term_probs}{Optional: a named vector giving the prior inclusion probabilities for parameters (names = parameters/terms). By default (if NULL) these are set to 0.5, which corresponds to uniform prior probabilities across models DOUBLE CHECK *.}
 

@@ -1,7 +1,7 @@
 #' Compute Bayes factors for a list of models.
-#' @param model_list A list of brmsfit objects, i.e. fitted regression models.
+#' @param model_list A list of fitted regression models, either brmsfit objects or MLE fits from "lm", "glm", "lmer" etc.
 #' @returns A vector of Bayes factors.
-#' @details The first model in the list is used as the denominator for comparisons, i.e. the Bayes factor for model i is defined as p(D | first model)/p(D | model i). Currently the Bayes factors are computed using bridge sampling. I may change this or add other methods in the future.
+#' @details The first model in the list is used as the denominator for comparisons, i.e. the Bayes factor for model i is defined as p(D | first model)/p(D | model i). If the fitted models are brmsfit objects, the Bayes factors are computed using bridge sampling. If not, it is assummed that they were fitted by MLE, and Bayes factors are computed using the BIC approximation.
 
 model_bfs = function(fit_list){
   n_models = length(fit_list)

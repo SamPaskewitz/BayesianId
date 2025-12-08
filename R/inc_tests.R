@@ -1,27 +1,47 @@
 #' Conduct term inclusion tests. This is the most important function in the "BayesianId" package.
 #'
 #' @param full_model A brmsfit object (fitted regression model) representing the full model, i.e. the model that includes all possible terms.
-#' @param prior_term_probs Optional: a named vector giving the prior inclusion probabilities for parameters (names = parameters/terms). By default (if NULL) these are set to 0.5, which corresponds to uniform prior probabilities across models DOUBLE CHECK *.
+#' @param prior_main_effect_probs Optional: a named vector giving the prior inclusion probabilities for main effects. By default (if NULL) these are set to 0.5.
+#' @param prior_intr_condprobs Optional: a named vector giving the prior inclusion conditional probabilities for interactions (given that the necessary main effects/lower order interactions are present. By default (if NULL) these are set to 0.5 if there are interactions, are to NULL if there are no interactions.
 #' @param digits_to_round Number of digits to round results to.
-#' @returns A list containing the following two elements: inc_table (term inclusion prior and posterior probabilities/odds, Bayes factors), model_table (model prior and posterior probabilities/odds, Bayes factors)
+#' @returns A list containing the following:
+#' inc_table (term inclusion prior and posterior probabilities/odds, Bayes factors)
+#' model_table (model prior and posterior probabilities/odds, Bayes factors)
+#' fit_list (list of fitted submodels)
+#' @export
 #'
 inc_tests = function(full_model,
-                     prior_term_probs = NULL,
+                     prior_main_effect_probs = NULL,
+                     prior_intr_condprobs = NULL,
                      digits_to_round = 2
                      ){
   # get a list of submodels (full model plus restricted models)
   model_list = submodels(formula(full_model))
 
-  # by default, give models equal prior probability
-  if(is.null(prior_term_probs)){
-    prior_model_probs = rep(1/model_list$n_models, times = model_list$n_models)
-    names(prior_model_probs) = model_list$model_names
-    prior_term_probs = probs_model_to_term(prior_model_probs, model_list)
+  # use default prior probs if not manually specified
+  if(is.null(prior_term_probs)){ # default
+    prior_main_effect_probs = rep(0.5, times = model_list$n_terms)
+    names(prior_main_effect_probs) = model_list$main_effect_names
   }
-  # otherwise, convert parameter prior probs to model prior probs
-  else{
-    # * NEED TO UPDATE THIS TO WORK WITH INTERACTIONS
-    prior_model_probs = probs_term_to_model(prior_term_probs, model_list$included_table)
+  if(is.null(prior_intr_condprobs)){
+    if(is.null(model_list$intr_names)){ # default if there are no interactions
+      prior_intr_condprobs = NULL
+    }
+    else{ # default if there are interactions
+      prior_intr_condprobs = rep(0.5, times = model_list$n_terms)
+      names(prior_intr_condprobs) = model_list$intr_names
+    }
+  }
+
+  # convert prior term inclusion probabilities to model probabilities
+  prior_model_probs = probs_term_to_model(prior_main_effect_probs, prior_intr_condprobs, model_list)
+
+  # get marginal term inclusion probabilities
+  if(model_list$n_intr == 0){ # no interactions
+    prior_term_probs = prior_main_effect_probs
+  }
+  else{ # have interactions -> get back from models
+    prior_term_probs = probs_model_to_term(prior_model_probs, model_list)
   }
 
   # fit all submodels
@@ -35,10 +55,10 @@ inc_tests = function(full_model,
   post_model_odds = bfs*prior_model_odds
   post_model_probs = post_model_odds/sum(post_model_odds)
 
-  # convert model posterior probs to parameter posterior probs
+  # convert model posterior probs to term posterior probs
   post_term_probs = probs_model_to_term(post_model_probs, model_list)
 
-  # make nice output tables for parameters and models
+  # make nice output tables for term and models
   inc_table = data.frame("p(β≠0)" = prior_term_probs,
                          "p(β≠0|D)" = post_term_probs,
                          "prior odds" = prior_term_probs/(1 - prior_term_probs),

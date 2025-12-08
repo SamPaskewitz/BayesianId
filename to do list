@@ -1,22 +1,26 @@
 - Write a more convenient posterior predictive plotting function that automatically chooses the appropriate type of plot based on the model family.
 
-- Write code (using "posterior_average" from brms) for getting posterior distribution plots, credible intervals, etc. averaging across models by posterior probability.
+- brm_indprior:
+  - Write tests.
+  - Fix the prior on random effect SDs so that it scales with sigma.
+  - Provide named defaults for the Cauchy r hyperparameter (see the BayesFactor package). Also adjust appropriately for logistic regression etc. (make sure that the latent SD is consistent).
 
-- In the long term: consider switching to INLA instead of MCMC.
+- Write code to test for interval null hypotheses using the encompassing prior approach.
 
-- For submodels:
-  - Get it to work properly with 3-way interactions.
-  - Give a warning if there are 4-way or more complex interactions.
-
-- For inc_tests:
+- model_bfs_sdr:
+  - Write the code for fixed effects models.
+  - Write the code for mixed effects models.
   - Write tests.
 
-- For brm_jzs:
+- inc_tests:
+  - Write tests.
+  - FIX INTERACTION TERM PROBS
+
+- brm_jzs:
   - Make sure they're not passing in a multivariate formula or anything crazy like that.
-  - Give a warning if they're trying to pass in a formula with random effects.
+  - Give a warning if they're trying to pass in a formula with random effects.test
   - Check the relevant paper (Hyper-g Priors for Generalized Linear Models, Bove' & Held, 2011, about JZS priors for GLMs) about "c" and the "weights", and fix things if needed.
   - Figure out what model families to support and have some idea about what they do.
-  - Provide support for factors (proper contrast coding).
   - Provide named defaults for the Cauchy r hyperparameter (see the BayesFactor package).
   - Write tests.
 
