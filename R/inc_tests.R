@@ -1,7 +1,7 @@
 #' Conduct term inclusion tests. This is the most important function in the "BayesianId" package.
 #'
 #' @param full_model A brmsfit object (fitted regression model) representing the full model, i.e. the model that includes all possible terms.
-#' @param prior_main_effect_probs Optional: a named vector giving the prior inclusion probabilities for main effects. By default (if NULL) these are set to 0.5.
+#' @param prior_main_probs Optional: a named vector giving the prior inclusion probabilities for main effects. By default (if NULL) these are set to 0.5.
 #' @param prior_intr_condprobs Optional: a named vector giving the prior inclusion conditional probabilities for interactions (given that the necessary main effects/lower order interactions are present. By default (if NULL) these are set to 0.5 if there are interactions, are to NULL if there are no interactions.
 #' @param digits_to_round Number of digits to round results to.
 #' @returns A list containing the following:
@@ -11,7 +11,7 @@
 #' @export
 #'
 inc_tests = function(full_model,
-                     prior_main_effect_probs = NULL,
+                     prior_main_probs = NULL,
                      prior_intr_condprobs = NULL,
                      digits_to_round = 2
                      ){
@@ -19,9 +19,9 @@ inc_tests = function(full_model,
   model_list = submodels(formula(full_model))
 
   # use default prior probs if not manually specified
-  if(is.null(prior_term_probs)){ # default
-    prior_main_effect_probs = rep(0.5, times = model_list$n_terms)
-    names(prior_main_effect_probs) = model_list$main_effect_names
+  if(is.null(prior_main_probs)){ # default
+    prior_main_probs = rep(0.5, times = model_list$n_terms)
+    names(prior_main_probs) = model_list$main_effect_names
   }
   if(is.null(prior_intr_condprobs)){
     if(is.null(model_list$intr_names)){ # default if there are no interactions
@@ -34,11 +34,11 @@ inc_tests = function(full_model,
   }
 
   # convert prior term inclusion probabilities to model probabilities
-  prior_model_probs = probs_term_to_model(prior_main_effect_probs, prior_intr_condprobs, model_list)
+  prior_model_probs = probs_term_to_model(prior_main_probs, prior_intr_condprobs, model_list)
 
   # get marginal term inclusion probabilities
   if(model_list$n_intr == 0){ # no interactions
-    prior_term_probs = prior_main_effect_probs
+    prior_term_probs = prior_main_probs
   }
   else{ # have interactions -> get back from models
     prior_term_probs = probs_model_to_term(prior_model_probs, model_list)
