@@ -231,7 +231,7 @@ qmix(0.025, c(0.95,0.05), c(0,0), c(1,1.1))
 ```
 
 ```{r}
-bma = reg_bma(lm(y ~ x1*island, data = test_data))
+bma = reg_bma(lm(y ~ x1*x2*island, data = test_data))
 ```
 
 ```{r}
@@ -241,17 +241,16 @@ summary(bma, type = "terms")
 ```{r}
 coef(bma)
 ```
-```{r}
 
+```{r}
+coef_names = colnames(model.matrix(bma$fit_list[[1]]))
+non_factor_coef_names = coef_names[coef_names %in% bma$model_info$term_names] # coefficients that are not factor contrast codes or interactions with factor contrast codes
+factor_coef_names = coef_names[!(coef_names %in% bma$model_info$term_names)]
+coef_names
 ```
 
 ```{r}
-coef_names = (coef(bma$fit_list[[1]]) |> names())[-1] # coefficient names (minus the intercept)
-non_factor_coef_names = coef_names %in% bma$model_info$term_names # coefficients that are not factor contrast codes or interactions with factor contrast codes
-```
-
-```{r}
-emmeans(bma$fit_list[[1]], ~ x1*island)
+emmeans(bma$fit_list[[1]], "island")
 ```
 
 

@@ -59,33 +59,32 @@ summary.reg_bma = function(obj, type = "terms", digits_to_round = 3){
 #' @export
 #' @method coef reg_bma
 coef.reg_bma = function(obj){
-  # figure out which coefficients are not factor contrast codes or interactions with factor contrast codes (or the intercept); these will be the coefficients whose names are equal to those of model terms
-  coef_names = (coef(bma$fit_list[[1]]) |> names())[-1]
-  non_factor_coef_names = coef_names[coef_names %in% obj$model_info$term_names]
-  n_nfc = length(non_factor_coef_names) # number of non-factor coefficients
+  # figure out coefficient names
+  coef_names = colnames(model.matrix(obj$fit_list[[1]]))
+  n_coef = length(coef_names)
 
-  # set up table for non-factor coefficients
-  est_table = data.frame(mean = rep(0.0, times = n_nfc),
-                         sd = rep(0.0, times = n_nfc),
-                         "2.5 %" = rep(0.0, times = n_nfc),
-                         "97.5 %" = rep(0.0, times = n_nfc),
+  # set up table for coefficients
+  est_table = data.frame(mean = rep(0.0, times = n_coef),
+                         sd = rep(0.0, times = n_coef),
+                         "2.5 %" = rep(0.0, times = n_coef),
+                         "97.5 %" = rep(0.0, times = n_coef),
                          check.names = FALSE)
-  row.names(est_table) = non_factor_coef_names
+  row.names(est_table) = coef_names
 
-  # fill out table for non-factor coefficients
-  for(i in 1:n_nfc){
-    term = non_factor_coef_names[i]
-    incl = obj$model_info$included_table[,term]
-    pi = obj$post_model_odds[incl]/sum(obj$post_model_odds[incl])
-    mu = lapply(obj$fit_list[incl], function(x){coef(x)[term]}) |> unlist()
-    sigma = lapply(obj$fit_list[incl], function(x){vcov(x)[term, term] |> sqrt()}) |> unlist()
+  # fill out table for coefficients
+  for(i in 1:n_coef){
+    coef_name = coef_names[i]
+    incl = lapply(obj$fit_list, function(x){coef_name %in% colnames(model.matrix(x))}) |> unlist() # Does each model include the coef?
+    pi = obj$post_model_odds[incl]/sum(obj$post_model_odds[incl]) # post probs for models that include the coef
+    mu = lapply(obj$fit_list[incl], function(x){coef(x)[coef_name]}) |> unlist() # means from models that include the coef
+    sigma = lapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()}) |> unlist() # SD's from models that include the coef
 
     if(sum(incl) > 1){ # more than one model includes the coefficient
       est_table[i, "mean"] = sum(pi*mu)
       est_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + est_table[i, "mean"]^2)) - est_table[i, "mean"]^2)
       est_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
       est_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
-    } else{ # only one model includes the term
+    } else{ # only one model includes the coef_name
       est_table[i, "mean"] = mu
       est_table[i, "sd"] = sigma
       est_table[i, "2.5 %"] = qnorm(p = 0.025, mean = mu, sd = sigma)
