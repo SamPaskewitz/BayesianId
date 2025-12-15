@@ -4,10 +4,10 @@
 \alias{restricted_model_bfs_sdr}
 \title{Use the Savage-Dickey Ratio with a brms model to compute Bayes factors for restricted models.}
 \usage{
-restricted_model_bfs_sdr(brms_model)
+restricted_model_bfs_sdr(brmsfit)
 }
 \arguments{
-\item{brms_model}{A fitted brms model.}
+\item{brmsfit}{A fitted brms model.}
 }
 \value{
 A table (data frame) of approximate Bayes factors.
@@ -16,5 +16,5 @@ A table (data frame) of approximate Bayes factors.
 Use the Savage-Dickey Ratio with a brms model to compute Bayes factors for restricted models.
 }
 \details{
-Uses a multivariate normal approximation with medians and robust covariance estimation.
+ADD THESE
 }

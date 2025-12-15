@@ -13,22 +13,22 @@
 inc_tests = function(full_model,
                      prior_main_probs = NULL,
                      prior_intr_condprobs = NULL,
-                     digits_to_round = 2
+                     digits_to_round = 3
                      ){
   # get a list of submodels (full model plus restricted models)
   model_list = submodels(formula(full_model))
 
   # use default prior probs if not manually specified
   if(is.null(prior_main_probs)){ # default
-    prior_main_probs = rep(0.5, times = model_list$n_terms)
-    names(prior_main_probs) = model_list$main_effect_names
+    prior_main_probs = rep(0.5, times = model_list$n_main)
+    names(prior_main_probs) = model_list$main_names
   }
   if(is.null(prior_intr_condprobs)){
     if(is.null(model_list$intr_names)){ # default if there are no interactions
       prior_intr_condprobs = NULL
     }
     else{ # default if there are interactions
-      prior_intr_condprobs = rep(0.5, times = model_list$n_terms)
+      prior_intr_condprobs = rep(0.5, times = model_list$n_intr)
       names(prior_intr_condprobs) = model_list$intr_names
     }
   }

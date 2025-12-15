@@ -7,7 +7,7 @@
 submodels(formula)
 }
 \arguments{
-\item{formula}{An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the full model, i.e. the model including all terms being considered.}
+\item{formula}{An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the full model, i.e. the model including all terms being considered. This could also be a string representing the formula.}
 }
 \value{
 A list containing the following elements:

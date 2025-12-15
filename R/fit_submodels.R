@@ -13,7 +13,7 @@ fit_submodels = function(full_model, model_list){
       if("prior_adjust" %in% names(full_model$stanvars) & i < model_list$n_models){
         # new_stanvars for ind. prior models
         new_X_names = (brms::standata(model_list$formulas[[i]], full_model$data)$X |> colnames())[-1]
-        new_stanvars = stanvar(full_model$stanvars$prior_adjust$sdata[new_X_names], name = "prior_adjust", block = "data") + stanvar(r, name = "r", scode = "real<lower=0> r;", block = "data")
+        new_stanvars = stanvar(full_model$stanvars$prior_adjust$sdata[new_X_names], name = "prior_adjust", block = "data") + stanvar(full_model$stanvars$r$sdata, name = "r", scode = "real<lower=0> r;", block = "data")
       } else{
         # new_stanvars for JZS prior or intercept-only model
         new_stanvars = NULL

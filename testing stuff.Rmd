@@ -12,22 +12,60 @@ library(BayesianId)
 
 ```{r}
 data("penguins")
-test_data = na.omit(penguins) %>% mutate(across(where(is.numeric), scale))
-levels(test_data$island)
+test_data = na.omit(penguins) %>% rename(y = body_mass, x1 = flipper_len, x2 = bill_len)
+levels(test_data$island) |> print()
+nrow(test_data) |> print()
 ```
 
 ```{r}
-head(penguins)
+test_data[10:20,]
 ```
 
 ```{r}
-fit = brm_indprior(body_mass ~ flipper_len*bill_len + (flipper_len*bill_len | island), 
-         data = test_data,
-         chains = 2,
-         seed = 1212)
+fit = brm_indprior(#y ~ x1*x2,
+                   y ~ x1 + x2 + (x1 + x2 | island), 
+                   data = test_data,
+                   chains = 2,
+                   seed = 1212)
 ```
 ```{r}
-summary(fit)
+foo = lme4::lmer(formula = y ~ x1 + x2 + (x1 + x2 | island),
+                 data = test_data)
+Z = model.matrix(foo,
+                 type = "random")
+dim(Z) |> print()
+colnames(Z) |> print()
+```
+
+```{r}
+Z = matrix(0.0, nrow = nrow(test_data), ncol = 3*length(unique(test_data$island)))
+```
+
+```{r}
+Z[10:20,]
+```
+
+
+```{r}
+stancode(fit)
+```
+
+
+```{r}
+names(fit)
+```
+
+```{r}
+#devtools::load_all()
+model_bfs_sdr(fit, submodels(fit |> formula())) |> as.matrix() |> round(digits = 2)
+
+## COMMENT: It runs, but gives very different answers from sample to sample.
+```
+
+
+
+```{r}
+inc_tests(fit)
 ```
 
 
@@ -160,80 +198,53 @@ ll = function(x, pars){
 }
 ```
 
-```{r}
-theta = rnorm(1000, mean = -2, sd = 1)
-theta = ifelse(theta > 0, theta, 0)
-
-est = optim(par = c(0, 0), fn = function(pars){-ll(theta, pars)})
-
-print(c(mean(theta), sd(theta)))
-print(c(est$par[1], exp(est$par[2])))
-```
-```{r}
-hist(theta)
-```
-
 
 
 
 ```{r}
+# https://stats.stackexchange.com/questions/390931/compute-quantile-function-from-a-mixture-of-normal-distribution
+# based on the answer by "Sextus Empiricus"
+# changed to use "optimize" because "uniroot" was giving me trouble
 
+mu = rnorm(n = 15, sd = 2)
+sigma = rgamma(n = 15, shape = 1)
+pi = rgamma(n = 15, shape = 1); pi = pi/sum(pi)
+
+pmix = function(q, pi, mu, sigma){
+  return(sum(pi*pnorm(q, mean = mu, sd = sigma)))
+}
+
+pmix(1.0, pi, mu, sigma)
 ```
 
 ```{r}
-bar = fit_submodels(fit, submodels(formula(fit)))
+qmix = function(p, pi, mu, sigma){
+   q = optimize(function(x){(pmix(x, pi, mu, sigma) - p)^2},
+                interval = range(qnorm(p, mu, sigma)))$minimum
+   return(q)
+}
 ```
 
 ```{r}
-library(lme4)
-fit_lmer = lmer(body_mass ~ flipper_len*bill_len + (1 | island), 
-                data = test_data,
-                REML = FALSE)
-results = inc_tests(fit_lmer)
+qmix(0.05, pi, mu, sigma)
+qmix(0.025, c(0.95,0.05), c(0,0), c(1,1.1))
 ```
 
 ```{r}
-results$inc_tabl
-```
-
-
-```{r}
-vcov(results$fit_list[[1]])
+bma = reg_bma(lm(y ~ x1*island, data = test_data))
 ```
 
 ```{r}
-confint(results$fit_list[[1]], method = "Wald")
-```
-```{r}
-print(fixef(results$fit_list[[1]])["flipper_len"] - 1.96*sqrt(vcov(results$fit_list[[1]])["flipper_len", "flipper_len"]))
-
-print(fixef(results$fit_list[[1]])["flipper_len"] + 1.96*sqrt(vcov(results$fit_list[[1]])["flipper_len", "flipper_len"]))
-```
-
-
-```{r}
-coef(results$fit_list[[1]])
+summary(bma, type = "terms")
 ```
 
 ```{r}
-fit_lm = lm(body_mass ~ flipper_len*bill_len,
-            data = test_data)
-inc_tests(fit_lm)
+coef(bma)
 ```
 
 ```{r}
-vcov(fit_lm)
+emmeans(bma$fit_list[[1]], ~ x1*island)
 ```
 
-```{r}
-fit_blmer = blmer(body_mass ~ flipper_len*bill_len + (flipper_len*bill_len | island),
-                  data = test_data,
-                  REML = FALSE,
-                  fixef.prior = normal,
-                  cov.prior = gamma)
-summary(fit_blmer)
-```
 
-```{r}
-fit_blmer2 = update(fit_blmer, formula = body_mass ~ flipper_len + bill_len + (flipper_len + bill_len | island))
-```
+

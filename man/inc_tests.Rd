@@ -4,17 +4,27 @@
 \alias{inc_tests}
 \title{Conduct term inclusion tests. This is the most important function in the "BayesianId" package.}
 \usage{
-inc_tests(full_model, prior_term_probs = NULL, digits_to_round = 2)
+inc_tests(
+  full_model,
+  prior_main_probs = NULL,
+  prior_intr_condprobs = NULL,
+  digits_to_round = 3
+)
 }
 \arguments{
 \item{full_model}{A brmsfit object (fitted regression model) representing the full model, i.e. the model that includes all possible terms.}
 
-\item{prior_term_probs}{Optional: a named vector giving the prior inclusion probabilities for parameters (names = parameters/terms). By default (if NULL) these are set to 0.5, which corresponds to uniform prior probabilities across models DOUBLE CHECK *.}
+\item{prior_main_probs}{Optional: a named vector giving the prior inclusion probabilities for main effects. By default (if NULL) these are set to 0.5.}
+
+\item{prior_intr_condprobs}{Optional: a named vector giving the prior inclusion conditional probabilities for interactions (given that the necessary main effects/lower order interactions are present. By default (if NULL) these are set to 0.5 if there are interactions, are to NULL if there are no interactions.}
 
 \item{digits_to_round}{Number of digits to round results to.}
 }
 \value{
-A list containing the following two elements: inc_table (term inclusion prior and posterior probabilities/odds, Bayes factors), model_table (model prior and posterior probabilities/odds, Bayes factors)
+A list containing the following:
+inc_table (term inclusion prior and posterior probabilities/odds, Bayes factors)
+model_table (model prior and posterior probabilities/odds, Bayes factors)
+fit_list (list of fitted submodels)
 }
 \description{
 Conduct term inclusion tests. This is the most important function in the "BayesianId" package.

@@ -2,12 +2,14 @@
 % Please edit documentation in R/probs_term_to_model.R
 \name{probs_term_to_model}
 \alias{probs_term_to_model}
-\title{Convert parameter probabilities into model probablities.}
+\title{Convert term inclusion probabilities into model probablities.}
 \usage{
-probs_term_to_model(term_probs, model_list)
+probs_term_to_model(main_probs, intr_condprobs, model_list)
 }
 \arguments{
-\item{term_probs}{A named vector of parameter inclusion probabilities (names = model terms/parameters).}
+\item{main_probs}{A named vector of inclusion probabilities for main effects.}
+
+\item{intr_condprobs}{A named vector of inclusion conditional probabilities for interactions, or NULL if there are no interactions.}
 
 \item{model_list}{A list containing information about some models (see restricted_models for details).}
 }
@@ -15,8 +17,13 @@ probs_term_to_model(term_probs, model_list)
 A named vector of model probabilities (names = model formulas).
 }
 \description{
-Convert parameter probabilities into model probablities.
+Convert term inclusion probabilities into model probablities.
 }
 \details{
-This assumes that the prior probabilities for parameter inclusion are all independent of each other.
+Prior probabilities for main effects are assumed to be independent of each other. Prior probabilities for two-way interactions are conditional on the inclusion of both relevant main effects, those for three-way interactions on the inclusion of relevant main effects and two-way interactions, etc.
+}
+\examples{
+* ADD THESE, ESPECIALLY TO SHOW HOW INTERACTIONS WORK
+
+
 }

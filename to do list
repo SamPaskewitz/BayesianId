@@ -1,27 +1,29 @@
-- Write a more convenient posterior predictive plotting function that automatically chooses the appropriate type of plot based on the model family.
+- CHECK write code for BMA estimates and credible intervals from MLE aprx
 
-- brm_indprior:
-  - Write tests.
-  - Fix the prior on random effect SDs so that it scales with sigma.
-  - Provide named defaults for the Cauchy r hyperparameter (see the BayesFactor package). Also adjust appropriately for logistic regression etc. (make sure that the latent SD is consistent).
+- use rstantools to set up package for using pre-compiled stan models
 
-- Write code to test for interval null hypotheses using the encompassing prior approach.
+- function for fitting linear/normal fixed effects model with independent priors
 
-- model_bfs_sdr:
-  - Write the code for fixed effects models.
-  - Write the code for mixed effects models.
-  - Write tests.
+- define class for this package's regression models with "summary", "plot", and other methods
 
-- inc_tests:
-  - Write tests.
-  - FIX INTERACTION TERM PROBS
+- making a function to separately fit the whole family of nested models
 
-- brm_jzs:
-  - Make sure they're not passing in a multivariate formula or anything crazy like that.
-  - Give a warning if they're trying to pass in a formula with random effects.test
-  - Check the relevant paper (Hyper-g Priors for Generalized Linear Models, Bove' & Held, 2011, about JZS priors for GLMs) about "c" and the "weights", and fix things if needed.
-  - Figure out what model families to support and have some idea about what they do.
-  - Provide named defaults for the Cauchy r hyperparameter (see the BayesFactor package).
-  - Write tests.
+- make a class for this set of nested models
 
-- Look at using the ‘instantiate’ package to use pre-compiled models.
+- update "inc_tests" to work with this new class of sets of nested models
+
+- write "plot" and "summary" methods for the new class of sets of nested models that produce BMA credible intervals, point estimates, plots etc.
+
+- add version with censoring
+
+- add logistic regression version
+
+- add random effects to existing models
+
+- option of JZS priors for numeric vars
+
+- improve the "summary" method so that it shows group differences for factors instead of contrast code coefficient estimates
+
+- add other methods based on rstanarm methods
+
+-
