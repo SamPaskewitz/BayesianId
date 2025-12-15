@@ -59,23 +59,28 @@ summary.reg_bma = function(obj, type = "terms", digits_to_round = 3){
 #' @export
 #' @method coef reg_bma
 coef.reg_bma = function(obj){
-  # set up table
-  est_table = data.frame(mean = rep(0.0, times = obj$model_info$n_terms),
-                         sd = rep(0.0, times = obj$model_info$n_terms),
-                         "2.5 %" = rep(0.0, times = obj$model_info$n_terms),
-                         "97.5 %" = rep(0.0, times = obj$model_info$n_terms),
-                         check.names = FALSE)
-  row.names(est_table) = obj$model_info$term_names
+  # figure out which coefficients are not factor contrast codes or interactions with factor contrast codes (or the intercept); these will be the coefficients whose names are equal to those of model terms
+  coef_names = (coef(bma$fit_list[[1]]) |> names())[-1]
+  non_factor_coef_names = coef_names[coef_names %in% obj$model_info$term_names]
+  n_nfc = length(non_factor_coef_names) # number of non-factor coefficients
 
-  # fill out table
-  for(i in 1:obj$model_info$n_terms){
-    term = obj$model_info$term_names[i]
-    incl = obj$model_info$included_table[,i]
+  # set up table for non-factor coefficients
+  est_table = data.frame(mean = rep(0.0, times = n_nfc),
+                         sd = rep(0.0, times = n_nfc),
+                         "2.5 %" = rep(0.0, times = n_nfc),
+                         "97.5 %" = rep(0.0, times = n_nfc),
+                         check.names = FALSE)
+  row.names(est_table) = non_factor_coef_names
+
+  # fill out table for non-factor coefficients
+  for(i in 1:n_nfc){
+    term = non_factor_coef_names[i]
+    incl = obj$model_info$included_table[,term]
     pi = obj$post_model_odds[incl]/sum(obj$post_model_odds[incl])
     mu = lapply(obj$fit_list[incl], function(x){coef(x)[term]}) |> unlist()
     sigma = lapply(obj$fit_list[incl], function(x){vcov(x)[term, term] |> sqrt()}) |> unlist()
 
-    if(sum(incl) > 1){ # more than one model includes the term
+    if(sum(incl) > 1){ # more than one model includes the coefficient
       est_table[i, "mean"] = sum(pi*mu)
       est_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + est_table[i, "mean"]^2)) - est_table[i, "mean"]^2)
       est_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)

@@ -241,6 +241,14 @@ summary(bma, type = "terms")
 ```{r}
 coef(bma)
 ```
+```{r}
+
+```
+
+```{r}
+coef_names = (coef(bma$fit_list[[1]]) |> names())[-1] # coefficient names (minus the intercept)
+non_factor_coef_names = coef_names %in% bma$model_info$term_names # coefficients that are not factor contrast codes or interactions with factor contrast codes
+```
 
 ```{r}
 emmeans(bma$fit_list[[1]], ~ x1*island)
