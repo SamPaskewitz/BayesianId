@@ -4,14 +4,14 @@
 \alias{probs_term_to_model}
 \title{Convert term inclusion probabilities into model probablities.}
 \usage{
-probs_term_to_model(main_probs, intr_condprobs, model_list)
+probs_term_to_model(main_probs, intr_condprobs, model_info)
 }
 \arguments{
 \item{main_probs}{A named vector of inclusion probabilities for main effects.}
 
 \item{intr_condprobs}{A named vector of inclusion conditional probabilities for interactions, or NULL if there are no interactions.}
 
-\item{model_list}{A list containing information about some models (see restricted_models for details).}
+\item{model_info}{Information about submodels, returned by using the function "submodels" on "formula(full_model)".}
 }
 \value{
 A named vector of model probabilities (names = model formulas).

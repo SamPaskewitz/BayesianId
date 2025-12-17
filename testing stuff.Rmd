@@ -231,27 +231,74 @@ qmix(0.025, c(0.95,0.05), c(0,0), c(1,1.1))
 ```
 
 ```{r}
-bma = reg_bma(lm(y ~ x1*x2*island, data = test_data))
+form = formula(y ~ x1 + island)
+bma_lm = reg_bma(lm(formula = form, data = test_data))
+bma_brm = reg_bma(brm_indprior(formula = form, data = test_data))
+```
+```{r}
+foo = lm_indprior(formula = y ~ 1, data = test_data)
+```
+```{r}
+class(foo) = "brmsfit"
+```
+
+
+```{r}
+summary(foo)
+```
+```{r}
+print(lm(form, test_data))
+```
+
+
+```{r}
+bar = brms::standata(form, test_data)
+```
+```{r}
+colnames(bar$X)
+```
+
+
+```{r}
+brms::stancode(y ~ 1, data = test_data)
 ```
 
 ```{r}
-summary(bma, type = "terms")
+bar = update(foo, formula = y ~ island)
+summary(bar)
+```
+
+
+```{r}
+#bma_rsa = reg_bma(rstanarm::stan_glm(y ~ x1 + x2, family = gaussian(), data = test_data, refresh = 0, prior = normal(autoscale = TRUE), diagnostic_file = file.path(tempdir(), "df.csv"), iter = 15000))
 ```
 
 ```{r}
-coef(bma)
+summary(bma_brm, type = "est")
+```
+```{r}
+summary(bma_lm, type = "est")
+```
+
+
+
+
+```{r}
+model.matrix(bma$fit_list[[1]])
+```
+```{r}
+bma$fit_list[[1]]
+```
+
+
+```{r}
+EMM = emmeans(bma$fit_list[[1]], as.formula(bma$model_info$model_names[[1]]))
 ```
 
 ```{r}
-coef_names = colnames(model.matrix(bma$fit_list[[1]]))
-non_factor_coef_names = coef_names[coef_names %in% bma$model_info$term_names] # coefficients that are not factor contrast codes or interactions with factor contrast codes
-factor_coef_names = coef_names[!(coef_names %in% bma$model_info$term_names)]
-coef_names
+EMM |> summary()
 ```
 
-```{r}
-emmeans(bma$fit_list[[1]], "island")
-```
 
 
 

@@ -16,20 +16,7 @@ brm_indprior = function(formula, data, family = gaussian(), r = 0.5, seed = NA, 
   # ** prepare data **
   prep = prepare_data(data, formula)
 
-  # ** define prior **
-  intercept_prior = set_prior("", class = "Intercept") # improper flat prior
-  has_sigma = family$family %in% c("gaussian", "student", "lognormal", "shifted_lognormal", "skew_normal", "gen_extreme_value", "exgaussian", "logistic_normal", "asym_laplace", "hurdle_lognormal")
-  if(has_sigma){ # families that have sigma as a parameter
-    b_prior = set_prior("cauchy(0, r*sigma*prior_adjust)", class = "b")
-    sigma_prior = set_prior("", "sigma") + set_prior("target += -2*log(sigma)", check = FALSE) # see https://discourse.mc-stan.org/t/setting-jeffreys-s-prior-on-sigma
-    our_prior = intercept_prior + b_prior + sigma_prior
-  }
-  else{ # families that don't have sigma as a parameter
-    b_prior = set_prior("cauchy(0, r*prior_adjust)", class = "b")
-    our_prior = intercept_prior + b_prior
-  }
-
-  # ** set up prior adjustments (based on the SDs of numeric predictors) **
+  # ** set up prior adjustments (based on the SD's of numeric predictors) **
   # design matrix (without intercept)
   X = brms::standata(formula, data)$X[,-1]
 
@@ -40,14 +27,29 @@ brm_indprior = function(formula, data, family = gaussian(), r = 0.5, seed = NA, 
   # loop through numeric predictor variables and adjust the prior by their SDs
   # TO DO: Fix this so that it works if one variable name is a subset of another variable's name, e.g. "x" and "x1".
   # OR ELSE: Give a warning if one variable's name is a subset of another's.
-  for(i in 1:length(prep$x_numeric_names)){
-    has_x = grepl(prep$x_numeric_names[i], colnames(X))
-    prior_adjust[has_x] = prior_adjust[has_x]/sd(X[,prep$x_numeric_names[i]])
+  if(!is.null(prep$x_numeric_names)){
+    for(i in 1:length(prep$x_numeric_names)){
+      has_x = grepl(prep$x_numeric_names[i], colnames(X))
+      prior_adjust[has_x] = prior_adjust[has_x]/sd(X[,prep$x_numeric_names[i]])
+    }
+  }
+
+  # ** define prior **
+  intercept_prior = brms::set_prior("", class = "Intercept") # improper flat prior
+  has_sigma = family$family %in% c("gaussian", "student", "lognormal", "shifted_lognormal", "skew_normal", "gen_extreme_value", "exgaussian", "logistic_normal", "asym_laplace", "hurdle_lognormal")
+  if(has_sigma){ # families that have sigma as a parameter
+    b_prior = brms::set_prior("cauchy(0, r*sigma*prior_adjust)", class = "b")
+    sigma_prior = brms::set_prior("", "sigma") + brms::set_prior("target += -2*log(sigma)", check = FALSE) # see https://discourse.mc-stan.org/t/setting-jeffreys-s-prior-on-sigma
+    our_prior = intercept_prior + b_prior + sigma_prior
+  }
+  else{ # families that don't have sigma as a parameter
+    b_prior = brms::set_prior("cauchy(0, r*prior_adjust)", class = "b")
+    our_prior = intercept_prior + b_prior
   }
 
   # ** define extra variables (stanvars) **
-  prior_adjust_stanvar = stanvar(prior_adjust, name = "prior_adjust", block = "data")
-  r_stanvar = stanvar(r, name = "r", scode = "real<lower=0> r;", block = "data") # the scale hyperparameter of the Cauchy hyper g-prior
+  prior_adjust_stanvar = brms::stanvar(prior_adjust, name = "prior_adjust", block = "data")
+  r_stanvar = brms::stanvar(r, name = "r", scode = "real<lower=0> r;", block = "data") # the scale hyperparameter of the Cauchy hyper g-prior
   our_stanvars = prior_adjust_stanvar + r_stanvar
 
   # ** fit the model using brms **
@@ -61,7 +63,7 @@ brm_indprior = function(formula, data, family = gaussian(), r = 0.5, seed = NA, 
                   iter = iter,
                   warmup = warmup,
                   refresh = 0, # don't print annoying updates
-                  save_pars = save_pars(all = TRUE) # for bridge sampling
+                  save_pars = brms::save_pars(all = TRUE) # for bridge sampling
   )
 
   return(fit)

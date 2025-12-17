@@ -4,6 +4,19 @@
 #' @param prior_main_probs Optional: a named vector giving the prior inclusion probabilities for main effects. By default (if NULL) these are set to 0.5.
 #' @param prior_intr_condprobs Optional: a named vector giving the prior inclusion conditional probabilities for interactions (given that the necessary main effects/lower order interactions are present. By default (if NULL) these are set to 0.5 if there are interactions, are to NULL if there are no interactions.
 #' @returns An object of class "reg_bma".
+#' @details
+#' Fully Bayesian estimation is supported using brms.
+#' Maximum likelihood estimates are supported (with the BIC approximation), so long as they have the following methods:
+#' \itemize{
+#'  \item update
+#'  \item vcov
+#'  \item coef
+#'  \item predict
+#'  \item loglik
+#'  \item nobs
+#' }
+#' ** CHECK AND ADD Additional details...
+#'
 #' @export
 #'
 reg_bma = function(full_model,
@@ -11,7 +24,7 @@ reg_bma = function(full_model,
                    prior_intr_condprobs = NULL,
                    digits_to_round = 3
 ){
-  # get a list of submodels (full model plus restricted models)
+  # get info about submodels (full model plus restricted models)
   model_info = submodels(formula(full_model))
 
   # use default prior probs if not manually specified
@@ -44,7 +57,9 @@ reg_bma = function(full_model,
   fit_list = fit_submodels(full_model, model_info)
 
   # compute Bayes factors and posterior models odds/probabilities
-  bfs = model_bfs(fit_list)
+  log_evidence = model_log_evidence(fit_list)
+  log_bfs = log_evidence - log_evidence[1]
+  bfs = exp(log_bfs)
   prior_model_odds = prior_model_probs/prior_model_probs[1]
   post_model_odds = bfs*prior_model_odds
   post_model_probs = post_model_odds/sum(post_model_odds)
@@ -59,6 +74,8 @@ reg_bma = function(full_model,
                 prior_model_probs = prior_model_probs,
                 post_model_odds = post_model_odds,
                 post_model_probs = post_model_probs,
+                log_evidence = log_evidence,
+                log_bfs = log_bfs,
                 bfs = bfs,
                 fit_list = fit_list,
                 model_class = class(full_model),

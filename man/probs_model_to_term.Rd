@@ -4,12 +4,12 @@
 \alias{probs_model_to_term}
 \title{Convert model probabilities into parameter probablities.}
 \usage{
-probs_model_to_term(model_probs, model_list)
+probs_model_to_term(model_probs, model_info)
 }
 \arguments{
 \item{model_probs}{A named vector of model probabilities (names = model formulas).}
 
-\item{model_list}{A list containing information about some models (see restricted_models for details).}
+\item{model_info}{Information about submodels, returned by using the function "submodels" on "formula(full_model)".}
 }
 \value{
 A named vector of parameter inclusion probabilities (names = model terms/parameters).

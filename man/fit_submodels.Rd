@@ -4,12 +4,12 @@
 \alias{fit_submodels}
 \title{Fit restricted submodels, given a full model.}
 \usage{
-fit_submodels(full_model, model_list)
+fit_submodels(full_model, model_info)
 }
 \arguments{
 \item{full_model}{A brmsfit object (fitted regression model) representing the full model, i.e. the model that includes all possible terms.}
 
-\item{model_list}{A list of submodels, returned by using the function "submodels" on "formula(full_model)".}
+\item{model_info}{Information about submodels, returned by using the function "submodels" on "formula(full_model)".}
 }
 \description{
 Fit restricted submodels, given a full model.

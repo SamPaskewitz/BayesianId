@@ -24,3 +24,16 @@ An object of class "reg_bma".
 \description{
 Fit nested regression submodels and compute Bayes factors (for Bayesian Model Averaging: BMA).
 }
+\details{
+Fully Bayesian estimation is supported using brms.
+Maximum likelihood estimates are supported (with the BIC approximation), so long as they have the following methods:
+\itemize{
+ \item update
+ \item vcov
+ \item coef
+ \item predict
+ \item loglik
+ \item nobs
+}
+** CHECK AND ADD Additional details...
+}

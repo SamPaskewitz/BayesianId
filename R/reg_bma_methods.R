@@ -14,7 +14,7 @@ print.reg_bma = function(obj){
 #' @param digits_to_round Number of digits to round results to.
 #' @details
 #' GIVE INFO ABOUT SUMMARY TYPES
-#'
+#' The first model in the list is used as the denominator for model comparison Bayes factors, i.e. the Bayes factor for model i is defined as p(D | first model)/p(D | model i).
 #' @export
 #' @method summary reg_bma
 summary.reg_bma = function(obj, type = "terms", digits_to_round = 3){
@@ -55,12 +55,11 @@ summary.reg_bma = function(obj, type = "terms", digits_to_round = 3){
 #' @details
 #' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
 #' Posterior credible intervals are computed using a normal approximation.
-#' NOTE: This does not yet work for factors.
 #' @export
 #' @method coef reg_bma
 coef.reg_bma = function(obj){
   # figure out coefficient names
-  coef_names = colnames(model.matrix(obj$fit_list[[1]]))
+  coef_names = get_coef_names(obj$fit_list[[1]])
   n_coef = length(coef_names)
 
   # set up table for coefficients
@@ -74,17 +73,30 @@ coef.reg_bma = function(obj){
   # fill out table for coefficients
   for(i in 1:n_coef){
     coef_name = coef_names[i]
-    incl = lapply(obj$fit_list, function(x){coef_name %in% colnames(model.matrix(x))}) |> unlist() # Does each model include the coef?
-    pi = obj$post_model_odds[incl]/sum(obj$post_model_odds[incl]) # post probs for models that include the coef
-    mu = lapply(obj$fit_list[incl], function(x){coef(x)[coef_name]}) |> unlist() # means from models that include the coef
-    sigma = lapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()}) |> unlist() # SD's from models that include the coef
+    # Does each model include the coef?
+    incl = lapply(obj$fit_list, function(x){coef_name %in% get_coef_names(x)}) |> unlist()
+    # post probs for models that include the coef
+    bfs_incl = exp(obj$log_evidence[incl] - max(obj$log_evidence[incl]))
+    pi = bfs_incl*obj$prior_model_odds[incl]
+    pi = pi/sum(pi)
+    # exclude models with effectively zero posterior prob
+    incl = incl*(pi > 1e-2)
+    pi = pi[pi > 1e-2]
+    # posterior means from models that include the coef
+    if("brmsfit" %in% obj$model_class){
+      mu = lapply(obj$fit_list[incl], function(x){fixef(x)[coef_name, "Estimate"]}) |> unlist()
+    } else{
+      mu = lapply(obj$fit_list[incl], function(x){coef(x)[coef_name]}) |> unlist()
+    }
+    # posterior SD's from models that include the coef
+    sigma = lapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()}) |> unlist()
 
-    if(sum(incl) > 1){ # more than one model includes the coefficient
+    if(sum(incl) > 1){ # more than one model includes the coef
       est_table[i, "mean"] = sum(pi*mu)
       est_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + est_table[i, "mean"]^2)) - est_table[i, "mean"]^2)
       est_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
       est_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
-    } else{ # only one model includes the coef_name
+    } else{ # only one model includes the coef
       est_table[i, "mean"] = mu
       est_table[i, "sd"] = sigma
       est_table[i, "2.5 %"] = qnorm(p = 0.025, mean = mu, sd = sigma)

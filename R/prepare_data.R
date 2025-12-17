@@ -17,33 +17,39 @@ prepare_data = function(data, formula, center = TRUE){
   # figure out which predictors are factors
   # also convert character variables to factors
   x_names = parse_formula(formula)$fixed_main
-  is_factor = rep(FALSE, times = length(x_names))
-  for(i in 1:length(x_names)){
-    if(is.character(prep_data[, x_names[i]])){
-      prep_data[, x_names[i]] = factor(prep_data[, x_names[i]])
+  if(length(x_names) > 1){
+    is_factor = rep(FALSE, times = length(x_names))
+    for(i in 1:length(x_names)){
+      if(is.character(prep_data[, x_names[i]])){
+        prep_data[, x_names[i]] = factor(prep_data[, x_names[i]])
+      }
+      is_factor[i] = is.factor(prep_data[, x_names[i]])
     }
-    is_factor[i] = is.factor(prep_data[, x_names[i]])
-  }
-  x_factor_names = x_names[is_factor]
+    x_factor_names = x_names[is_factor]
 
-  # give factors proper contrast codes (Rouder et al 2012)
-  if(any(is_factor)){
-    for(i in which(is_factor)){
-      a = length(levels(prep_data[, x_names[i]])) # number of factor levels
-      contrasts(prep_data[, x_names[i]]) = contr_banova(a)
+    # give factors proper contrast codes (Rouder et al 2012)
+    if(any(is_factor)){
+      for(i in which(is_factor)){
+        a = length(levels(prep_data[, x_names[i]])) # number of factor levels
+        contrasts(prep_data[, x_names[i]]) = contr_banova(a)
+      }
     }
-  }
 
-  # find numeric predictors and mean-center them (optionally)
-  if(any(!is_factor)){
-    x_numeric_names = x_names[which(!is_factor)]
-    if(center){
-      prep_data = prep_data |> dplyr::mutate(dplyr::across(all_of(x_numeric_names), ~ .x - mean(.x)))
+    # find numeric predictors and mean-center them (optionally)
+    if(any(!is_factor)){
+      x_numeric_names = x_names[which(!is_factor)]
+      if(center){
+        prep_data = prep_data |> dplyr::mutate(dplyr::across(all_of(x_numeric_names), ~ .x - mean(.x)))
+      }
     }
-  }
-  else{
+    else{
+      x_numeric_names = NULL
+    }
+  } else{
     x_numeric_names = NULL
+    x_factor_names = NULL
   }
+
 
   # collect function output
   output = list(data = prep_data,

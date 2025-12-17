@@ -16,3 +16,7 @@
 \description{
 Summarize information about a "reg_bma" object.
 }
+\details{
+GIVE INFO ABOUT SUMMARY TYPES
+The first model in the list is used as the denominator for model comparison Bayes factors, i.e. the Bayes factor for model i is defined as p(D | first model)/p(D | model i).
+}

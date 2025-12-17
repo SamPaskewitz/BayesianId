@@ -1,18 +1,66 @@
-- CHECK write code for BMA estimates and credible intervals from MLE aprx
+***** PLUG & PLAY SUPPORT (BMA) *****
+
+- write reg_bma "plot" method
+
+- write reg_bma "predict" method for MLE
+
+- write reg_bma "predict" method for MCMC
+
+- add reg_bma "emmeans"" support for MLE
+
+- add reg_bma "emmeans"" support for MCMC
+
+- write tests for reg_bma with "lm" objects
+
+- write tests for reg_bma with "glm" objects
+
+- write tests for reg_bma with "lmer" objects
+
+- write tests for reg_bma with "lm" objects
+
+- write tests for reg_bma with "brmsfit" objects
+
+***** UX AND BUG TESTING *****
+
+- look for why you sometimes get a negative BF (examples in Crystal's data)
+
+- check the credible interval code: sometimes it doesn't contain the posterior mean (example in Crystal's data)
+
+- display posterior probabilities of "1" as something like "> 0.999" (analogous to p < .001)
+
+***** HYPOTHESIS TESTING *****
+
+- add support for interval null hypotheses
+
+- add support for directional hypotheses
+
+***** DOCUMENTATION ETC *****
+
+- double check help files and update as needed
+
+- create a vignette showing basic usage
+
+- go through and implement warnings/"stops"
+
+- make sure that all imported packages are listed in "DESCRIPTION"
+
+- make other fixes to "DESCRIPTION"
+
+- TLDR for hypothesis testing: "What's the probability that there is an effect?"
+
+- TLDR for estimation: "If there is an effect, how big is it?"
+
+***** BETTER MODEL CLASS SUPPPORT *****
+
+- get something better than basic BIC for "lmer" and "glmer" models
+
+- GLIB-style estimation
+
+***** STAN SUPPORT *****
 
 - use rstantools to set up package for using pre-compiled stan models
 
 - function for fitting linear/normal fixed effects model with independent priors
-
-- define class for this package's regression models with "summary", "plot", and other methods
-
-- making a function to separately fit the whole family of nested models
-
-- make a class for this set of nested models
-
-- update "inc_tests" to work with this new class of sets of nested models
-
-- write "plot" and "summary" methods for the new class of sets of nested models that produce BMA credible intervals, point estimates, plots etc.
 
 - add version with censoring
 
@@ -21,9 +69,3 @@
 - add random effects to existing models
 
 - option of JZS priors for numeric vars
-
-- improve the "summary" method so that it shows group differences for factors instead of contrast code coefficient estimates
-
-- add other methods based on rstanarm methods
-
--

@@ -18,7 +18,7 @@ pmix = function(q, pi, mu, sigma){
 #'
 qmix = function(p, pi, mu, sigma){
   q = optimize(function(x){(pmix(x, pi, mu, sigma) - p)^2},
-               interval = range(qnorm(p, mu, sigma)))$minimum
+               interval = range(qnorm(p, mu, sigma))*c(0.75, 1.25))$minimum
   return(q)
 }
 
@@ -40,4 +40,16 @@ has_needed = function(terms, intr){
   ord = length(parts)
   what_needed = combn(parts, ord - 1, simplify = FALSE) |> lapply(function(x){paste(x, collapse = ":")}) |> unlist()
   return(all(what_needed %in% terms))
+}
+
+#' Get the names of coefficients from a fitted model.
+#' @param obj A fitted regression model.
+#' @returns The names of the regression coefficients.
+#'
+get_coef_names = function(obj){
+  if("brmsfit" %in% class(obj)){
+    return(fixef(obj) |> row.names())
+  } else{
+    return(coef(obj) |> names())
+  }
 }
