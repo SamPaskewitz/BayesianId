@@ -12,12 +12,16 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 
-RcppExport SEXP _rcpp_module_boot_stan_fit4intercept_normal_mod();
-RcppExport SEXP _rcpp_module_boot_stan_fit4linear_normal_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4normal_intercept_est_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4normal_intercept_sim_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4normal_linear_est_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4normal_linear_sim_mod();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_rcpp_module_boot_stan_fit4intercept_normal_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4intercept_normal_mod, 0},
-    {"_rcpp_module_boot_stan_fit4linear_normal_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4linear_normal_mod, 0},
+    {"_rcpp_module_boot_stan_fit4normal_intercept_est_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4normal_intercept_est_mod, 0},
+    {"_rcpp_module_boot_stan_fit4normal_intercept_sim_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4normal_intercept_sim_mod, 0},
+    {"_rcpp_module_boot_stan_fit4normal_linear_est_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4normal_linear_est_mod, 0},
+    {"_rcpp_module_boot_stan_fit4normal_linear_sim_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4normal_linear_sim_mod, 0},
     {NULL, NULL, 0}
 };
 

@@ -12,293 +12,31 @@ library(BayesianId)
 
 ```{r}
 data("penguins")
-test_data = na.omit(penguins) %>% rename(y = body_mass, x1 = flipper_len, x2 = bill_len)
-levels(test_data$island) |> print()
+test_data = na.omit(penguins) %>% rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex)
+levels(test_data$f1) |> print()
 nrow(test_data) |> print()
 ```
 
 ```{r}
 test_data[10:20,]
 ```
-
 ```{r}
-fit = brm_indprior(#y ~ x1*x2,
-                   y ~ x1 + x2 + (x1 + x2 | island), 
-                   data = test_data,
-                   chains = 2,
-                   seed = 1212)
-```
-```{r}
-foo = lme4::lmer(formula = y ~ x1 + x2 + (x1 + x2 | island),
-                 data = test_data)
-Z = model.matrix(foo,
-                 type = "random")
-dim(Z) |> print()
-colnames(Z) |> print()
+foo = BayesianId:::make_stan_data(formula = y ~ x1*x2*f1, data = test_data)
 ```
 
 ```{r}
-Z = matrix(0.0, nrow = nrow(test_data), ncol = 3*length(unique(test_data$island)))
+names(foo)
+```
+```{r}
+foo$N
 ```
 
 ```{r}
-Z[10:20,]
-```
-
-
-```{r}
-stancode(fit)
-```
-
-
-```{r}
-names(fit)
+fit = breg(y ~ x1*x2, data = test_data)
 ```
 
 ```{r}
-#devtools::load_all()
-model_bfs_sdr(fit, submodels(fit |> formula())) |> as.matrix() |> round(digits = 2)
-
-## COMMENT: It runs, but gives very different answers from sample to sample.
+rstan::Rhat(fit |> as.matrix())
 ```
-
-
-
-```{r}
-inc_tests(fit)
-```
-
-
-```{r}
-library(bayesplot)
-
-mcmc_dens(fit, pars = vars(starts_with("SD")), adjust = 2)
-```
-
-```{r}
-library(ks)
-post <- as_draws_matrix(fit)[, c("b_flipper_len", "b_bill_len")]
-fit_kde <- kde(post)
-
-# Evaluate at a point:
-point <- c(0.2, -1.0)
-predict(fit_kde, x = point)
-```
-
-```{r}
-post = as_draws_matrix(fit)
-colnames(post)
-```
-```{r}
-post %>% as.data.frame() %>% select(c("b_flipper_len", "sd_island__flipper_len")) %>% cor() %>% round(2)
-```
-
-
-```{r}
-#library(rvinecopulib)
-library(kde1d)
-
-#theta = abs(rnorm(10000, mean = 0, sd = 4))
-#print(2*dnorm(0, mean = 0, sd = 4))
-theta = rgamma(10000, shape = 1, rate = 1)
-print(dgamma(0, shape = 1, rate = 1))
-print("")
-aprx_dens = kde1d(theta, xmin = 0, mult = 2)
-print(dkde1d(0, aprx_dens))
-print("")
-aprx_dens = kde1d(theta)
-aprx_dens_refl = kde1d(-theta)
-print(dkde1d(0, aprx_dens) + dkde1d(0, aprx_dens_refl))
-print("")
-n <- length(theta); h <- 1.06*sd(theta)*n^(-1/5); f0_hat <- (2/(n*h))*sum(dnorm(theta/h))
-print(f0_hat)
-```
-
-```{r}
-#library(kde1d)
-## bounded data, log-linear
-x <- rgamma(20000, shape = 1) # simulate data
-#fit <- kde1d::kde1d(x, xmin = 0, deg = 2, mult = 7) # estimate density
-fit <- rkdevine::kde1d(x, xmin = 0, deg = 2, mult = 7) # estimate density
-dkde1d(0, fit) # evaluate density estimate
-dgamma(0, shape = 1) 
-summary(fit) # information about the estimate
-plot(fit, col = "blue") # plot the density estimate
-curve(dgamma(x, shape = 1), # add true density
-  add = TRUE, col = "red",
-  from = 0
-)
-```
-
-
-```{r}
-x <- rgamma(100, shape = 0.5, rate = 3)        # simulate data
-fit <- kdevine::kde1d(x, xmin = 0) # estimate density
-kdevine::dkde1d(seq(0, 5, by = 1), fit)     # evaluate density estimate
-#summary(fit)                       # information about the estimate
-plot(fit, col = "blue")            # plot the density estimate
-curve(dgamma(x, shape = 0.5, rate = 3),        # add true density
-      add = TRUE, col = "red",
-      from = 0)
-```
-
-```{r}
-n = 10000
-n_sim = 2000
-sim = expand.grid(i = 1:n_sim,
-                  package = c("kdevine", "kde1d"))
-sim$est = 0.0
-shape = 5
-rate = 3
-
-for(i in 1:n_sim){
-  x = rgamma(n, shape = shape, rate = rate)
-  sim[sim$i == i & sim$package == "kdevine", "est"] = kdevine::kde1d(x, xmin = 0) |> kdevine::dkde1d(x = 0)
-  sim[sim$i == i & sim$package == "kde1d", "est"] = kde1d::kde1d(x, xmin = 0) |> kde1d::dkde1d(x = 0)
-}
-sim$error = sim$est - dgamma(0.0, shape = shape, rate = rate)
-
-sim |> dplyr::group_by(package) |> dplyr::summarize(mse = mean(error^2), bias = mean(error))
-
-# CONCLUSION: The package "kdevine" is MUCH better for bounded data, despite being older.
-```
-
-```{r}
-hist(x)
-```
-
-
-```{r}
-library(mvtnorm)
-
-theta = rgamma(1000, shape = 3, rate = 2)
-mu = rnorm(1000, mean = -theta, sd = 2)
-data.frame(mu, theta) |> cor() |> round(2) |> print()
-
-fit = data.frame(mu, theta) |> kdevine::kdevine(xmin = c(-Inf, 0))
-plot(fit)
-```
-
-```{r}
-drectnorm = function(x, mu, sigma, log = FALSE){
-  #dens = (x < 0)*ifelse(log, yes = -Inf, no = 0) + (x == 0)*pnorm(0, mean = mu, sd = sigma, log.p = log) + (x > 0)*dnorm(x, mean = mu, sd = sigma, log = log)
-  dens = case_when(x < 0 ~ ifelse(log, yes = -Inf, no = 0),
-                   x == 0 ~ pnorm(0, mean = mu, sd = sigma, log.p = log),
-                   x > 0 ~ dnorm(x, mean = mu, sd = sigma, log = log))
-  return(dens)
-}
-
-print(drectnorm(c(-1, 0, 2), mu = 0, sigma = 1, log = TRUE))
-```
-
-
-```{r}
-ll = function(x, pars){
-  return(sum(drectnorm(x, mu = pars[1], sigma = exp(pars[2]), log = TRUE)))
-}
-```
-
-
-
-
-```{r}
-# https://stats.stackexchange.com/questions/390931/compute-quantile-function-from-a-mixture-of-normal-distribution
-# based on the answer by "Sextus Empiricus"
-# changed to use "optimize" because "uniroot" was giving me trouble
-
-mu = rnorm(n = 15, sd = 2)
-sigma = rgamma(n = 15, shape = 1)
-pi = rgamma(n = 15, shape = 1); pi = pi/sum(pi)
-
-pmix = function(q, pi, mu, sigma){
-  return(sum(pi*pnorm(q, mean = mu, sd = sigma)))
-}
-
-pmix(1.0, pi, mu, sigma)
-```
-
-```{r}
-qmix = function(p, pi, mu, sigma){
-   q = optimize(function(x){(pmix(x, pi, mu, sigma) - p)^2},
-                interval = range(qnorm(p, mu, sigma)))$minimum
-   return(q)
-}
-```
-
-```{r}
-qmix(0.05, pi, mu, sigma)
-qmix(0.025, c(0.95,0.05), c(0,0), c(1,1.1))
-```
-
-```{r}
-form = formula(y ~ x1 + island)
-bma_lm = reg_bma(lm(formula = form, data = test_data))
-bma_brm = reg_bma(brm_indprior(formula = form, data = test_data))
-```
-```{r}
-foo = lm_indprior(formula = y ~ 1, data = test_data)
-```
-```{r}
-class(foo) = "brmsfit"
-```
-
-
-```{r}
-summary(foo)
-```
-```{r}
-print(lm(form, test_data))
-```
-
-
-```{r}
-bar = brms::standata(form, test_data)
-```
-```{r}
-colnames(bar$X)
-```
-
-
-```{r}
-brms::stancode(y ~ 1, data = test_data)
-```
-
-```{r}
-bar = update(foo, formula = y ~ island)
-summary(bar)
-```
-
-
-```{r}
-#bma_rsa = reg_bma(rstanarm::stan_glm(y ~ x1 + x2, family = gaussian(), data = test_data, refresh = 0, prior = normal(autoscale = TRUE), diagnostic_file = file.path(tempdir(), "df.csv"), iter = 15000))
-```
-
-```{r}
-summary(bma_brm, type = "est")
-```
-```{r}
-summary(bma_lm, type = "est")
-```
-
-
-
-
-```{r}
-model.matrix(bma$fit_list[[1]])
-```
-```{r}
-bma$fit_list[[1]]
-```
-
-
-```{r}
-EMM = emmeans(bma$fit_list[[1]], as.formula(bma$model_info$model_names[[1]]))
-```
-
-```{r}
-EMM |> summary()
-```
-
-
 
 

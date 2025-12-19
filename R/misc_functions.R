@@ -38,7 +38,7 @@ is_interaction = function(terms){
 has_needed = function(terms, intr){
   parts = strsplit(intr, "\\:") |> unlist()
   ord = length(parts)
-  what_needed = combn(parts, ord - 1, simplify = FALSE) |> lapply(function(x){paste(x, collapse = ":")}) |> unlist()
+  what_needed = combn(parts, ord - 1, simplify = FALSE) |> sapply(function(x){paste(x, collapse = ":")})
   return(all(what_needed %in% terms))
 }
 

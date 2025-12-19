@@ -24,6 +24,8 @@
 
 - look for why you sometimes get a negative BF (examples in Crystal's data)
 
+- implement log-sum-exp trick for Bayes factors
+
 - check the credible interval code: sometimes it doesn't contain the posterior mean (example in Crystal's data)
 
 - display posterior probabilities of "1" as something like "> 0.999" (analogous to p < .001)
@@ -56,11 +58,25 @@
 
 - GLIB-style estimation
 
+- sampling-based BMA for MCMC fits (instead of normal approximation)
+
 ***** STAN SUPPORT *****
 
-- use rstantools to set up package for using pre-compiled stan models
+- define a class ("breg")
 
-- function for fitting linear/normal fixed effects model with independent priors
+- remove any dependence on brms or brms formulas
+
+- figure out a more appropriate prior for the intercept in intercept-only models
+
+- write a "print" method
+
+- write a "summary" method
+
+- write a "posterior_predict" method
+
+- write a "plot" method
+
+- write an "update" method
 
 - add version with censoring
 
