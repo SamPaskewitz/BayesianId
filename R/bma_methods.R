@@ -1,23 +1,23 @@
-#' Print basic information about a "reg_bma" object.
-#' @param obj A "reg_bma" object.
+#' Print basic information about a "bma" object.
+#' @param obj A "bma" object.
 #' @export
-#' @method print reg_bma
-print.reg_bma = function(obj){
+#' @method print bma
+print.bma = function(obj){
   cat("Full model:", as.character(obj$model_info$formulas[[1]])[[1]])
   cat("\nModel class:", obj$model_class)
   cat("\nNumber of submodels:", obj$model_info$n_models)
 }
 
-#' Summarize information about a "reg_bma" object.
-#' @param obj A "reg_bma" object.
+#' Summarize information about a "bma" object.
+#' @param obj A "bma" object.
 #' @param type Type of summary. Options are "terms", "est", and "models" (defaults to "terms").
 #' @param digits_to_round Number of digits to round results to.
 #' @details
 #' GIVE INFO ABOUT SUMMARY TYPES
 #' The first model in the list is used as the denominator for model comparison Bayes factors, i.e. the Bayes factor for model i is defined as p(D | first model)/p(D | model i).
 #' @export
-#' @method summary reg_bma
-summary.reg_bma = function(obj, type = "terms", digits_to_round = 3){
+#' @method summary bma
+summary.bma = function(obj, type = "terms", digits_to_round = 3){
   if(type == "terms"){
     tab = data.frame("p(β≠0)" = obj$prior_term_probs,
                      "p(β≠0|D)" = obj$post_term_probs,
@@ -46,7 +46,7 @@ summary.reg_bma = function(obj, type = "terms", digits_to_round = 3){
 }
 
 #' Get BMA estimates of coefficients.
-#' @param obj A "reg_bma" object.
+#' @param obj A "bma" object.
 #' @returns A table (data frame) with the following information:
 #' mean: posterior mean
 #' sd: posterior standard deviation
@@ -56,8 +56,8 @@ summary.reg_bma = function(obj, type = "terms", digits_to_round = 3){
 #' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
 #' Posterior credible intervals are computed using a normal approximation.
 #' @export
-#' @method coef reg_bma
-coef.reg_bma = function(obj){
+#' @method coef bma
+coef.bma = function(obj){
   # figure out coefficient names
   coef_names = get_coef_names(obj$fit_list[[1]])
   n_coef = length(coef_names)

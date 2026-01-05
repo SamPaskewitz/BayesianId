@@ -1,26 +1,22 @@
 ***** PLUG & PLAY SUPPORT (BMA) *****
 
-- rename the "reg_bma" class to "bma"
+- write bma "plot" method
 
-- write reg_bma "plot" method
+- write bma "predict" method for MLE
 
-- write reg_bma "predict" method for MLE
+- write bma "predict" method for MCMC
 
-- write reg_bma "predict" method for MCMC
+- add bma "emmeans"" support for MLE
 
-- add reg_bma "emmeans"" support for MLE
+- add bma "emmeans"" support for MCMC
 
-- add reg_bma "emmeans"" support for MCMC
+- write tests for bma with "lm" objects
 
-- write tests for reg_bma with "lm" objects
+- write tests for bma with "glm" objects
 
-- write tests for reg_bma with "glm" objects
+- write tests for bma with "lmer" objects
 
-- write tests for reg_bma with "lmer" objects
-
-- write tests for reg_bma with "lm" objects
-
-- write tests for reg_bma with "brmsfit" objects
+- write tests for bma with "breg" objects
 
 ***** UX AND BUG TESTING *****
 
@@ -70,15 +66,11 @@
 
 - remove any dependence on brms or brms formulas
 
-- get rid of old brms functions etc. (and their tests etc.)
-
 - write a "predict" method that produces both means and SD
 
 - get "breg" objects to work with Bayes factor computation for "reg_bma"
 
 - add version with censoring
-
-- add logistic regression version
 
 - add random effects to existing models
 

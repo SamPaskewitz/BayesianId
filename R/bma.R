@@ -3,7 +3,7 @@
 #' @param full_model An object representing the full model, i.e. the model that includes all possible terms.
 #' @param prior_main_probs Optional: a named vector giving the prior inclusion probabilities for main effects. By default (if NULL) these are set to 0.5.
 #' @param prior_intr_condprobs Optional: a named vector giving the prior inclusion conditional probabilities for interactions (given that the necessary main effects/lower order interactions are present. By default (if NULL) these are set to 0.5 if there are interactions, are to NULL if there are no interactions.
-#' @returns An object of class "reg_bma".
+#' @returns An object of class "bma".
 #' @details
 #' Fully Bayesian estimation is supported using brms.
 #' Maximum likelihood estimates are supported (with the BIC approximation), so long as they have the following methods:
@@ -19,7 +19,7 @@
 #'
 #' @export
 #'
-reg_bma = function(full_model,
+bma = function(full_model,
                    prior_main_probs = NULL,
                    prior_intr_condprobs = NULL,
                    digits_to_round = 3
@@ -80,7 +80,7 @@ reg_bma = function(full_model,
                 fit_list = fit_list,
                 model_class = class(full_model),
                 model_info = model_info)
-  class(output) = "reg_bma"
+  class(output) = "bma"
 
   return(output)
 }
