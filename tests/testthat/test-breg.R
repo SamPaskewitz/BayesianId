@@ -1,6 +1,5 @@
 # set up test data
 data("penguins")
-library(rstan)
 test_data = na.omit(penguins) |> dplyr::rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex)
 test_data$y_bin = as.integer(test_data$f2) - 1
 

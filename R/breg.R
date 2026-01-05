@@ -16,7 +16,7 @@
 #' DESCRIBE PRIORS
 #' @export
 #'
-breg = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0, seed = NA, chains = 4, iter = 5000, warmup = floor(iter/2)){
+breg = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0, seed = NA, chains = 4, iter = 10000, warmup = floor(iter/4)){
   # **** FIGURE THIS OUT *****
 
   # ** set up Stan data **

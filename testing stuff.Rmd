@@ -29,15 +29,39 @@ fit = breg(y ~ x1,
 ```
 
 ```{r}
-fit = brms::stancode(f2 ~ x1,
-                     data = test_data,
-                     family = brms::bernoulli())
-fit
+fit = breg(#y ~ x1 + x2,
+           y_bin ~ x1 + x2,
+           data = test_data,
+           #family = "normal_linear",
+           family = "bernoulli_logistic",
+           prior_scale = 10,
+           center = TRUE,
+           iter = 10000,
+           warmup = 1000)
+coef(fit)
 ```
 
 ```{r}
-gfit = glm(f2 ~ 1, data = test_data, family = binomial())
-summary(gfit)
+plot(fit, type = "post_pred")
+```
+
+```{r}
+plot(fit, type = "trace")
+```
+
+
+```{r}
+foo = posterior_predict(fit)
+```
+
+```{r}
+gfit = glm(#y ~ x1 + x2, 
+           y_bin ~ x1 + x2,
+           data = test_data, 
+           #family = gaussian()
+           family = binomial()
+           )
+coef(gfit)
 ```
 
 

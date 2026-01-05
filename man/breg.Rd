@@ -12,8 +12,8 @@ breg(
   prior_scale = 1,
   seed = NA,
   chains = 4,
-  iter = 5000,
-  warmup = floor(iter/2)
+  iter = 10000,
+  warmup = floor(iter/4)
 )
 }
 \arguments{

@@ -47,13 +47,18 @@ coef.breg = function(obj, pars = c("Intercept", obj$coef_names)){
 #' You could use those Rstan plotting functions directly on obj$stanfit for more options and flexibility.
 #' Also, note that the results are ggplot2 objects, so could use ggplot2 to modify them (e.g. add a different title).
 #' @importFrom rstan stan_plot stan_trace stan_dens
-#' @importFrom bayesplot ppc_dens_overlay
+#' @importFrom bayesplot ppc_dens_overlay ppc_hist
 #' @export
 #' @method plot breg
 plot.breg = function(obj, type = "post_pred", pars = obj$coef_names){
   if(type == "post_pred"){
     ppred = posterior_predict(obj, ndraws = 5)
-    pt = ppc_dens_overlay(y = obj$data[,obj$formula_info$lhs], yrep = ppred)
+    # select type of post pred plot
+    if(obj$model_name %in% c("bernoulli_logistic")){
+      pt = ppc_hist(y = obj$data[,obj$formula_info$lhs], yrep = ppred, bins = 2)
+    } else{
+      pt = ppc_dens_overlay(y = obj$data[,obj$formula_info$lhs], yrep = ppred)
+    }
   } else if(type == "intervals"){
     pt = stan_plot(obj$stanfit, pars = pars)
   } else if(type == "density"){
@@ -68,12 +73,12 @@ plot.breg = function(obj, type = "post_pred", pars = obj$coef_names){
 
 #' Computes the posterior variance-covariance matrix of model parameters.
 #' @param obj A "breg" object (fitted model).
-#' @param pars Parameters to select. By default these are just the model coefficients (fixed effects).
+#' @param pars Parameters to select. By default these are just the model coefficients (fixed effects) plus the intercept.
 #' @returns The posterior variance-covariance matrix.
 #' @export
 #' @method vcov breg
-vcov.breg = function(obj, pars = obj$coef_names){
-  samples = as.matrix(fit$stanfit)[,pars]
+vcov.breg = function(obj, pars = c("Intercept", obj$coef_names)){
+  samples = as.matrix(obj$stanfit)[,pars]
   if(length(pars) > 1){
     return(cov(samples))
   } else{
@@ -84,12 +89,12 @@ vcov.breg = function(obj, pars = obj$coef_names){
 #' Compute posterior credible intervals for model parameters.
 #' @param obj A "breg" object (fitted model).
 #' @param prob Probability of the interval (e.g. 0.9 for a 90% interval).
-#' @param pars Parameters to select. By default these are just the model coefficients (fixed effects).
+#' @param pars Parameters to select. By default these are just the model coefficients (fixed effects) plus the intercept.
 #' @returns Posterior credible intervals for selected parameters.
 #' @importFrom rstantools posterior_interval
 #' @export
 #' @method posterior_interval breg
-posterior_interval.breg = function(obj, prob = 0.9, pars = obj$coef_names){
+posterior_interval.breg = function(obj, prob = 0.9, pars = c("Intercept", obj$coef_names)){
   samples = as.matrix(obj$stanfit)[,pars]
   intervals = posterior_interval(samples, prob = prob)
   return(intervals)

@@ -4,14 +4,14 @@
 \alias{posterior_interval.breg}
 \title{Compute posterior credible intervals for model parameters.}
 \usage{
-\method{posterior_interval}{breg}(obj, prob = 0.9, pars = obj$coef_names)
+\method{posterior_interval}{breg}(obj, prob = 0.9, pars = c("Intercept", obj$coef_names))
 }
 \arguments{
 \item{obj}{A "breg" object (fitted model).}
 
 \item{prob}{Probability of the interval (e.g. 0.9 for a 90% interval).}
 
-\item{pars}{Parameters to select. By default these are just the model coefficients (fixed effects).}
+\item{pars}{Parameters to select. By default these are just the model coefficients (fixed effects) plus the intercept.}
 }
 \value{
 Posterior credible intervals for selected parameters.

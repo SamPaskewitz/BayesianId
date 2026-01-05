@@ -4,12 +4,12 @@
 \alias{vcov.breg}
 \title{Computes the posterior variance-covariance matrix of model parameters.}
 \usage{
-\method{vcov}{breg}(obj, pars = obj$coef_names)
+\method{vcov}{breg}(obj, pars = c("Intercept", obj$coef_names))
 }
 \arguments{
 \item{obj}{A "breg" object (fitted model).}
 
-\item{pars}{Parameters to select. By default these are just the model coefficients (fixed effects).}
+\item{pars}{Parameters to select. By default these are just the model coefficients (fixed effects) plus the intercept.}
 }
 \value{
 The posterior variance-covariance matrix.
