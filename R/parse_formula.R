@@ -45,6 +45,7 @@ parse_formula = function(formula){
   # Package everything into a list
   return(list(lhs = lhs,
               fixed = fixed,
+              n_fixed = length(fixed),
               random = random,
               fixed_main = fixed_main,
               fixed_interaction = fixed_interaction)

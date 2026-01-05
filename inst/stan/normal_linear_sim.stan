@@ -1,7 +1,7 @@
 data {
   int<lower=1> N_tilde;  // total number of observations
   int<lower=1> K;  // number of population-level effects
-  matrix[N_tilde, K] X_tilde;  // population-level design matrix (no intercept, numeric vars centered)
+  matrix[N_tilde, K] X_tilde;  // population-level design matrix (no intercept)
 }
 parameters {
   vector[K] b;  // actual regression coefficients

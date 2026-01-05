@@ -1,6 +1,8 @@
 #' Prepare data for regression by giving factors appropriate contrast codes and (optionally) mean-centering numeric predictors.
 #' @param formula An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the model to be fitted. The details of model specification are explained in brmsformula.
 #' @param data A data frame.
+#' @param prior_scale ****
+#' @param center ****
 #' @returns A list with the following elements:
 #' data: a modified data frame that is ready for regression
 #' x_numeric_names: names of data variables that are numeric
@@ -20,13 +22,13 @@ make_stan_data = function(formula, data, prior_scale = 1, center = TRUE){
 
     # ** convert character variables to factors **
     for(i in 1:length(x_names)){
-      if(is.character(data[, x_names[i]])){
-        data[, x_names[i]] = factor(data[, x_names[i]])
+      if(is.character(data[,x_names[i],drop = FALSE])){
+        data[,x_names[i],drop = FALSE] = factor(data[,x_names[i],drop = FALSE])
       }
     }
 
     # ** figure out which predictors are factors **
-    is_factor = sapply(data[,x_names], is.factor)
+    is_factor = sapply(data[,x_names,drop=FALSE], is.factor)
     is_numeric = !is_factor
     x_factor_names = x_names[is_factor]
     x_numeric_names = x_names[is_numeric]
@@ -34,18 +36,18 @@ make_stan_data = function(formula, data, prior_scale = 1, center = TRUE){
     # ** give factors proper contrast codes **
     if(any(is_factor)){
       for(i in 1:length(x_factor_names)){
-        a = length(levels(data[, x_factor_names[i]])) # number of factor levels
+        a = length(levels(data[,x_factor_names[i]])) # number of factor levels
         contrasts(data[, x_factor_names[i]]) = contr_banova(a)
       }
     }
 
     # ** center numeric predictors (optionally) **
     if(center & any(is_numeric)){
-      data[,x_numeric_names] = scale(data[,x_numeric_names], center = TRUE, scale = FALSE)
+      data[,x_numeric_names] = data[,x_numeric_names] |> scale(center = TRUE, scale = FALSE)
     }
 
     # ** set up design matrix (minus intercept) **
-    X = model.matrix(formula, data = data)[,-1]
+    X = model.matrix(formula, data = data)[,-1,drop = FALSE]
 
     # ** compute Xcol_scale **
 
@@ -60,7 +62,7 @@ make_stan_data = function(formula, data, prior_scale = 1, center = TRUE){
     # adjust numeric main effects by their SD's
     if(any(Xcol_is_numeric)){
       Xcol_numeric_names = colnames(X)[which(Xcol_is_numeric)]
-      Xcol_scale[Xcol_numeric_names] = apply(data[,Xcol_numeric_names], 2, sd)
+      Xcol_scale[Xcol_numeric_names] = apply(data[,Xcol_numeric_names,drop=FALSE], 2, sd)
       # adjust interactions by the SD's of any numeric components
       if(any(Xcol_is_interaction)){
         Xcol_interaction_names = colnames(X)[which(Xcol_is_interaction)]
@@ -74,6 +76,10 @@ make_stan_data = function(formula, data, prior_scale = 1, center = TRUE){
         }
       }
     }
+
+    # convert to an array so Stan doesn't drop dimensions when there's one column
+    Xcol_scale = array(Xcol_scale, dim = ncol(X))
+    names(Xcol_scale) = colnames(X)
 
     # ** collect function output **
     stan_data = list(N = nrow(data),

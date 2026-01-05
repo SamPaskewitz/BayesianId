@@ -7,7 +7,7 @@
 \method{print}{breg}(obj)
 }
 \arguments{
-\item{obj}{A "breg" object.}
+\item{obj}{A "breg" object (fitted model).}
 }
 \description{
 Print basic information about a "breg" object.

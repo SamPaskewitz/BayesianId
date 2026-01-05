@@ -7,7 +7,8 @@
 breg(
   formula,
   data,
-  center = FALSE,
+  family = "normal_linear",
+  center = TRUE,
   prior_scale = 1,
   seed = NA,
   chains = 4,
@@ -16,21 +17,23 @@ breg(
 )
 }
 \arguments{
-\item{formula}{**}
+\item{formula}{An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.}
 
-\item{data}{**}
+\item{data}{A data frame containing the variables in the model.}
 
-\item{center}{**}
+\item{family}{A string describing the response distribution and link function to be used in the model (see 'Details').}
 
-\item{seed}{**}
+\item{center}{Should the numeric predictor variables be mean-centered?}
 
-\item{chains}{**}
+\item{prior_scale}{Scale for the prior distribution on model coefficients (see 'Details').}
 
-\item{iter}{**}
+\item{seed}{Random seed (set manually for reproducible results).}
 
-\item{warmup}{**}
+\item{chains}{Number of MCMC chains (see rstan documentation).}
 
-\item{r}{**}
+\item{iter}{Number of MCMC iterations (see rstan documentation).}
+
+\item{warmup}{Number of warmup/burnin iterations (see rstan documentation).}
 }
 \value{
 A fitted Bayesian regression model (of class "breg").
@@ -40,4 +43,6 @@ Fit a Bayesian regression model using Stan.
 }
 \details{
 ADD THESE
+DESCRIBE THE FITTED MODEL OBJECT
+DESCRIBE PRIORS
 }

@@ -1,5 +1,7 @@
 ***** PLUG & PLAY SUPPORT (BMA) *****
 
+- rename the "reg_bma" class to "bma"
+
 - write reg_bma "plot" method
 
 - write reg_bma "predict" method for MLE
@@ -30,6 +32,8 @@
 
 - display posterior probabilities of "1" as something like "> 0.999" (analogous to p < .001)
 
+- add a reminder that "All hypothesis/model probabilities are conditional on modeling assumptions."
+
 ***** HYPOTHESIS TESTING *****
 
 - add support for interval null hypotheses
@@ -40,13 +44,15 @@
 
 - double check help files and update as needed
 
+- add examples to help files
+
+- write documentation for the "breg" and "reg_bma" classes
+
 - create a vignette showing basic usage
 
 - go through and implement warnings/"stops"
 
-- make sure that all imported packages are listed in "DESCRIPTION"
-
-- make other fixes to "DESCRIPTION"
+- make fixes to "DESCRIPTION"
 
 - TLDR for hypothesis testing: "What's the probability that there is an effect?"
 
@@ -62,21 +68,13 @@
 
 ***** STAN SUPPORT *****
 
-- define a class ("breg")
-
 - remove any dependence on brms or brms formulas
 
-- figure out a more appropriate prior for the intercept in intercept-only models
+- get rid of old brms functions etc. (and their tests etc.)
 
-- write a "print" method
+- write a "predict" method that produces both means and SD
 
-- write a "summary" method
-
-- write a "posterior_predict" method
-
-- write a "plot" method
-
-- write an "update" method
+- get "breg" objects to work with Bayes factor computation for "reg_bma"
 
 - add version with censoring
 
@@ -84,4 +82,4 @@
 
 - add random effects to existing models
 
-- option of JZS priors for numeric vars
+- add other methods suggested by "rstantools"

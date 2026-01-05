@@ -13,30 +13,36 @@ library(BayesianId)
 ```{r}
 data("penguins")
 test_data = na.omit(penguins) %>% rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex)
+test_data$y_bin = as.integer(test_data$f2) - 1
 levels(test_data$f1) |> print()
+levels(test_data$f2) |> print()
 nrow(test_data) |> print()
 ```
 
 ```{r}
 test_data[10:20,]
 ```
+
 ```{r}
-foo = BayesianId:::make_stan_data(formula = y ~ x1*x2*f1, data = test_data)
+fit = breg(y ~ x1, 
+           data = test_data |> dplyr::filter(f1 == "Torgersen"))
 ```
 
 ```{r}
-names(foo)
-```
-```{r}
-foo$N
-```
-
-```{r}
-fit = breg(y ~ x1*x2, data = test_data)
+fit = brms::stancode(f2 ~ x1,
+                     data = test_data,
+                     family = brms::bernoulli())
+fit
 ```
 
 ```{r}
-rstan::Rhat(fit |> as.matrix())
+gfit = glm(f2 ~ 1, data = test_data, family = binomial())
+summary(gfit)
 ```
+
+
+
+
+
 
 
