@@ -17,10 +17,8 @@
 #' @export
 #'
 breg = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0, seed = NA, chains = 4, iter = 10000, warmup = floor(iter/4)){
-  # **** FIGURE THIS OUT *****
-
   # ** set up Stan data **
-  stan_data = make_stan_data(formula = formula, data = data, prior_scale = prior_scale, center = center)
+  stan_data = make_stan_data(formula = formula, data = data, family = family, prior_scale = prior_scale, center = center)
 
   # ** pick the Stan model to use **
   # NOTE: later this will be more elaborate to deal with mixed effects models, GLM's etc.

@@ -1,6 +1,7 @@
 #' Prepare data for regression by giving factors appropriate contrast codes and (optionally) mean-centering numeric predictors.
 #' @param formula An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the model to be fitted. The details of model specification are explained in brmsformula.
 #' @param data A data frame.
+#' @param family ****
 #' @param prior_scale ****
 #' @param center ****
 #' @returns A list with the following elements:
@@ -11,11 +12,18 @@
 #' * DESCRIBE THE CONTRAST CODES ETC
 #'
 
-make_stan_data = function(formula, data, prior_scale = 1, center = TRUE){
+make_stan_data = function(formula, data, family, prior_scale = 1, center = TRUE){
   # ***** setup *****
   parsed_formula = parse_formula(formula) # parse formula
   x_names = parsed_formula$fixed_main
   intercept_only = (length(parsed_formula$fixed) == 0) # is it an intercept-only model?
+
+  # ** convert Y to an integer vector if needed **
+  if(family %in% c("bernoulli_logistic")){
+    Y = as.integer(data[, parsed_formula$lhs]) - 1
+  } else{
+    Y = data[, parsed_formula$lhs]
+  }
 
   if(!intercept_only){
     # ***** NOT INTERCEPT-ONLY *****
@@ -83,8 +91,8 @@ make_stan_data = function(formula, data, prior_scale = 1, center = TRUE){
 
     # ** collect function output **
     stan_data = list(N = nrow(data),
-                     Y = data[, parsed_formula$lhs],
-                     Ymean = mean(data[, parsed_formula$lhs]),
+                     Y = Y,
+                     Ymean = mean(Y),
                      K = ncol(X),
                      X = X,
                      Xcol_scale = Xcol_scale,
@@ -93,8 +101,8 @@ make_stan_data = function(formula, data, prior_scale = 1, center = TRUE){
   } else{
     # ***** INTERCEPT-ONLY *****
     stan_data = list(N = nrow(data),
-                     Y = data[, parsed_formula$lhs],
-                     Ymean = mean(data[, parsed_formula$lhs]),
+                     Y = Y,
+                     Ymean = mean(Y),
                      prior_only = FALSE,
                      prior_scale = prior_scale)
   }

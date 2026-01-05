@@ -1,7 +1,7 @@
 # set up test data
 data("penguins")
 test_data = na.omit(penguins) |> dplyr::rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex)
-test_data$y_bin = as.integer(test_data$f2) - 1
+test_data = test_data |> dplyr::mutate(y_bin = test_data$f2, y_cens = ifelse(y > 4800, 4800, y))
 
 test_that("normal linear model runs with one numeric predictor", {
   expect_no_warning(breg(formula = y ~ x1,

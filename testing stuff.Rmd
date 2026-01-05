@@ -12,8 +12,8 @@ library(BayesianId)
 
 ```{r}
 data("penguins")
-test_data = na.omit(penguins) %>% rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex)
-test_data$y_bin = as.integer(test_data$f2) - 1
+test_data = test_data |> dplyr::mutate(y_bin = test_data$f2, y_cens = ifelse(y > 4800, 4800, y))
+
 levels(test_data$f1) |> print()
 levels(test_data$f2) |> print()
 nrow(test_data) |> print()
@@ -40,6 +40,17 @@ fit = breg(#y ~ x1 + x2,
            warmup = 1000)
 coef(fit)
 ```
+
+```{r}
+foo = make_stan_data(formula = y_bin ~ 1,
+           data = test_data,
+           #family = "normal_linear",
+           family = "bernoulli_logistic",
+           prior_scale = 10,
+           center = TRUE)
+foo$Y[1:5]
+```
+
 
 ```{r}
 plot(fit, type = "post_pred")
