@@ -4,12 +4,14 @@
 \alias{make_stan_data}
 \title{Prepare data for regression by giving factors appropriate contrast codes and (optionally) mean-centering numeric predictors.}
 \usage{
-make_stan_data(formula, data, prior_scale = 1, center = TRUE)
+make_stan_data(formula, data, family, prior_scale = 1, center = TRUE)
 }
 \arguments{
 \item{formula}{An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the model to be fitted. The details of model specification are explained in brmsformula.}
 
 \item{data}{A data frame.}
+
+\item{family}{****}
 
 \item{prior_scale}{****}
 
