@@ -30,6 +30,8 @@ Imports:
     rstan (>= 2.18.1),
     rstantools (>= 2.5.0)
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.3
@@ -44,3 +46,4 @@ LinkingTo:
     rstan (>= 2.18.1),
     StanHeaders (>= 2.18.0)
 SystemRequirements: GNU make
+VignetteBuilder: knitr

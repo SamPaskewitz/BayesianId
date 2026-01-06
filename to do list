@@ -26,10 +26,6 @@
 
 - check the credible interval code: sometimes it doesn't contain the posterior mean (example in Crystal's data)
 
-- display posterior probabilities of "1" as something like "> 0.999" (analogous to p < .001)
-
-- add a reminder that "All hypothesis/model probabilities are conditional on modeling assumptions."
-
 ***** HYPOTHESIS TESTING *****
 
 - add support for interval null hypotheses

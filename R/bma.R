@@ -5,7 +5,7 @@
 #' @param prior_intr_condprobs Optional: a named vector giving the prior inclusion conditional probabilities for interactions (given that the necessary main effects/lower order interactions are present. By default (if NULL) these are set to 0.5 if there are interactions, are to NULL if there are no interactions.
 #' @returns An object of class "bma".
 #' @details
-#' Fully Bayesian estimation is supported using brms.
+#' Fully Bayesian estimation is supported using "breg" (from this package).
 #' Maximum likelihood estimates are supported (with the BIC approximation), so long as they have the following methods:
 #' \itemize{
 #'  \item update
@@ -20,9 +20,8 @@
 #' @export
 #'
 bma = function(full_model,
-                   prior_main_probs = NULL,
-                   prior_intr_condprobs = NULL,
-                   digits_to_round = 3
+               prior_main_probs = NULL,
+               prior_intr_condprobs = NULL
 ){
   # get info about submodels (full model plus restricted models)
   model_info = submodels(formula(full_model))

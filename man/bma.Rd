@@ -4,12 +4,7 @@
 \alias{bma}
 \title{Fit nested regression submodels and compute Bayes factors (for Bayesian Model Averaging: BMA).}
 \usage{
-bma(
-  full_model,
-  prior_main_probs = NULL,
-  prior_intr_condprobs = NULL,
-  digits_to_round = 3
-)
+bma(full_model, prior_main_probs = NULL, prior_intr_condprobs = NULL)
 }
 \arguments{
 \item{full_model}{An object representing the full model, i.e. the model that includes all possible terms.}
@@ -25,7 +20,7 @@ An object of class "bma".
 Fit nested regression submodels and compute Bayes factors (for Bayesian Model Averaging: BMA).
 }
 \details{
-Fully Bayesian estimation is supported using brms.
+Fully Bayesian estimation is supported using "breg" (from this package).
 Maximum likelihood estimates are supported (with the BIC approximation), so long as they have the following methods:
 \itemize{
  \item update

@@ -4,6 +4,7 @@
 #' @method print bma
 print.bma = function(obj){
   cat("Full model:", as.character(obj$model_info$formulas[[1]])[[1]])
+  cat("\nMost probable model:", (obj$post_model_odds |> which.max() |> names())[1])
   cat("\nModel class:", obj$model_class)
   cat("\nNumber of submodels:", obj$model_info$n_models)
 }
@@ -11,13 +12,13 @@ print.bma = function(obj){
 #' Summarize information about a "bma" object.
 #' @param obj A "bma" object.
 #' @param type Type of summary. Options are "terms", "est", and "models" (defaults to "terms").
-#' @param digits_to_round Number of digits to round results to.
+#' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
 #' @details
 #' GIVE INFO ABOUT SUMMARY TYPES
 #' The first model in the list is used as the denominator for model comparison Bayes factors, i.e. the Bayes factor for model i is defined as p(D | first model)/p(D | model i).
 #' @export
 #' @method summary bma
-summary.bma = function(obj, type = "terms", digits_to_round = 3){
+summary.bma = function(obj, type = "terms", pretty = TRUE){
   if(type == "terms"){
     tab = data.frame("p(β≠0)" = obj$prior_term_probs,
                      "p(β≠0|D)" = obj$post_term_probs,
@@ -41,7 +42,16 @@ summary.bma = function(obj, type = "terms", digits_to_round = 3){
     } else{
     warning("Summary type not recognized. Please choose 'terms', 'est', or 'models'.")
     }
-  tab = round(tab, digits = digits_to_round)
+  # make output pretty
+  if(pretty){
+    tab = tab |> round(digits = 3) |> format(digits = 3)
+    tab[tab[,1] == "1.000", 1] = ">0.999"
+    tab[tab[,1] == "0.000", 1] = "<0.001"
+    tab[tab[,2] == "1.000", 2] = ">0.999"
+    tab[tab[,2] == "0.000", 2] = "<0.001"
+  }
+  # return output
+  cat("Reminder: hypothesis/model probabilities are conditional on modeling assumptions.")
   return(tab)
 }
 

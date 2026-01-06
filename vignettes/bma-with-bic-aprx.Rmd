@@ -1,0 +1,57 @@
+---
+title: "Bayesian Model Averaging with the BIC Approximation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Bayesian Model Averaging with the BIC Approximation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(BayesianId)
+```
+
+```{r load_data}
+data("penguins")
+head(penguins)
+```
+
+```{r full_model}
+mass_lm_full = lm(body_mass ~ flipper_len*bill_len*island,
+                  data = na.omit(penguins))
+```
+
+```{r check_full_model}
+plot(mass_lm_full)
+```
+
+```{r create_bma_object}
+mass_lm_bma = bma(mass_lm_full)
+```
+
+```{r print}
+print(mass_lm_bma)
+```
+
+```{r terms}
+summary(mass_lm_bma, type = "terms")
+```
+
+```{r models}
+summary(mass_lm_bma, type = "models")
+```
+
+```{r est}
+summary(mass_lm_bma, type = "est")
+```
+
+
+
+
