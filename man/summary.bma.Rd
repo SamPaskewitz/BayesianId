@@ -4,14 +4,14 @@
 \alias{summary.bma}
 \title{Summarize information about a "bma" object.}
 \usage{
-\method{summary}{bma}(obj, type = "terms", digits_to_round = 3)
+\method{summary}{bma}(obj, type = "terms", pretty = TRUE)
 }
 \arguments{
 \item{obj}{A "bma" object.}
 
 \item{type}{Type of summary. Options are "terms", "est", and "models" (defaults to "terms").}
 
-\item{digits_to_round}{Number of digits to round results to.}
+\item{pretty}{Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.}
 }
 \description{
 Summarize information about a "bma" object.

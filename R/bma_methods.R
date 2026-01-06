@@ -11,18 +11,22 @@ print.bma = function(obj){
 
 #' Summarize information about a "bma" object.
 #' @param obj A "bma" object.
-#' @param type Type of summary. Options are "terms", "est", and "models" (defaults to "terms").
+#' @param type Type of summary. Options are "term_probs", "term_odds", "model_probs", "model_odds", and "est" (defaults to "term_probs").
 #' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
 #' @details
 #' GIVE INFO ABOUT SUMMARY TYPES
 #' The first model in the list is used as the denominator for model comparison Bayes factors, i.e. the Bayes factor for model i is defined as p(D | first model)/p(D | model i).
 #' @export
 #' @method summary bma
-summary.bma = function(obj, type = "terms", pretty = TRUE){
-  if(type == "terms"){
+summary.bma = function(obj, type = "term_probs", pretty = TRUE){
+  if(type == "term_probs"){
     tab = data.frame("p(β≠0)" = obj$prior_term_probs,
                      "p(β≠0|D)" = obj$post_term_probs,
-                     "prior_odds" = obj$prior_term_probs/(1 - obj$prior_term_probs),
+                     check.names = FALSE # prevent names from getting messed up
+    )
+    row.names(tab) = obj$model_info$term_names
+  } else if(type == "term_odds"){
+    tab = data.frame("prior_odds" = obj$prior_term_probs/(1 - obj$prior_term_probs),
                      "post_odds" = obj$post_term_probs/(1 - obj$post_term_probs),
                      check.names = FALSE # prevent names from getting messed up
     )
@@ -30,28 +34,38 @@ summary.bma = function(obj, type = "terms", pretty = TRUE){
     row.names(tab) = obj$model_info$term_names
   } else if(type == "est"){
     tab = coef(obj)
-  } else if(type == "models"){
+  } else if(type == "model_probs"){
     tab = data.frame("p(M)" = obj$prior_model_probs,
                      "p(M | D)" = obj$post_model_probs,
-                     "prior_odds" = obj$prior_model_odds,
-                     "post_odds" = obj$post_model_odds,
-                     "BF" = obj$bfs,
                      check.names = FALSE # prevent names from getting messed up
     )
     row.names(tab) = obj$model_info$model_names
+    } else if(type == "model_odds"){
+      tab = data.frame("prior_odds" = obj$prior_model_odds,
+                       "post_odds" = obj$post_model_odds,
+                       "BF" = obj$model_bfs,
+                       check.names = FALSE # prevent names from getting messed up
+      )
+      row.names(tab) = obj$model_info$model_names
     } else{
     warning("Summary type not recognized. Please choose 'terms', 'est', or 'models'.")
     }
-  # make output pretty
+  # make output pretty (optionally)
   if(pretty){
-    tab = tab |> round(digits = 3) |> format(digits = 3)
-    tab[tab[,1] == "1.000", 1] = ">0.999"
-    tab[tab[,1] == "0.000", 1] = "<0.001"
-    tab[tab[,2] == "1.000", 2] = ">0.999"
-    tab[tab[,2] == "0.000", 2] = "<0.001"
+    if(type %in% c("term_probs", "model_probs")){
+      tab = tab |> round(digits = 3)
+      tab[tab[,1] == "1.000", 1] = ">0.999"
+      tab[tab[,1] == "0.000", 1] = "<0.001"
+      tab[tab[,2] == "1.000", 2] = ">0.999"
+      tab[tab[,2] == "0.000", 2] = "<0.001"
+    } else if(type %in% c("term_odds", "model_odds")){
+      tab = tab |> signif(digits = 3) |> format(scientific = TRUE)
+    } else if(type == "est"){
+      tab = tab |> signif(digits = 3)
+    }
   }
   # return output
-  cat("Reminder: hypothesis/model probabilities are conditional on modeling assumptions.")
+  cat("Reminder: all results are conditional on modeling assumptions.")
   return(tab)
 }
 
@@ -84,22 +98,15 @@ coef.bma = function(obj){
   for(i in 1:n_coef){
     coef_name = coef_names[i]
     # Does each model include the coef?
-    incl = lapply(obj$fit_list, function(x){coef_name %in% get_coef_names(x)}) |> unlist()
-    # post probs for models that include the coef
-    bfs_incl = exp(obj$log_evidence[incl] - max(obj$log_evidence[incl]))
-    pi = bfs_incl*obj$prior_model_odds[incl]
-    pi = pi/sum(pi)
+    incl = sapply(obj$fit_list, function(x){coef_name %in% get_coef_names(x)})
     # exclude models with effectively zero posterior prob
-    incl = incl*(pi > 1e-2)
-    pi = pi[pi > 1e-2]
+    incl = incl*(obj$post_model_probs > 1e-2)
+    # post probs for models that include the coef ("pi")
+    pi = exp(obj$log_model_bfs[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_bfs[incl] + log(obj$prior_model_probs[incl])))
     # posterior means from models that include the coef
-    if("brmsfit" %in% obj$model_class){
-      mu = lapply(obj$fit_list[incl], function(x){fixef(x)[coef_name, "Estimate"]}) |> unlist()
-    } else{
-      mu = lapply(obj$fit_list[incl], function(x){coef(x)[coef_name]}) |> unlist()
-    }
+    mu = sapply(obj$fit_list[incl], function(x){coef(x)[coef_name]})
     # posterior SD's from models that include the coef
-    sigma = lapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()}) |> unlist()
+    sigma = sapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()})
 
     if(sum(incl) > 1){ # more than one model includes the coef
       est_table[i, "mean"] = sum(pi*mu)

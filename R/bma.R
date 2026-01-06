@@ -55,13 +55,13 @@ bma = function(full_model,
   # fit all submodels
   fit_list = fit_submodels(full_model, model_info)
 
-  # compute Bayes factors and posterior models odds/probabilities
+  # compute Bayes factors and posterior model odds/probabilities
   log_evidence = model_log_evidence(fit_list)
   log_bfs = log_evidence - log_evidence[1]
   bfs = exp(log_bfs)
   prior_model_odds = prior_model_probs/prior_model_probs[1]
-  post_model_odds = bfs*prior_model_odds
-  post_model_probs = post_model_odds/sum(post_model_odds)
+  post_model_probs = exp(log_bfs + log(prior_model_probs) - lse(log_bfs + log(prior_model_probs)))
+  post_model_odds = post_model_probs/post_model_probs[1]
 
   # convert model posterior probs to term posterior probs
   post_term_probs = probs_model_to_term(post_model_probs, model_info)
@@ -73,9 +73,9 @@ bma = function(full_model,
                 prior_model_probs = prior_model_probs,
                 post_model_odds = post_model_odds,
                 post_model_probs = post_model_probs,
-                log_evidence = log_evidence,
-                log_bfs = log_bfs,
-                bfs = bfs,
+                log_model_evidence = log_evidence,
+                log_model_bfs = log_bfs,
+                model_bfs = bfs,
                 fit_list = fit_list,
                 model_class = class(full_model),
                 model_info = model_info)

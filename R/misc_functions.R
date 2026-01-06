@@ -1,3 +1,19 @@
+#' Log-sum-exp trick (stable computation of the log of a sum of exponentials).
+#' @param a A vector of numbers.
+#' @returns log-sum-exp of the vector a.
+#' @details
+#' The log-sum-exp function is defined as:
+#' \deqn{\text{LSE}(\vec{a}) = \log\Big(\sum_j \exp(a_j)\Big)}
+#' If the components of \eqn{\vec{a}} are large, then this will not be numerically stable.
+#' To compute the log-sum-exp in a numerically stable way, we can use the equivalent expression:
+#' \deqn{\text{LSE}(\vec{a}) = \max(\vec{a}) + \log\Big(\sum_j \exp(a_j - \max(\vec{a}))\Big)}
+#' This is what the function below does.
+#'
+lse = function(a){
+  m = max(a)
+  return(m + log(sum(exp(a - m))))
+}
+
 #' Cumulative distribution function for a (univariate) mixture of normals.
 #' @param q The quantile for which we want to find the probability.
 #' @param pi A vector of mixture weights.

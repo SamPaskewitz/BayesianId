@@ -2,13 +2,11 @@
 
 - write bma "plot" method
 
-- write bma "predict" method for MLE
+- write bma "predict" method
 
-- write bma "predict" method for MCMC
+- add bma "emmeans" support for MLE
 
-- add bma "emmeans"" support for MLE
-
-- add bma "emmeans"" support for MCMC
+- add bma "emmeans" support for MCMC
 
 - write tests for bma with "lm" objects
 
@@ -21,10 +19,6 @@
 ***** UX AND BUG TESTING *****
 
 - look for why you sometimes get a negative BF (examples in Crystal's data)
-
-- implement log-sum-exp trick for Bayes factors
-
-- check the credible interval code: sometimes it doesn't contain the posterior mean (example in Crystal's data)
 
 ***** HYPOTHESIS TESTING *****
 
