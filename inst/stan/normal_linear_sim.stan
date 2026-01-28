@@ -10,7 +10,7 @@ parameters {
 }
 transformed parameters {
   vector[N_tilde] mu;
-  mu = b0 + X_tilde*b;
+  mu = b0 + X_tilde*b; // linear predictor
 }
 generated quantities {
   array[N_tilde] real Y_tilde;  // simulated response variable

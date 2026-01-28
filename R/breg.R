@@ -21,13 +21,24 @@ breg = function(formula, data, family = "normal_linear", center = TRUE, prior_sc
   stan_data = make_stan_data(formula = formula, data = data, family = family, prior_scale = prior_scale, center = center)
 
   # ** pick the Stan model to use **
-  # NOTE: later this will be more elaborate to deal with mixed effects models, GLM's etc.
+  # NOTE: later this will be more elaborate to deal with mixed effects models etc.
   model_name = family
   intercept_only = !("X" %in% names(stan_data))
   if(intercept_only){
     model_name = paste0(model_name, "_intercept")
   }
   stan_model_to_use = stanmodels[[paste0(model_name, "_est")]]
+
+  # ** set up initialization for sigma **
+  # this is particularly important with censored data
+  if(family %in% c("normal_linear", "right_censored_linear")){
+    sample_sd = sd(stan_data$Y)
+    init = function(){
+      list(sigma = runif(1, min = 0.5, max = 1.5)*sample_sd)
+    }
+  } else{
+    init = "random"
+  }
 
   # ** fit the model **
   stanfit = rstan::sampling(stan_model_to_use,
@@ -36,7 +47,8 @@ breg = function(formula, data, family = "normal_linear", center = TRUE, prior_sc
                             chains = chains,
                             iter = iter,
                             warmup = warmup,
-                            refresh = 0 # don't print annoying updates
+                            refresh = 0, # don't print annoying updates
+                            init = init
                             )
 
   # ** get formula info **
@@ -48,7 +60,7 @@ breg = function(formula, data, family = "normal_linear", center = TRUE, prior_sc
   if(!intercept_only){
     par_names = c(par_names, paste0("b[",1:formula_info$n_fixed,"]"))
   }
-  if(family %in% c("normal_linear")){
+  if(family %in% c("normal_linear", "right_censored_linear")){
     par_names = c(par_names, "sigma")
   }
   b_draws_matrix = as.matrix(stanfit)[,par_names]

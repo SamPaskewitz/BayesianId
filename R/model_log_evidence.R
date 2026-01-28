@@ -1,5 +1,5 @@
 #' Compute log model evidence (marginal likelihood) for a list of models.
-#' @param model_list A list of fitted regression models, either brmsfit objects or MLE fits from "lm", "glm", "lmer" etc.
+#' @param model_list A list of fitted regression models, either breg objects or MLE fits from "lm", "glm", "lmer" etc.
 #' @returns A vector of log Bayes factors.
 #' @details If the fitted models are brmsfit objects, the log model evidence is computed using bridge sampling. If not, it is assummed that they were fitted by MLE, and log model evidence is computed using the BIC approximation.
 
@@ -8,10 +8,10 @@ model_log_evidence = function(fit_list){
 
   # compute log model evidence (log marginal likelihoods)
   log_evidence = rep(0.0, times = n_models)
-  if("brmsfit" %in% class(fit_list[[1]]) | "stanreg" %in% class(fit_list[[1]])){
+  if("breg" %in% class(fit_list[[1]])){
     # use bridge sampling for MCMC
     for(i in 1:n_models){
-      log_evidence[i] = bridgesampling::bridge_sampler(fit_list[[i]],
+      log_evidence[i] = bridgesampling::bridge_sampler(fit_list[[i]]$stanfit,
                                                        silent = TRUE)$logml
     }
   } else{

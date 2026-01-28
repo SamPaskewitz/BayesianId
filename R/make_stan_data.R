@@ -98,6 +98,20 @@ make_stan_data = function(formula, data, family, prior_scale = 1, center = TRUE)
                      Xcol_scale = Xcol_scale,
                      prior_only = FALSE,
                      prior_scale = prior_scale)
+
+    # add data for censoring if needed
+    if(family == "right_censored_linear"){
+      Ymax = max(Y)
+      which_ncens = which(Y < Ymax)
+      which_cens = which(Y == Ymax)
+      stan_data = c(stan_data,
+                    list(Nncens = length(which_ncens),
+                         Ncens = length(which_cens),
+                         Ymax = Ymax,
+                         which_ncens = which_ncens,
+                         which_cens = which_cens)
+                    )
+    }
   } else{
     # ***** INTERCEPT-ONLY *****
     stan_data = list(N = nrow(data),
@@ -105,6 +119,18 @@ make_stan_data = function(formula, data, family, prior_scale = 1, center = TRUE)
                      Ymean = mean(Y),
                      prior_only = FALSE,
                      prior_scale = prior_scale)
+
+    # add data for censoring if needed
+    if(family == "right_censored_linear"){
+      Ymax = max(Y)
+      which_ncens = which(Y < Ymax)
+      stan_data = c(stan_data,
+                    list(Nncens = length(which_ncens),
+                         Ncens = nrow(data) - length(which_ncens),
+                         Ymax = Ymax,
+                         which_ncens = which_ncens)
+      )
+    }
   }
 
   return(stan_data)

@@ -7,7 +7,7 @@
 fit_submodels(full_model, model_info)
 }
 \arguments{
-\item{full_model}{A brmsfit object (fitted regression model) representing the full model, i.e. the model that includes all possible terms.}
+\item{full_model}{An object representing the full model, i.e. the model that includes all possible terms.}
 
 \item{model_info}{Information about submodels, returned by using the function "submodels" on "formula(full_model)".}
 }

@@ -100,16 +100,17 @@ posterior_interval.breg = function(obj, prob = 0.9, pars = c("Intercept", obj$co
   return(intervals)
 }
 
-#' Draw from the posterior predictive distribution of the outcome.
+#' Draw from the posterior predictive distribution.
 #' @param obj A "breg" object (fitted model).
 #' @param newdata Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.
 #' @param ndraws Number of posterior draws to use, i.e. number of replicated data sets to simulate. Defaults to NULL (use all).
 #' @param seed The seed for random number generation. Set this manually if you want reproducible results.
+#' @returns A D x N matrix of samples from the posterior predictive distribution, where D is the number of draws and N is the number of data points.
 #' @importFrom rstantools posterior_predict
 #' @export
 #' @method posterior_predict breg
 posterior_predict.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sample.int(.Machine$integer.max, size = 1L)){
-  # figure out which Stan model code to us
+  # figure out which Stan model code to use
   stan_model_to_use = stanmodels[[paste0(obj$model_name, "_sim")]]
   # figure out how which draws to use
   if(is.null(ndraws)){
@@ -120,7 +121,7 @@ posterior_predict.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sam
     }
     draws_to_use = sample(1:nrow(obj$b_draws_matrix), size = ndraws, replace = FALSE)
   }
-  # package data (modify later to allow for new data)
+  # package data
   if(obj$intercept_only){
     stan_data = list(N_tilde = obj$stan_data$N)
   } else{
@@ -134,12 +135,36 @@ posterior_predict.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sam
                        K = obj$stan_data$K,
                        X_tilde = X_tilde)
     }
-
   }
+  if("Ymax" %in% names(obj$stan_data)){
+    stan_data$Ymax = obj$stan_data$Ymax
+  }
+
   # sample from the posterior predictive distribution
   post_samples = rstan::gqs(object = stan_model_to_use,
                             data = stan_data,
                             draws = obj$b_draws_matrix[draws_to_use,],
                             seed = seed) |> as.matrix() |> drop()
   return(post_samples)
+}
+
+#' Predicted values (means and optionally SD's) based on a fitted model.
+#' @param obj A "breg" object (fitted model).
+#' @param newdata Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.
+#' @param compute_sd Indicates whether predictive standard deviations should be computed.
+#' @param seed The seed for random number generation. Set this manually if you want reproducible results.
+#' @returns If compute_sd is FALSE, a vector of posterior predictive means. If compute_sd is TRUE, a list with the posterior predictive means and standard deviations.
+#' @details This method is designed to be analogous to the "predict" method of lm and glm model objects. While the "posterior_predict" method samples from the posterior predictive distribution, "predict" produces point predictions (means) and optionally their standard deviations (roughly analogous to predictive standard errors, but Bayesian).
+#' @export
+#' @method predict breg
+predict.breg = function(obj, newdata = NULL, compute_sd = FALSE, seed = sample.int(.Machine$integer.max, size = 1L)){
+  ppred_draws = posterior_predict(obj = obj, newdata = newdata, seed = seed)
+  ppred_mean = apply(ppred_draws, MARGIN = 2, FUN = mean)
+  if(compute_sd){
+    ppred_sd = apply(ppred_draws, MARGIN = 2, FUN = sd)
+    return(list(mean = ppred_mean, sd = ppred_sd))
+  }
+  else{
+    return(ppred_mean)
+  }
 }

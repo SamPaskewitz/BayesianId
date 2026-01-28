@@ -7,7 +7,7 @@
 model_log_evidence(fit_list)
 }
 \arguments{
-\item{model_list}{A list of fitted regression models, either brmsfit objects or MLE fits from "lm", "glm", "lmer" etc.}
+\item{model_list}{A list of fitted regression models, either breg objects or MLE fits from "lm", "glm", "lmer" etc.}
 }
 \value{
 A vector of log Bayes factors.

@@ -13,7 +13,7 @@ library(BayesianId)
 ```{r}
 data("penguins")
 test_data = na.omit(penguins) %>% rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex)
-test_data = test_data |> dplyr::mutate(y_bin = test_data$f2, y_cens = ifelse(y > 4800, 4800, y))
+test_data = test_data |> dplyr::mutate(y_bin = test_data$f2, y_cens = ifelse(y > 5000, 5000, y), censoring = (y > 5000))
 
 levels(test_data$f1) |> print()
 levels(test_data$f2) |> print()
@@ -21,64 +21,95 @@ nrow(test_data) |> print()
 ```
 
 ```{r}
-test_data[10:20,]
-```
-
-```{r}
-fit = breg(y ~ x1, 
-           data = test_data |> dplyr::filter(f1 == "Torgersen"))
-```
-
-```{r}
-fit = breg(#y ~ x1 + x2,
-           y_bin ~ x1 + x2,
-           data = test_data,
-           #family = "normal_linear",
-           family = "bernoulli_logistic",
-           prior_scale = 10,
-           center = TRUE,
-           iter = 10000,
-           warmup = 1000)
-coef(fit)
-```
-
-```{r}
-foo = make_stan_data(formula = y_bin ~ 1,
-           data = test_data,
-           #family = "normal_linear",
-           family = "bernoulli_logistic",
-           prior_scale = 10,
-           center = TRUE)
-foo$Y[1:5]
-```
-
-
-```{r}
-plot(fit, type = "post_pred")
-```
-
-```{r}
-plot(fit, type = "trace")
-```
-
-
-```{r}
-foo = posterior_predict(fit)
-```
-
-```{r}
-gfit = glm(#y ~ x1 + x2, 
-           y_bin ~ x1 + x2,
+tic = Sys.time()
+bar = breg(y_cens ~ 1, 
            data = test_data, 
-           #family = gaussian()
-           family = binomial()
+           family = "right_censored_linear",
+           #family = "normal_linear",
+           chains = 2,
+           iter = 1000
            )
-coef(gfit)
+toc = Sys.time()
+print(toc - tic)
+```
+
+```{r}
+as.matrix(bar$stanfit)[1:4,]
+```
+
+
+```{r}
+stanmodels[["right_censored_linear_est"]]
+```
+
+
+```{r}
+foo = posterior_predict(bar)
+```
+
+```{r}
+foo |> dim()
+```
+
+```{r}
+plot(bar)
 ```
 
 
 
+```{r}
+data("Loblolly")
+Loblolly = as.data.frame(Loblolly)
+Loblolly$Seed = factor(Loblolly$Seed)
+```
 
+```{r}
+foo = parse_formula(height ~ age + (age | Seed))
+```
 
+```{r}
+foo
+```
 
+```{r}
+foo$random
+```
+```{r}
+bar = paste(foo$lhs, "~", paste(foo$random$Seed, collapse = " + ")) |> formula()
+bar
+```
 
+```{r}
+Xg_list = list()
+for(i in 1:length(levels(Loblolly$Seed))){
+  Xg_list[[i]] = model.matrix(bar, data = Loblolly |> subset(Seed == levels(Loblolly$Seed)[[i]]))
+}
+```
+
+```{r}
+Xg = Matrix::bdiag(Xg_list)
+```
+
+```{r}
+Xg
+```
+
+```{r}
+glmm_matrix = function(formula, data){
+  formula_info = parse_formula(formula)
+  gfactor = names(formula_info$random)[1]
+  gef_formula = paste(foo$lhs, "~", paste(formula_info$random[[gfactor]], collapse = " + ")) |> formula()
+  
+  Xg_list = list()
+  for(i in 1:length(levels(data[,gfactor]))){
+    data_subset = data[data[,gfactor] == levels(data[,gfactor])[[i]],]
+    Xg_list[[i]] = model.matrix(gef_formula, data = data_subset)
+  }
+  Xg = bdiag(Xg_list)
+  return(Xg)
+}
+```
+
+```{r}
+glmm_matrix(height ~ age + (age | Seed), data = Loblolly)
+```

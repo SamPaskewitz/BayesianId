@@ -16,10 +16,12 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(BayesianId)
+library(dplyr)
 ```
 
 ```{r load_data}
 data("penguins")
+penguins = penguins |> mutate(across(c("bill_len", "flipper_len"), ~ scale(.x, scale = FALSE)))
 head(penguins)
 ```
 
@@ -40,23 +42,21 @@ mass_lm_bma = bma(mass_lm_full)
 print(mass_lm_bma)
 ```
 
-```{r terms}
+```{r term_probs}
 summary(mass_lm_bma, type = "term_probs")
 ```
 
-```{r}
+```{r term_odds}
 summary(mass_lm_bma, type = "term_odds")
 ```
 
-
-```{r models}
+```{r model_probs}
 summary(mass_lm_bma, type = "model_probs")
 ```
 
-```{r}
+```{r model_odds}
 summary(mass_lm_bma, type = "model_odds")
 ```
-
 
 ```{r est}
 summary(mass_lm_bma, type = "est")

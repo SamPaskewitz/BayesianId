@@ -2,7 +2,7 @@
 % Please edit documentation in R/breg_methods.R
 \name{posterior_predict.breg}
 \alias{posterior_predict.breg}
-\title{Draw from the posterior predictive distribution of the outcome.}
+\title{Draw from the posterior predictive distribution.}
 \usage{
 \method{posterior_predict}{breg}(
   obj,
@@ -20,6 +20,9 @@
 
 \item{seed}{The seed for random number generation. Set this manually if you want reproducible results.}
 }
+\value{
+A D x N matrix of samples from the posterior predictive distribution, where D is the number of draws and N is the number of data points.
+}
 \description{
-Draw from the posterior predictive distribution of the outcome.
+Draw from the posterior predictive distribution.
 }

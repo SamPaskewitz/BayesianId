@@ -4,12 +4,12 @@
 \alias{summary.bma}
 \title{Summarize information about a "bma" object.}
 \usage{
-\method{summary}{bma}(obj, type = "terms", pretty = TRUE)
+\method{summary}{bma}(obj, type = "term_probs", pretty = TRUE)
 }
 \arguments{
 \item{obj}{A "bma" object.}
 
-\item{type}{Type of summary. Options are "terms", "est", and "models" (defaults to "terms").}
+\item{type}{Type of summary. Options are "term_probs", "term_odds", "model_probs", "model_odds", and "est" (defaults to "term_probs").}
 
 \item{pretty}{Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.}
 }

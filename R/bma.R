@@ -60,7 +60,7 @@ bma = function(full_model,
   log_bfs = log_evidence - log_evidence[1]
   bfs = exp(log_bfs)
   prior_model_odds = prior_model_probs/prior_model_probs[1]
-  post_model_probs = exp(log_bfs + log(prior_model_probs) - lse(log_bfs + log(prior_model_probs)))
+  post_model_probs = exp(log_evidence + log(prior_model_probs) - lse(log_evidence + log(prior_model_probs)))
   post_model_odds = post_model_probs/post_model_probs[1]
 
   # convert model posterior probs to term posterior probs

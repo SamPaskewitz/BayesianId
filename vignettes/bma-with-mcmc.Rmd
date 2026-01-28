@@ -1,0 +1,61 @@
+---
+title: "Bayesian Model Averaging with MCMC"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Bayesian Model Averaging with MCMC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(BayesianId)
+```
+
+```{r load_data}
+data("penguins")
+head(penguins)
+```
+
+```{r full_model}
+mass_breg_full = breg(body_mass ~ flipper_len*bill_len,
+                      data = na.omit(penguins))
+```
+
+```{r check_full_model}
+plot(mass_breg_full, type = "post_pred")
+```
+
+```{r create_bma_object}
+mass_breg_bma = bma(mass_breg_full)
+```
+
+```{r print}
+print(mass_breg_bma)
+```
+
+```{r term_probs}
+summary(mass_breg_bma, type = "term_probs")
+```
+
+```{r term_odds}
+summary(mass_breg_bma, type = "term_odds")
+```
+
+```{r model_probs}
+summary(mass_breg_bma, type = "model_probs")
+```
+
+```{r model_odds}
+summary(mass_breg_bma, type = "model_odds")
+```
+
+```{r est}
+summary(mass_breg_bma, type = "est")
+```

@@ -34,6 +34,23 @@ test_that("normal linear intercept model runs", {
                          iter = 1000))
 })
 
+test_that("right censored linear model runs", {
+  expect_no_warning(breg(formula = y_cens ~ x1*x2*f1,
+                         family = "right_censored_linear",
+                         data = test_data,
+                         center = TRUE,
+                         chains = 2,
+                         iter = 1000))
+})
+
+test_that("right censored linear intercept model runs", {
+  expect_no_warning(breg(formula = y_cens ~ 1,
+                         family = "right_censored_linear",
+                         data = test_data,
+                         chains = 2,
+                         iter = 1000))
+})
+
 test_that("bernoulli logistic model runs", {
   expect_no_warning(breg(formula = y_bin ~ x1*x2*f1,
                          family = "bernoulli_logistic",

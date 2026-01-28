@@ -4,9 +4,7 @@
 
 - write bma "predict" method
 
-- add bma "emmeans" support for MLE
-
-- add bma "emmeans" support for MCMC
+- add bma "emmeans" support
 
 - write tests for bma with "lm" objects
 
@@ -20,6 +18,8 @@
 
 - look for why you sometimes get a negative BF (examples in Crystal's data)
 
+- revise BMA "summary" method to print "> **" instead of "Inf" for very large Bayes factors (and add a similar fix for very small Bayes factors)
+
 ***** HYPOTHESIS TESTING *****
 
 - add support for interval null hypotheses
@@ -30,9 +30,7 @@
 
 - double check help files and update as needed
 
-- add examples to help files
-
-- write documentation for the "breg" and "reg_bma" classes
+- write documentation for the "breg" and "bma" classes
 
 - create a vignette showing basic usage
 
@@ -44,24 +42,30 @@
 
 - TLDR for estimation: "If there is an effect, how big is it?"
 
+- guide for adding new models
+
 ***** BETTER MODEL CLASS SUPPPORT *****
 
 - get something better than basic BIC for "lmer" and "glmer" models
+
+- error message in "bma" for mixed effects models fit by REML
 
 - GLIB-style estimation
 
 - sampling-based BMA for MCMC fits (instead of normal approximation)
 
-***** STAN SUPPORT *****
+***** STAN SUPPORT (BREG) *****
 
 - remove any dependence on brms or brms formulas
 
-- write a "predict" method that produces both means and SD
+- better treatment of default prior scales (c.f. BayesFactor)
 
-- get "breg" objects to work with Bayes factor computation for "reg_bma"
+- add emmeans support
 
 - add version with censoring
 
 - add random effects to existing models
 
 - add other methods suggested by "rstantools"
+
+- add a "stancode" method for seeing the Stan code

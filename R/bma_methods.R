@@ -3,7 +3,7 @@
 #' @export
 #' @method print bma
 print.bma = function(obj){
-  cat("Full model:", as.character(obj$model_info$formulas[[1]])[[1]])
+  cat("Full model:", obj$model_info$model_names[[1]])
   cat("\nMost probable model:", (obj$post_model_odds |> which.max() |> names())[1])
   cat("\nModel class:", obj$model_class)
   cat("\nNumber of submodels:", obj$model_info$n_models)
@@ -102,7 +102,7 @@ coef.bma = function(obj){
     # exclude models with effectively zero posterior prob
     incl = incl*(obj$post_model_probs > 1e-2)
     # post probs for models that include the coef ("pi")
-    pi = exp(obj$log_model_bfs[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_bfs[incl] + log(obj$prior_model_probs[incl])))
+    pi = exp(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl])))
     # posterior means from models that include the coef
     mu = sapply(obj$fit_list[incl], function(x){coef(x)[coef_name]})
     # posterior SD's from models that include the coef
