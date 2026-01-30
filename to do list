@@ -42,7 +42,7 @@
 
 - TLDR for estimation: "If there is an effect, how big is it?"
 
-- guide for adding new models
+- write a guide for adding new models
 
 ***** BETTER MODEL CLASS SUPPPORT *****
 
@@ -52,7 +52,7 @@
 
 - GLIB-style estimation
 
-- sampling-based BMA for MCMC fits (instead of normal approximation)
+- sampling-based BMA credible intervals etc. for MCMC fits (instead of normal approximation)
 
 ***** STAN SUPPORT (BREG) *****
 
@@ -62,7 +62,7 @@
 
 - add emmeans support
 
-- add version with censoring
+- add "posterior_linpred" method
 
 - add random effects to existing models
 

@@ -22,37 +22,50 @@ nrow(test_data) |> print()
 
 ```{r}
 tic = Sys.time()
-bar = breg(y_cens ~ 1, 
+bar = breg(y_cens ~ x1, 
            data = test_data, 
-           family = "right_censored_linear",
-           #family = "normal_linear",
+           #family = "right_censored_linear",
+           family = "normal_linear",
            chains = 2,
-           iter = 1000
+           iter = 10000
            )
 toc = Sys.time()
 print(toc - tic)
 ```
 
 ```{r}
-as.matrix(bar$stanfit)[1:4,]
+quz = simulate(bar)
+```
+
+```{r}
+#names(quz)
+quz$N_tilde
 ```
 
 
 ```{r}
-stanmodels[["right_censored_linear_est"]]
+nrow(as.matrix(quz))
+```
+
+
+
+```{r}
+foo = posterior_linpred(bar)
+#foo = posterior_predict(bar)
+```
+
+```{r}
+foo
 ```
 
 
 ```{r}
-foo = posterior_predict(bar)
+library(rstan)
+foo |> names()
 ```
 
 ```{r}
-foo |> dim()
-```
-
-```{r}
-plot(bar)
+stanmodels[["normal_linear_sim"]]
 ```
 
 

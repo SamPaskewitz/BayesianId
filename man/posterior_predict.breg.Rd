@@ -14,7 +14,7 @@
 \arguments{
 \item{obj}{A "breg" object (fitted model).}
 
-\item{newdata}{Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.}
+\item{newdata}{Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted data are used.}
 
 \item{ndraws}{Number of posterior draws to use, i.e. number of replicated data sets to simulate. Defaults to NULL (use all).}
 

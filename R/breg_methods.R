@@ -100,16 +100,16 @@ posterior_interval.breg = function(obj, prob = 0.9, pars = c("Intercept", obj$co
   return(intervals)
 }
 
-#' Draw from the posterior predictive distribution.
+#' Simulate the model to get generated quantities (posterior predictive samples and posterior samples of mu, i.e. "linpred").
 #' @param obj A "breg" object (fitted model).
-#' @param newdata Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.
+#' @param newdata Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted data are used.
 #' @param ndraws Number of posterior draws to use, i.e. number of replicated data sets to simulate. Defaults to NULL (use all).
 #' @param seed The seed for random number generation. Set this manually if you want reproducible results.
-#' @returns A D x N matrix of samples from the posterior predictive distribution, where D is the number of draws and N is the number of data points.
-#' @importFrom rstantools posterior_predict
+#' @details This runs the appropriate "_sim" Stan code with the "gqs" rstan function, producing samples of "mu" (the linear predictor) and "Y_tilde" (the posterior predictive distribution). The user will not ordinarily use this function directly. Instead, this function is used for the "posterior_predict" and "posterior_linpred" methods.
+#' @returns A list with the stanfit object (containing the samples) and "N_tilde" (the number of simulated data points).
 #' @export
-#' @method posterior_predict breg
-posterior_predict.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sample.int(.Machine$integer.max, size = 1L)){
+#' @method simulate breg
+simulate.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sample.int(.Machine$integer.max, size = 1L)){
   # figure out which Stan model code to use
   stan_model_to_use = stanmodels[[paste0(obj$model_name, "_sim")]]
   # figure out how which draws to use
@@ -141,11 +141,45 @@ posterior_predict.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sam
   }
 
   # sample from the posterior predictive distribution
-  post_samples = rstan::gqs(object = stan_model_to_use,
-                            data = stan_data,
-                            draws = obj$b_draws_matrix[draws_to_use,],
-                            seed = seed) |> as.matrix() |> drop()
-  return(post_samples)
+  stanfit = rstan::gqs(object = stan_model_to_use,
+                       data = stan_data,
+                       draws = obj$b_draws_matrix[draws_to_use,],
+                       seed = seed)
+  return(list(stanfit = stanfit, N_tilde = stan_data$N_tilde))
+}
+
+#' Draw from the posterior predictive distribution.
+#' @param obj A "breg" object (fitted model).
+#' @param newdata Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted data are used.
+#' @param ndraws Number of posterior draws to use, i.e. number of replicated data sets to simulate. Defaults to NULL (use all).
+#' @param seed The seed for random number generation. Set this manually if you want reproducible results.
+#' @returns A D x N matrix of samples from the posterior predictive distribution, where D is the number of draws and N is the number of data points.
+#' @importFrom rstantools posterior_predict
+#' @export
+#' @method posterior_predict breg
+posterior_predict.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sample.int(.Machine$integer.max, size = 1L)){
+  sim = simulate(obj = obj, newdata = newdata, ndraws = ndraws, seed = seed)
+  all_samples = as.matrix(sim$stanfit)
+  cnames = paste0("Y_tilde[", 1:sim$N_tilde, "]")
+  Y_tilde_samples = all_samples[, cnames] |> drop()
+  return(Y_tilde_samples)
+}
+
+#' Draw from the posterior distribution of the linear predictor (mu = b0 + b1*x + ...).
+#' @param obj A "breg" object (fitted model).
+#' @param newdata Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted data are used.
+#' @param ndraws Number of posterior draws to use, i.e. number of replicated data sets to simulate. Defaults to NULL (use all).
+#' @param seed The seed for random number generation. Set this manually if you want reproducible results.
+#' @returns A D x N matrix of samples from the posterior distribution of the linear predictor (mu), where D is the number of draws and N is the number of data points.
+#' @importFrom rstantools posterior_linpred
+#' @export
+#' @method posterior_linpred breg
+posterior_linpred.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sample.int(.Machine$integer.max, size = 1L)){
+  sim = simulate(obj = obj, newdata = newdata, ndraws = ndraws, seed = seed)
+  all_samples = as.matrix(sim$stanfit)
+  cnames = paste0("mu[", 1:sim$N_tilde, "]")
+  mu_samples = all_samples[, cnames] |> drop()
+  return(mu_samples)
 }
 
 #' Predicted values (means and optionally SD's) based on a fitted model.
