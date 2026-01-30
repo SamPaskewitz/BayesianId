@@ -12,7 +12,7 @@
 #' * DESCRIBE THE CONTRAST CODES ETC
 #'
 
-make_stan_data = function(formula, data, family, prior_scale = 1, center = TRUE){
+make_stan_data = function(formula, data, family = "normal_linear", prior_scale = 1, center = TRUE){
   # ***** setup *****
   parsed_formula = parse_formula(formula) # parse formula
   x_names = parsed_formula$fixed_main

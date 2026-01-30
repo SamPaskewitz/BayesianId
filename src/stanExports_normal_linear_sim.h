@@ -32,18 +32,18 @@ static constexpr std::array<const char*, 16> locations_array__ =
   " (in 'normal_linear_sim', line 7, column 2 to column 14)",
   " (in 'normal_linear_sim', line 8, column 2 to column 10)",
   " (in 'normal_linear_sim', line 9, column 2 to column 22)",
-  " (in 'normal_linear_sim', line 16, column 2 to column 21)",
-  " (in 'normal_linear_sim', line 17, column 2 to column 30)",
-  " (in 'normal_linear_sim', line 18, column 2 to column 22)",
-  " (in 'normal_linear_sim', line 19, column 2 to column 34)",
+  " (in 'normal_linear_sim', line 12, column 2 to column 21)",
+  " (in 'normal_linear_sim', line 13, column 2 to column 30)",
+  " (in 'normal_linear_sim', line 14, column 2 to column 22)",
+  " (in 'normal_linear_sim', line 15, column 2 to column 34)",
   " (in 'normal_linear_sim', line 2, column 2 to column 23)",
   " (in 'normal_linear_sim', line 3, column 2 to column 17)",
   " (in 'normal_linear_sim', line 4, column 9 to column 16)",
   " (in 'normal_linear_sim', line 4, column 18 to column 19)",
   " (in 'normal_linear_sim', line 4, column 2 to column 29)",
   " (in 'normal_linear_sim', line 7, column 9 to column 10)",
-  " (in 'normal_linear_sim', line 16, column 9 to column 16)",
-  " (in 'normal_linear_sim', line 17, column 8 to column 15)"};
+  " (in 'normal_linear_sim', line 12, column 9 to column 16)",
+  " (in 'normal_linear_sim', line 13, column 8 to column 15)"};
 #include <stan_meta_header.hpp>
 class model_normal_linear_sim final : public model_base_crtp<model_normal_linear_sim> {
 private:

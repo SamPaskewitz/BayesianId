@@ -5,11 +5,9 @@ data {
 parameters {
   real b0;  // actual intercept
 }
-transformed parameters {
-  vector[N_tilde] mu;
-  mu = rep_vector(b0, N_tilde);
-}
 generated quantities {
+  vector[N_tilde] mu; // linear predictor
   array[N_tilde] int Y_tilde;  // simulated response variable
+  mu = rep_vector(b0, N_tilde);
   Y_tilde = bernoulli_logit_rng(mu);
 }

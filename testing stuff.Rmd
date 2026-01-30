@@ -34,22 +34,6 @@ print(toc - tic)
 ```
 
 ```{r}
-quz = simulate(bar)
-```
-
-```{r}
-#names(quz)
-quz$N_tilde
-```
-
-
-```{r}
-nrow(as.matrix(quz))
-```
-
-
-
-```{r}
 foo = posterior_linpred(bar)
 #foo = posterior_predict(bar)
 ```

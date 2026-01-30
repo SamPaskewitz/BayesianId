@@ -9,12 +9,10 @@ parameters {
   real b0;  // actual intercept
   real<lower=0> sigma;  // dispersion parameter
 }
-transformed parameters {
-  vector[N_tilde] mu;
-  mu = b0 + X_tilde*b; // linear predictor
-}
 generated quantities {
+  vector[N_tilde] mu; // linear predictor
   array[N_tilde] real Y_tilde;  // simulated response variable
+  mu = b0 + X_tilde*b;
   Y_tilde = normal_rng(mu, sigma);
   for (i in 1:N_tilde) { // do the right-censoring
     if (Y_tilde[i] > Ymax) {

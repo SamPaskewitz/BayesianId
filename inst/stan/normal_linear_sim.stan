@@ -8,10 +8,6 @@ parameters {
   real b0;  // actual intercept
   real<lower=0> sigma;  // dispersion parameter
 }
-//transformed parameters {
-//  vector[N_tilde] mu;
-//  mu = b0 + X_tilde*b; // linear predictor
-//}
 generated quantities {
   vector[N_tilde] mu; // linear predictor
   array[N_tilde] real Y_tilde;  // simulated response variable

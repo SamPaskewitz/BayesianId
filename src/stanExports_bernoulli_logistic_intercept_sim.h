@@ -31,13 +31,13 @@ static constexpr std::array<const char*, 10> locations_array__ =
   {" (found before start of program)",
   " (in 'bernoulli_logistic_intercept_sim', line 6, column 2 to column 10)",
   " (in 'bernoulli_logistic_intercept_sim', line 9, column 2 to column 21)",
-  " (in 'bernoulli_logistic_intercept_sim', line 13, column 2 to column 29)",
-  " (in 'bernoulli_logistic_intercept_sim', line 10, column 2 to column 31)",
-  " (in 'bernoulli_logistic_intercept_sim', line 14, column 2 to column 36)",
+  " (in 'bernoulli_logistic_intercept_sim', line 10, column 2 to column 29)",
+  " (in 'bernoulli_logistic_intercept_sim', line 11, column 2 to column 31)",
+  " (in 'bernoulli_logistic_intercept_sim', line 12, column 2 to column 36)",
   " (in 'bernoulli_logistic_intercept_sim', line 2, column 2 to column 23)",
   " (in 'bernoulli_logistic_intercept_sim', line 3, column 2 to column 17)",
   " (in 'bernoulli_logistic_intercept_sim', line 9, column 9 to column 16)",
-  " (in 'bernoulli_logistic_intercept_sim', line 13, column 8 to column 15)"};
+  " (in 'bernoulli_logistic_intercept_sim', line 10, column 8 to column 15)"};
 #include <stan_meta_header.hpp>
 class model_bernoulli_logistic_intercept_sim final : public model_base_crtp<model_bernoulli_logistic_intercept_sim> {
 private:
@@ -120,11 +120,6 @@ public:
       local_scalar_t__ b0 = DUMMY_VAR__;
       current_statement__ = 1;
       b0 = in__.template read<local_scalar_t__>();
-      Eigen::Matrix<local_scalar_t__,-1,1> mu =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(N_tilde, DUMMY_VAR__);
-      current_statement__ = 4;
-      stan::model::assign(mu, stan::math::rep_vector(b0, N_tilde),
-        "assigning variable mu");
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -165,30 +160,28 @@ public:
       double b0 = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 1;
       b0 = in__.template read<local_scalar_t__>();
-      Eigen::Matrix<double,-1,1> mu =
-        Eigen::Matrix<double,-1,1>::Constant(N_tilde,
-          std::numeric_limits<double>::quiet_NaN());
       out__.write(b0);
       if (stan::math::logical_negation(
             (stan::math::primitive_value(emit_transformed_parameters__) ||
             stan::math::primitive_value(emit_generated_quantities__)))) {
         return ;
       }
-      current_statement__ = 4;
-      stan::model::assign(mu, stan::math::rep_vector(b0, N_tilde),
-        "assigning variable mu");
-      if (emit_transformed_parameters__) {
-        out__.write(mu);
-      }
       if (stan::math::logical_negation(emit_generated_quantities__)) {
         return ;
       }
+      Eigen::Matrix<double,-1,1> mu =
+        Eigen::Matrix<double,-1,1>::Constant(N_tilde,
+          std::numeric_limits<double>::quiet_NaN());
       std::vector<int> Y_tilde =
         std::vector<int>(N_tilde, std::numeric_limits<int>::min());
+      current_statement__ = 4;
+      stan::model::assign(mu, stan::math::rep_vector(b0, N_tilde),
+        "assigning variable mu");
       current_statement__ = 5;
       stan::model::assign(Y_tilde,
         stan::math::bernoulli_logit_rng(mu, base_rng__),
         "assigning variable Y_tilde");
+      out__.write(mu);
       out__.write(Y_tilde);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -247,13 +240,9 @@ public:
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
     names__ = std::vector<std::string>{"b0"};
-    if (emit_transformed_parameters__) {
-      std::vector<std::string> temp{"mu"};
-      names__.reserve(names__.size() + temp.size());
-      names__.insert(names__.end(), temp.begin(), temp.end());
-    }
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {
-      std::vector<std::string> temp{"Y_tilde"};
+      std::vector<std::string> temp{"mu", "Y_tilde"};
       names__.reserve(names__.size() + temp.size());
       names__.insert(names__.end(), temp.begin(), temp.end());
     }
@@ -263,15 +252,11 @@ public:
            emit_transformed_parameters__ = true, const bool
            emit_generated_quantities__ = true) const {
     dimss__ = std::vector<std::vector<size_t>>{std::vector<size_t>{}};
-    if (emit_transformed_parameters__) {
-      std::vector<std::vector<size_t>>
-        temp{std::vector<size_t>{static_cast<size_t>(N_tilde)}};
-      dimss__.reserve(dimss__.size() + temp.size());
-      dimss__.insert(dimss__.end(), temp.begin(), temp.end());
-    }
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {
       std::vector<std::vector<size_t>>
-        temp{std::vector<size_t>{static_cast<size_t>(N_tilde)}};
+        temp{std::vector<size_t>{static_cast<size_t>(N_tilde)},
+             std::vector<size_t>{static_cast<size_t>(N_tilde)}};
       dimss__.reserve(dimss__.size() + temp.size());
       dimss__.insert(dimss__.end(), temp.begin(), temp.end());
     }
@@ -281,13 +266,12 @@ public:
                           emit_transformed_parameters__ = true, bool
                           emit_generated_quantities__ = true) const final {
     param_names__.emplace_back(std::string() + "b0");
-    if (emit_transformed_parameters__) {
+    if (emit_transformed_parameters__) {}
+    if (emit_generated_quantities__) {
       for (int sym1__ = 1; sym1__ <= N_tilde; ++sym1__) {
         param_names__.emplace_back(std::string() + "mu" + '.' +
           std::to_string(sym1__));
       }
-    }
-    if (emit_generated_quantities__) {
       for (int sym1__ = 1; sym1__ <= N_tilde; ++sym1__) {
         param_names__.emplace_back(std::string() + "Y_tilde" + '.' +
           std::to_string(sym1__));
@@ -299,13 +283,12 @@ public:
                             emit_transformed_parameters__ = true, bool
                             emit_generated_quantities__ = true) const final {
     param_names__.emplace_back(std::string() + "b0");
-    if (emit_transformed_parameters__) {
+    if (emit_transformed_parameters__) {}
+    if (emit_generated_quantities__) {
       for (int sym1__ = 1; sym1__ <= N_tilde; ++sym1__) {
         param_names__.emplace_back(std::string() + "mu" + '.' +
           std::to_string(sym1__));
       }
-    }
-    if (emit_generated_quantities__) {
       for (int sym1__ = 1; sym1__ <= N_tilde; ++sym1__) {
         param_names__.emplace_back(std::string() + "Y_tilde" + '.' +
           std::to_string(sym1__));
@@ -313,10 +296,10 @@ public:
     }
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(N_tilde) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Y_tilde\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N_tilde) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(N_tilde) + "},\"block\":\"generated_quantities\"},{\"name\":\"Y_tilde\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N_tilde) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(N_tilde) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Y_tilde\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N_tilde) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(N_tilde) + "},\"block\":\"generated_quantities\"},{\"name\":\"Y_tilde\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N_tilde) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
@@ -326,8 +309,9 @@ public:
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
     const size_t num_params__ = 1;
-    const size_t num_transformed = emit_transformed_parameters * (N_tilde);
-    const size_t num_gen_quantities = emit_generated_quantities * (N_tilde);
+    const size_t num_transformed = emit_transformed_parameters * (0);
+    const size_t num_gen_quantities = emit_generated_quantities * ((N_tilde +
+      N_tilde));
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;
     std::vector<int> params_i;
@@ -343,8 +327,9 @@ public:
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
     const size_t num_params__ = 1;
-    const size_t num_transformed = emit_transformed_parameters * (N_tilde);
-    const size_t num_gen_quantities = emit_generated_quantities * (N_tilde);
+    const size_t num_transformed = emit_transformed_parameters * (0);
+    const size_t num_gen_quantities = emit_generated_quantities * ((N_tilde +
+      N_tilde));
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;
     vars = std::vector<double>(num_to_write,
