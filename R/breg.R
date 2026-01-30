@@ -53,12 +53,12 @@ breg = function(formula, data, family = "normal_linear", center = TRUE, prior_sc
 
   # ** get formula info **
   formula_info = parse_formula(formula)
-  coef_names = formula_info$fixed
 
   # ** save parameter draws (with original names) for posterior predictive simulations **
   par_names = c("b0")
   if(!intercept_only){
-    par_names = c(par_names, paste0("b[",1:formula_info$n_fixed,"]"))
+    n_coef = ncol(stan_data$X)
+    par_names = c(par_names, paste0("b[",1:n_coef,"]"))
   }
   if(family %in% c("normal_linear", "right_censored_linear")){
     par_names = c(par_names, "sigma")
@@ -67,9 +67,14 @@ breg = function(formula, data, family = "normal_linear", center = TRUE, prior_sc
 
   # ** rename parameters **
   names(stanfit)[names(stanfit) == "b0"] = "Intercept"
-  names(stanfit)[names(stanfit) %in% paste0("b[",1:formula_info$n_fixed,"]")] = coef_names
   names(stanfit)[names(stanfit) == "delta0"] = "delta_Intercept"
-  names(stanfit)[names(stanfit) %in% paste0("delta[",1:formula_info$n_fixed,"]")] = paste0("delta_", coef_names)
+  if(!intercept_only){
+    coef_names = colnames(stan_data$X)
+    names(stanfit)[names(stanfit) %in% paste0("b[",1:n_coef,"]")] = coef_names
+    names(stanfit)[names(stanfit) %in% paste0("delta[",1:n_coef,"]")] = paste0("delta_", coef_names)
+  } else{
+    coef_names = NULL
+  }
 
   # ** assemble a "breg" object **
   output = list(stanfit = stanfit,
@@ -78,7 +83,7 @@ breg = function(formula, data, family = "normal_linear", center = TRUE, prior_sc
                 formula = formula,
                 formula_info = formula_info,
                 stan_data = stan_data,
-                data = data,
+                data = data[,c(formula_info$lhs, formula_info$fixed_main)], # only relevant variables
                 center = center,
                 coef_names = coef_names,
                 call = match.call(), # this records the function call, so the default "update" method works (I don't need to write my own version)

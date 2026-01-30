@@ -22,20 +22,51 @@ nrow(test_data) |> print()
 
 ```{r}
 tic = Sys.time()
-bar = breg(y_cens ~ x1, 
-           data = test_data, 
-           #family = "right_censored_linear",
+bar = breg(y ~ f1*f2 + x1, 
+           data = test_data,
            family = "normal_linear",
            chains = 2,
-           iter = 10000
+           iter = 2000
            )
 toc = Sys.time()
 print(toc - tic)
 ```
 
 ```{r}
-foo = posterior_linpred(bar)
-#foo = posterior_predict(bar)
+coef(lm(y ~ f1*f2 + x1, data = test_data))
+```
+
+```{r}
+summary(bar)
+```
+```{r}
+levels(bar$data$f1)
+```
+
+```{r}
+bar$stan_data$X
+```
+
+```{r}
+bar$coef_names
+```
+
+
+
+
+
+
+```{r}
+coef(bar)
+```
+
+```{r}
+recover_data(bar)
+```
+
+```{r}
+library(emmeans)
+foo = emmeans(bar, ~ f1)
 ```
 
 ```{r}
