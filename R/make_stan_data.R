@@ -28,34 +28,14 @@ make_stan_data = function(formula, data, family = "normal_linear", prior_scale =
   if(!intercept_only){
     # ***** NOT INTERCEPT-ONLY *****
 
-    # ** convert character variables to factors **
-    for(i in 1:length(x_names)){
-      if(is.character(data[,x_names[i],drop = FALSE])){
-        data[,x_names[i],drop = FALSE] = factor(data[,x_names[i],drop = FALSE])
-      }
-    }
+    # ** make X (model matrix with appropriate contrasts etc.) **
+    X = make_X(formula = formula, data = data, center = center)
 
     # ** figure out which predictors are factors **
     is_factor = sapply(data[,x_names,drop=FALSE], is.factor)
     is_numeric = !is_factor
     x_factor_names = x_names[is_factor]
     x_numeric_names = x_names[is_numeric]
-
-    # ** give factors proper contrast codes **
-    if(any(is_factor)){
-      for(i in 1:length(x_factor_names)){
-        a = length(levels(data[,x_factor_names[i]])) # number of factor levels
-        contrasts(data[, x_factor_names[i]]) = contr_banova(a)
-      }
-    }
-
-    # ** center numeric predictors (optionally) **
-    if(center & any(is_numeric)){
-      data[,x_numeric_names] = data[,x_numeric_names] |> scale(center = TRUE, scale = FALSE)
-    }
-
-    # ** set up design matrix (minus intercept) **
-    X = model.matrix(formula, data = data)[,-1,drop = FALSE]
 
     # ** compute Xcol_scale **
 

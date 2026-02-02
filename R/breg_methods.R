@@ -18,9 +18,11 @@ summary.breg = function(obj){
   print(obj$call)
   cat("\nSampling details and estimates:\n")
   print(obj$stanfit, pars = c("Intercept", obj$coef_names), probs = c(0.025, 0.975), digits_summary = 3)
+  cat("\nFactor means (estimated marginal means):\n")
+  print(factor_means(obj))
 }
 
-#' Print parameter estimates (posterior means) from a "breg" object.
+#' Get parameter estimates (posterior means) from a "breg" object.
 #' @param obj A "breg" object (fitted model).
 #' @param pars Parameters to select. By default these are just the model coefficients (fixed effects), plus the intercept.
 #' @importMethodsFrom rstan summary
@@ -130,7 +132,7 @@ simulate.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sample.int(.
                        K = obj$stan_data$K,
                        X_tilde = obj$stan_data$X)
     } else{
-      X_tilde = make_stan_data(formula = obj$formula, data = newdata, center = obj$center)$X
+      X_tilde = make_X(formula = obj$formula, data = newdata, center = obj$center)
       stan_data = list(N_tilde = nrow(newdata),
                        K = obj$stan_data$K,
                        X_tilde = X_tilde)
@@ -186,13 +188,12 @@ posterior_linpred.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sam
 #' @param obj A "breg" object (fitted model).
 #' @param newdata Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.
 #' @param compute_sd Indicates whether predictive standard deviations should be computed.
-#' @param seed The seed for random number generation. Set this manually if you want reproducible results.
 #' @returns If compute_sd is FALSE, a vector of posterior predictive means. If compute_sd is TRUE, a list with the posterior predictive means and standard deviations.
-#' @details This method is designed to be analogous to the "predict" method of lm and glm model objects. While the "posterior_predict" method samples from the posterior predictive distribution, "predict" produces point predictions (means) and optionally their standard deviations (roughly analogous to predictive standard errors, but Bayesian).
+#' @details This method is designed to be analogous to the "predict" method of lm and glm model objects. The "posterior_predict" method samples from the posterior predictive distribution; "predict" summarizes these samples to produce point predictions (means) and optionally their standard deviations (roughly analogous to predictive standard errors, but Bayesian).
 #' @export
 #' @method predict breg
-predict.breg = function(obj, newdata = NULL, compute_sd = FALSE, seed = sample.int(.Machine$integer.max, size = 1L)){
-  ppred_draws = posterior_predict(obj = obj, newdata = newdata, seed = seed)
+predict.breg = function(obj, newdata = NULL, compute_sd = FALSE){
+  ppred_draws = posterior_predict(obj = obj, newdata = newdata)
   ppred_mean = apply(ppred_draws, MARGIN = 2, FUN = mean)
   if(compute_sd){
     ppred_sd = apply(ppred_draws, MARGIN = 2, FUN = sd)
@@ -201,4 +202,49 @@ predict.breg = function(obj, newdata = NULL, compute_sd = FALSE, seed = sample.i
   else{
     return(ppred_mean)
   }
+}
+
+#' Compute means of the linear predictor (mu = b0 + b1*x + ...) at all combinations of factor levels (i.e. expected marginal means).
+#' @param obj A "breg" object (fitted model).
+#' @returns The estimated marginal means and their standard deviations.
+#' @export
+#' @method factor_means breg
+#'
+factor_means.breg = function(obj){
+  # get info
+  x_names = obj$formula_info$fixed_main
+  is_factor = sapply(obj$data[,x_names,drop=FALSE], is.factor)
+  factor_names = x_names[is_factor]
+  n_factors = length(factor_names)
+  # make list of factors
+  factor_list = list()
+  for(i in 1:n_factors){
+    factor_list[[i]] = levels(obj$data[,factor_names[i]])
+  }
+  names(factor_list) = factor_names
+  # create grid of factor level combinations
+  grid = expand.grid(factor_list)
+  # add numeric variables at their means
+  num_names = x_names[!is_factor]
+  n_num = length(num_names)
+  for(i in 1:n_num){
+    grid[,num_names[i]] = mean(obj$data[,num_names[i]])
+  }
+  # sample the linear predictor (mu)
+  mu_samples = posterior_linpred(obj, newdata = grid)
+  # compute factor means, SD's, and quantiles
+  output = data.frame(mean = apply(foo, MARGIN = 2, FUN = mean),
+                      sd = apply(foo, MARGIN = 2, FUN = sd),
+                      "2.5%" = apply(foo, MARGIN = 2, FUN = quantile, probs = 0.025),
+                      "97.5%" = apply(foo, MARGIN = 2, FUN = quantile, probs = 0.975),
+                      check.names = FALSE)
+  # label everything nicely
+  cell_names = df[,1]
+  if(n_factors > 1){
+    for(i in 2:n_factors){
+      cell_names = paste(cell_names, df[,i], sep = "_")
+    }
+  }
+  row.names(output) = cell_names
+  return(output)
 }

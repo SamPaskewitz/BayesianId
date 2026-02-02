@@ -13,6 +13,10 @@ recover_data.breg = function(object){
       df[,!is_factor] = scale(df[,!is_factor], center = TRUE, scale = FALSE)
     }
   }
+  attr(df, "call") = object$call
+  attr(df, "terms") = terms(object$formula)
+  attr(df, "predictors") = object$formula_info$fixed_main
+  attr(df, "responses") = object$formula_info$lhs
   return(df)
 }
 
@@ -28,13 +32,8 @@ emm_basis.breg = function(object, trms, xlev, grid, ...){
   #X = diag(ncol(mu_samples)) # just following the brms code here (shrug)
 
   # "straight" emmeans extension (ignoring what brms does)
-  #X = make_stan_data(formula = object$formula,
-  #                   data = grid,
-  #                   family = object$family,
-  #                   center = object$center)$X
-  #X = cbind(rep(1.0, times = nrow(X)), X) # add intercept back to design matrix
   m = model.frame(trms, grid, na.action = na.pass, xlev = xlev)
-  X = model.matrix(trms, m, contrasts.arg = object$contrasts)
+  X = model.matrix(trms, m, contrasts.arg = contr_banova)
   bhat = coef(object)
   V = vcov(object)
 
