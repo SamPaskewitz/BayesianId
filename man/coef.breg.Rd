@@ -2,7 +2,7 @@
 % Please edit documentation in R/breg_methods.R
 \name{coef.breg}
 \alias{coef.breg}
-\title{Print parameter estimates (posterior means) from a "breg" object.}
+\title{Get parameter estimates (posterior means) from a "breg" object.}
 \usage{
 \method{coef}{breg}(obj, pars = c("Intercept", obj$coef_names))
 }
@@ -12,5 +12,5 @@
 \item{pars}{Parameters to select. By default these are just the model coefficients (fixed effects), plus the intercept.}
 }
 \description{
-Print parameter estimates (posterior means) from a "breg" object.
+Get parameter estimates (posterior means) from a "breg" object.
 }

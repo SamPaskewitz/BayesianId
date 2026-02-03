@@ -8,7 +8,13 @@ centered_test_data[,c("x1", "x2")] = scale(centered_test_data[,c("x1", "x2")], c
 correct_X = model.matrix(object = y ~ x1*x2*f1,
                          data = centered_test_data,
                          contrasts.arg = list(f1 = contr_banova(a = 3)))[,-1]
-stan_data = make_stan_data(formula = y ~ x1*x2*f1, data = test_data, prior_scale = 1.0, center = TRUE)
+formula_info = parse_formula(y ~ x1*x2*f1)
+prepped_data = prepare_data(formula_info = formula_info,
+                            data = test_data,
+                            center = TRUE)
+stan_data = make_stan_data(formula_info = formula_info,
+                           data = prepped_data,
+                           prior_scale = 1.0)
 
 test_that("N is correct", {
   expect_equal(stan_data$N,

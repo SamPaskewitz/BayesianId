@@ -48,6 +48,9 @@ parse_formula = function(formula){
               n_fixed = length(fixed),
               random = random,
               fixed_main = fixed_main,
-              fixed_interaction = fixed_interaction)
+              fixed_interaction = fixed_interaction,
+              y_name = lhs, # assume that the only thing to the left of the "~" is the y variable's name
+              x_names = fixed_main # assume that there are no random effects without corresponding main effects
+              )
   )
 }

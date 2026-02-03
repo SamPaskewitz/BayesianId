@@ -22,52 +22,35 @@ nrow(test_data) |> print()
 
 ```{r}
 tic = Sys.time()
-bar = breg(y ~ f1*f2 + x1, 
+bar = breg(f2 ~ f1 + x1, 
            data = test_data,
-           family = "normal_linear",
+           #family = "normal_linear",
+           #family = "right_censored_linear",
+           family = "bernoulli_logistic",
            chains = 2,
-           iter = 2000
+           iter = 10000
            )
 toc = Sys.time()
 print(toc - tic)
 ```
 
 ```{r}
-summary(bar)
-```
-
-
-```{r}
-factor_means.breg(bar)
+barq = lm(y ~ f1 + x1, 
+           data = test_data)
 ```
 
 ```{r}
-factor_list = list(f1 = as.character(levels(bar$data$f1)), f2 = as.character(levels(bar$data$f2)))
-df = expand.grid(factor_list)
-df$x1 = mean(test_data$x1)
-foo = posterior_linpred(bar, newdata = df)
-
-# do something like this, marginalizing over factor levels as needed, automatically creating the reference grid from all factors with any numeric predictors at their means (or another specified level), using posterior_linpred to get draws of the linear predictor (instead of using posterior_predict to get draws of Y_tilde)
-```
-```{r}
-foo |> head()
+library(emmeans)
+emmeans(bar, "f1") |> summary()
 ```
 
 ```{r}
-factor_means.breg(bar)
+emmeans(barq, "f1") |> summary()
 ```
 
-```{r}
-df
-```
-```{r}
-paste(as.character(df[,1]), as.character(df[,2]))
-```
-```{r}
-foo = df[,1]
-foo = paste(foo, df[,2], sep = "_")
-foo
-```
+
+
+
 
 
 ```{r}
@@ -99,6 +82,11 @@ data("Loblolly")
 Loblolly = as.data.frame(Loblolly)
 Loblolly$Seed = factor(Loblolly$Seed)
 ```
+
+```{r}
+Loblolly[1:15,]
+```
+
 
 ```{r}
 foo = parse_formula(height ~ age + (age | Seed))

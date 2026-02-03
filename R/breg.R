@@ -17,8 +17,16 @@
 #' @export
 #'
 breg = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0, seed = NA, chains = 4, iter = 10000, warmup = floor(iter/4)){
+  # ** get formula info **
+  formula_info = parse_formula(formula)
+
+  # ** prepare data frame (centering, contrasts etc.) **
+  data = prepare_data(formula_info = formula_info,
+                      data = data,
+                      center = center)
+
   # ** set up Stan data **
-  stan_data = make_stan_data(formula = formula, data = data, family = family, prior_scale = prior_scale, center = center)
+  stan_data = make_stan_data(formula_info = formula_info, data = data, family = family, prior_scale = prior_scale)
 
   # ** pick the Stan model to use **
   # NOTE: later this will be more elaborate to deal with mixed effects models etc.
@@ -51,9 +59,6 @@ breg = function(formula, data, family = "normal_linear", center = TRUE, prior_sc
                             init = init
                             )
 
-  # ** get formula info **
-  formula_info = parse_formula(formula)
-
   # ** save parameter draws (with original names) for posterior predictive simulations **
   par_names = c("b0")
   if(!intercept_only){
@@ -83,7 +88,7 @@ breg = function(formula, data, family = "normal_linear", center = TRUE, prior_sc
                 formula = formula,
                 formula_info = formula_info,
                 stan_data = stan_data,
-                data = data[,c(formula_info$lhs, formula_info$fixed_main)], # only relevant variables
+                data = data,
                 center = center,
                 coef_names = coef_names,
                 call = match.call(), # this records the function call, so the default "update" method works (I don't need to write my own version)

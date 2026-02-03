@@ -1,9 +1,8 @@
-#' Prepare data for regression by giving factors appropriate contrast codes and (optionally) mean-centering numeric predictors.
-#' @param formula An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the model to be fitted. The details of model specification are explained in brmsformula.
-#' @param data A data frame.
+#' ***
+#' @param formula_info **
+#' @param data A data frame
 #' @param family ****
 #' @param prior_scale ****
-#' @param center ****
 #' @returns A list with the following elements:
 #' data: a modified data frame that is ready for regression
 #' x_numeric_names: names of data variables that are numeric
@@ -12,24 +11,24 @@
 #' * DESCRIBE THE CONTRAST CODES ETC
 #'
 
-make_stan_data = function(formula, data, family = "normal_linear", prior_scale = 1, center = TRUE){
+make_stan_data = function(formula_info, data, family = "normal_linear", prior_scale = 1){
   # ***** setup *****
-  parsed_formula = parse_formula(formula) # parse formula
-  x_names = parsed_formula$fixed_main
-  intercept_only = (length(parsed_formula$fixed) == 0) # is it an intercept-only model?
+  x_names = formula_info$x_names
+  intercept_only = (length(formula_info$fixed) == 0) # is it an intercept-only model?
 
   # ** convert Y to an integer vector if needed **
   if(family %in% c("bernoulli_logistic")){
-    Y = as.integer(data[, parsed_formula$lhs]) - 1
+    Y = as.integer(data[, formula_info$lhs]) - 1
   } else{
-    Y = data[, parsed_formula$lhs]
+    Y = data[, formula_info$lhs]
   }
 
   if(!intercept_only){
     # ***** NOT INTERCEPT-ONLY *****
 
-    # ** make X (model matrix with appropriate contrasts etc.) **
-    X = make_X(formula = formula, data = data, center = center)
+    # ** set up design matrix (minus intercept) **
+    formula_without_lhs = formula(paste0("~ ", paste(formula_info$fixed, collapse = " + ")))
+    X = model.matrix(formula_without_lhs, data = data)[,-1,drop = FALSE]
 
     # ** figure out which predictors are factors **
     is_factor = sapply(data[,x_names,drop=FALSE], is.factor)

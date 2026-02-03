@@ -206,11 +206,11 @@ predict.breg = function(obj, newdata = NULL, compute_sd = FALSE){
 
 #' Compute means of the linear predictor (mu = b0 + b1*x + ...) at all combinations of factor levels (i.e. expected marginal means).
 #' @param obj A "breg" object (fitted model).
+#' @param f The factor for which to compute estimated marginal means, or NULL to compute estimated marginal means for all factor combinations.
 #' @returns The estimated marginal means and their standard deviations.
 #' @export
-#' @method factor_means breg
 #'
-factor_means.breg = function(obj){
+factor_means = function(obj, f = NULL){
   # get info
   x_names = obj$formula_info$fixed_main
   is_factor = sapply(obj$data[,x_names,drop=FALSE], is.factor)
@@ -230,13 +230,17 @@ factor_means.breg = function(obj){
   for(i in 1:n_num){
     grid[,num_names[i]] = mean(obj$data[,num_names[i]])
   }
-  # sample the linear predictor (mu)
+  # sample the linear predictor (mu) across the grid
   mu_samples = posterior_linpred(obj, newdata = grid)
+  # combine columns together based on "factor" (if needed)
+  if(n_factors > 1 & !is.null(f)){
+
+  }
   # compute factor means, SD's, and quantiles
-  output = data.frame(mean = apply(foo, MARGIN = 2, FUN = mean),
-                      sd = apply(foo, MARGIN = 2, FUN = sd),
-                      "2.5%" = apply(foo, MARGIN = 2, FUN = quantile, probs = 0.025),
-                      "97.5%" = apply(foo, MARGIN = 2, FUN = quantile, probs = 0.975),
+  output = data.frame(mean = apply(mu_samples, MARGIN = 2, FUN = mean),
+                      sd = apply(mu_samples, MARGIN = 2, FUN = sd),
+                      "2.5%" = apply(mu_samples, MARGIN = 2, FUN = quantile, probs = 0.025),
+                      "97.5%" = apply(mu_samples, MARGIN = 2, FUN = quantile, probs = 0.975),
                       check.names = FALSE)
   # label everything nicely
   cell_names = df[,1]

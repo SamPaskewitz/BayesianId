@@ -4,12 +4,7 @@
 \alias{predict.breg}
 \title{Predicted values (means and optionally SD's) based on a fitted model.}
 \usage{
-\method{predict}{breg}(
-  obj,
-  newdata = NULL,
-  compute_sd = FALSE,
-  seed = sample.int(.Machine$integer.max, size = 1L)
-)
+\method{predict}{breg}(obj, newdata = NULL, compute_sd = FALSE)
 }
 \arguments{
 \item{obj}{A "breg" object (fitted model).}
@@ -17,8 +12,6 @@
 \item{newdata}{Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.}
 
 \item{compute_sd}{Indicates whether predictive standard deviations should be computed.}
-
-\item{seed}{The seed for random number generation. Set this manually if you want reproducible results.}
 }
 \value{
 If compute_sd is FALSE, a vector of posterior predictive means. If compute_sd is TRUE, a list with the posterior predictive means and standard deviations.
@@ -27,5 +20,5 @@ If compute_sd is FALSE, a vector of posterior predictive means. If compute_sd is
 Predicted values (means and optionally SD's) based on a fitted model.
 }
 \details{
-This method is designed to be analogous to the "predict" method of lm and glm model objects. While the "posterior_predict" method samples from the posterior predictive distribution, "predict" produces point predictions (means) and optionally their standard deviations (roughly analogous to predictive standard errors, but Bayesian).
+This method is designed to be analogous to the "predict" method of lm and glm model objects. The "posterior_predict" method samples from the posterior predictive distribution; "predict" summarizes these samples to produce point predictions (means) and optionally their standard deviations (roughly analogous to predictive standard errors, but Bayesian).
 }

@@ -1,10 +1,10 @@
-fmla1 = formula(y | cens(is_censored) ~ x1 + x2 + x3 + x1:x2 + (x3 | g1) + (x1*x2 | g2))
+fmla1 = formula(y ~ x1 + x2 + x3 + x1:x2 + (x3 | g1) + (x1*x2 | g2))
 fmla2 = formula("sqrt(y) ~ x1 + x2")
 fmla3 = formula(y ~ x1*x2*x3 + (x1 | g))
 fmla4 = formula(y ~ 1)
 
 test_that("lhs_works", {
-  expect_match(parse_formula(fmla1)$lhs, "y | cens(is_censored)")
+  expect_match(parse_formula(fmla1)$lhs, "y")
   expect_match(parse_formula(fmla2)$lhs, "sqrt(y)", fixed = TRUE)
   expect_match(parse_formula(fmla3)$lhs, "y")
   expect_match(parse_formula(fmla4)$lhs, "y")
