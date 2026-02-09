@@ -48,7 +48,7 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
       )
       row.names(tab) = obj$model_info$model_names
     } else{
-    warning("Summary type not recognized. Please choose 'terms', 'est', or 'models'.")
+    stop("Summary type not recognized. Please use 'help(summary.bma)' for options.")
     }
   # make output pretty (optionally)
   if(pretty){
@@ -100,17 +100,17 @@ coef.bma = function(obj){
     # Does each model include the coef?
     incl = sapply(obj$fit_list, function(x){coef_name %in% get_coef_names(x)})
     # exclude models with effectively zero posterior prob
-    incl = incl*(obj$post_model_probs > 1e-2)
+    incl = incl&(obj$post_model_probs > 1e-2)
     # post probs for models that include the coef ("pi")
     pi = exp(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl])))
     # posterior means from models that include the coef
     mu = sapply(obj$fit_list[incl], function(x){coef(x)[coef_name]})
     # posterior SD's from models that include the coef
     sigma = sapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()})
-
+    # Bayesian model averaging (Hoeting, Madigan, Raftery, & Volinsky, 1999)
     if(sum(incl) > 1){ # more than one model includes the coef
       est_table[i, "mean"] = sum(pi*mu)
-      est_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + est_table[i, "mean"]^2)) - est_table[i, "mean"]^2)
+      est_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + mu^2)) - est_table[i, "mean"]^2)
       est_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
       est_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
     } else{ # only one model includes the coef
@@ -122,4 +122,62 @@ coef.bma = function(obj){
   }
 
   return(est_table)
+}
+
+#' Get BMA estimates of contrasts (for interpreting factors).
+#' @param obj A "bma" object.
+#' @param factors The names(s) of the factor or factors for which to compute contrasts. If multiple factor names are listed, then the corresponding interaction contrasts are computed. See the examples below.
+#' @param ref Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces. See the examples below.
+#' @returns A table (data frame) with the following information:
+#' mean: posterior mean
+#' sd: posterior standard deviation
+#' 2.5 %: lower end of 95% posterior credible interval
+#' 97.5 %: upper end of 95% posterior credible interval
+#' @details
+#' This is based on the 'contrast' method of the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA). The contrasts computed are based on the 'trt.vs.ctrl' method.
+#' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors. In other words, they should be interpreted as estimates of the contrasts IF they are all non-zero.
+#' Posterior credible intervals are computed using a normal approximation.
+#' ** ADD EXAMPLES
+#' @importFrom emmeans emmeans contrast
+#' @export
+#' @method contrast bma
+contrast.bma = function(obj, factors, ref){
+  # check that "factors" is of type "character"
+  if(!is.character(factors)){
+    stop("The argument 'factors' should be of type 'character'.")
+  }
+  # Does each model include all the factors?
+  incl = sapply(obj$fit_list, function(x){all(factors %in% get_term_names(x))})
+  # if no models include all the factors, return an error
+  if(sum(incl) == 0){
+    stop("None of the models includes all requested factors.")
+  }
+  # exclude models with effectively zero posterior prob
+  incl = incl&(obj$post_model_probs > 1e-2)
+  # post probs for models that include the factors ("pi")
+  pi = exp(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl])))
+  # compute emmeans for all selected models
+  emmeans_list = lapply(obj$fit_list[incl], function(x){emmeans(x, specs = factors)})
+  # compute contrasts for all selected models
+  contrast_list = lapply(emmeans_list, function(x){contrast(x, method = "trt.vs.ctrl", ref = ref, infer = FALSE) |> as.data.frame()})
+  # set up table for BMA contrasts
+  contrast_table = data.frame(contrast = contrast_list[[1]]$contrast, mean = 0.0, sd = 1.0, "2.5 %" = 0.0, "97.5 %" = 0.0, check.names = FALSE)
+  # Bayesian model averaging (Hoeting, Madigan, Raftery, & Volinsky, 1999)
+  if(sum(incl) > 1){ # multiple models include the factors
+    for(i in 1:nrow(contrast_table)){
+      mu = sapply(contrast_list, function(x){x$estimate[i]})
+      sigma = sapply(contrast_list, function(x){x$se[i]})
+      contrast_table[i, "mean"] = sum(mu*pi)
+      contrast_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + mu^2)) - contrast_table[i, "mean"]^2)
+      contrast_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
+      contrast_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
+    }
+  } else{ # only one model includes the factors
+    contrast_table[,"mean"] = contrast_list[[1]]$estimate
+    contrast_table[,"sd"] = contrast_list[[1]]$SE
+    contrast_table[,"2.5 %"] = qnorm(p = 0.025, mean = contrast_table[,"mean"], sd = contrast_table[,"sd"])
+    contrast_table[,"97.5 %"] = qnorm(p = 0.975, mean = contrast_table[,"mean"], sd = contrast_table[,"sd"])
+  }
+
+  return(contrast_table)
 }

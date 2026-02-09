@@ -250,3 +250,12 @@ factor_means = function(obj, f = NULL){
   row.names(output) = cell_names
   return(output)
 }
+
+#' Get model "terms".
+#' @param obj A "breg" object (fitted model).
+#' @returns Model "terms" object.
+#' @export
+#' @method terms breg
+terms.breg = function(obj){
+  return(model.frame(obj$formula, obj$data) |> terms())
+}

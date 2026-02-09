@@ -37,6 +37,7 @@ test_that("methods run with Bernoulli logistic model", {
   expect_no_warning(simulate(fit))
   expect_no_warning(posterior_predict(fit))
   expect_no_warning(posterior_linpred(fit))
+  expect_no_warning(terms(fit))
 })
 
 test_that("methods run with right censored linear model", {
@@ -55,4 +56,5 @@ test_that("methods run with right censored linear model", {
   expect_no_warning(simulate(fit))
   expect_no_warning(posterior_predict(fit))
   expect_no_warning(posterior_linpred(fit))
+  expect_no_warning(terms(fit))
 })
