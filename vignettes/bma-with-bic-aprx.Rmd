@@ -26,7 +26,7 @@ head(penguins)
 ```
 
 ```{r full_model}
-mass_lm_full = lm(body_mass ~ flipper_len*bill_len,
+mass_lm_full = lm(body_mass ~ island*flipper_len,
                   data = na.omit(penguins))
 ```
 
@@ -44,6 +44,11 @@ print(mass_lm_bma)
 
 ```{r term_probs}
 summary(mass_lm_bma, type = "term_probs")
+```
+
+```{r}
+foo = summary(mass_lm_bma, type = "term_probs", pretty = FALSE)
+foo
 ```
 
 ```{r term_odds}

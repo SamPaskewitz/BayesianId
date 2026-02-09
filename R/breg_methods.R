@@ -19,7 +19,6 @@ summary.breg = function(obj){
   cat("\nSampling details and estimates:\n")
   print(obj$stanfit, pars = c("Intercept", obj$coef_names), probs = c(0.025, 0.975), digits_summary = 3)
   cat("\nFactor means (estimated marginal means):\n")
-  print(factor_means(obj))
 }
 
 #' Get parameter estimates (posterior means) from a "breg" object.
@@ -78,7 +77,6 @@ plot.breg = function(obj, type = "post_pred", pars = obj$coef_names){
 #' @param pars Parameters to select. By default these are just the model coefficients (fixed effects) plus the intercept.
 #' @returns The posterior variance-covariance matrix.
 #' @export
-#' @method vcov breg
 vcov.breg = function(obj, pars = c("Intercept", obj$coef_names)){
   samples = as.matrix(obj$stanfit)[,pars]
   if(length(pars) > 1){
@@ -132,7 +130,7 @@ simulate.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sample.int(.
                        K = obj$stan_data$K,
                        X_tilde = obj$stan_data$X)
     } else{
-      X_tilde = make_X(formula = obj$formula, data = newdata, center = obj$center)
+      X_tilde = model.matrix(formula(obj$formula_info$rhs), data = newdata)[,-1,drop = FALSE]
       stan_data = list(N_tilde = nrow(newdata),
                        K = obj$stan_data$K,
                        X_tilde = X_tilde)
@@ -243,10 +241,10 @@ factor_means = function(obj, f = NULL){
                       "97.5%" = apply(mu_samples, MARGIN = 2, FUN = quantile, probs = 0.975),
                       check.names = FALSE)
   # label everything nicely
-  cell_names = df[,1]
+  cell_names = grid[,1]
   if(n_factors > 1){
     for(i in 2:n_factors){
-      cell_names = paste(cell_names, df[,i], sep = "_")
+      cell_names = paste(cell_names, grid[,i], sep = "_")
     }
   }
   row.names(output) = cell_names

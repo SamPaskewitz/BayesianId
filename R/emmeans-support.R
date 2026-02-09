@@ -1,3 +1,4 @@
+#' @importFrom emmeans recover_data
 #' @export
 #' @method recover_data breg
 recover_data.breg <- function(object, ...) {
@@ -9,10 +10,11 @@ recover_data.breg <- function(object, ...) {
   return(data)
 }
 
+#' @importFrom emmeans emm_basis
 #' @export
 #' @method emm_basis breg
 emm_basis.breg = function(object, trms, xlev, grid, ...){
-  # Bbased on: https://github.com/rvlenth/emmeans/blob/master/R/brms-support.R
+  # Based on: https://github.com/rvlenth/emmeans/blob/master/R/brms-support.R
   m = model.frame(trms, grid, na.action = na.pass, xlev = xlev)
   contr = lapply(object$data, function(.) attr(., "contrasts"))
   contr = contr[!sapply(contr, is.null)]

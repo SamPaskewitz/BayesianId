@@ -54,10 +54,10 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
   if(pretty){
     if(type %in% c("term_probs", "model_probs")){
       tab = tab |> round(digits = 3)
-      tab[tab[,1] == "1.000", 1] = ">0.999"
-      tab[tab[,1] == "0.000", 1] = "<0.001"
-      tab[tab[,2] == "1.000", 2] = ">0.999"
-      tab[tab[,2] == "0.000", 2] = "<0.001"
+      tab[tab[,1] == 1.000, 1] = ">0.999"
+      tab[tab[,1] == 0.000, 1] = "<0.001"
+      tab[tab[,2] == 1.000, 2] = ">0.999"
+      tab[tab[,2] == 0.000, 2] = "<0.001"
     } else if(type %in% c("term_odds", "model_odds")){
       tab = tab |> signif(digits = 3) |> format(scientific = TRUE)
     } else if(type == "est"){

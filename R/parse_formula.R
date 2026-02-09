@@ -42,8 +42,20 @@ parse_formula = function(formula){
     fixed_interaction = NULL
   }
 
+  # Get the right hand side of the formula (fixed effects only)
+  if(length(fixed) > 0){
+    rhs = paste0("~ ", paste(fixed, collapse = " + "))
+    intercept_only = FALSE
+  } else{
+    rhs = "~ 1"
+    intercept_only = TRUE
+  }
+
+
   # Package everything into a list
   return(list(lhs = lhs,
+              rhs = rhs,
+              intercept_only = intercept_only,
               fixed = fixed,
               n_fixed = length(fixed),
               random = random,

@@ -16,9 +16,6 @@
 
 ***** UX AND BUG TESTING *****
 
-- look for why you sometimes get a negative BF (examples in Crystal's data)
-
-- revise BMA "summary" method to print "> **" instead of "Inf" for very large Bayes factors (and add a similar fix for very small Bayes factors)
 
 ***** HYPOTHESIS TESTING *****
 
@@ -60,9 +57,7 @@
 
 - better treatment of default prior scales (c.f. BayesFactor)
 
-- add emmeans support
-
-- add "posterior_linpred" method
+- better tests for "breg" (compare to known correct output from brms or something)
 
 - add random effects to existing models
 

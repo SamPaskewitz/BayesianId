@@ -2,26 +2,18 @@
 % Please edit documentation in R/make_stan_data.R
 \name{make_stan_data}
 \alias{make_stan_data}
-\title{Prepare data for regression by giving factors appropriate contrast codes and (optionally) mean-centering numeric predictors.}
+\title{***}
 \usage{
-make_stan_data(
-  formula,
-  data,
-  family = "normal_linear",
-  prior_scale = 1,
-  center = TRUE
-)
+make_stan_data(formula_info, data, family = "normal_linear", prior_scale = 1)
 }
 \arguments{
-\item{formula}{An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the model to be fitted. The details of model specification are explained in brmsformula.}
+\item{formula_info}{**}
 
-\item{data}{A data frame.}
+\item{data}{A data frame}
 
 \item{family}{****}
 
 \item{prior_scale}{****}
-
-\item{center}{****}
 }
 \value{
 A list with the following elements:
@@ -30,7 +22,7 @@ x_numeric_names: names of data variables that are numeric
 x_factor_names: names of data variables that are factors
 }
 \description{
-Prepare data for regression by giving factors appropriate contrast codes and (optionally) mean-centering numeric predictors.
+***
 }
 \details{
 * DESCRIBE THE CONTRAST CODES ETC

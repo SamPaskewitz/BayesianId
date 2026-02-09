@@ -22,11 +22,11 @@ nrow(test_data) |> print()
 
 ```{r}
 tic = Sys.time()
-bar = breg(f2 ~ f1 + x1, 
+bar = breg(y ~ f1, 
            data = test_data,
-           #family = "normal_linear",
+           family = "normal_linear",
            #family = "right_censored_linear",
-           family = "bernoulli_logistic",
+           #family = "bernoulli_logistic",
            chains = 2,
            iter = 10000
            )
@@ -35,47 +35,18 @@ print(toc - tic)
 ```
 
 ```{r}
-barq = lm(y ~ f1 + x1, 
-           data = test_data)
+plot(bar)
 ```
+
+```{r}
+emmeans(bar, "f1") |> summary()
+```
+
 
 ```{r}
 library(emmeans)
 emmeans(bar, "f1") |> summary()
 ```
-
-```{r}
-emmeans(barq, "f1") |> summary()
-```
-
-
-
-
-
-
-```{r}
-# Source - https://stackoverflow.com/a/14568715
-# Posted by Anthony Damico, modified by community. See post 'Timeline' for change history
-# Retrieved 2026-01-31, License - CC BY-SA 3.0
-
-# your starting data..
-data <- data.frame('a' = 1:3, 'b' = c('a','b','c'), 'c' = c('d', 'e', 'f'), 'd' = c('g', 'h', 'i')) 
-
-# columns to paste together
-cols <- c( 'b' , 'c' , 'd' )
-
-# create a new column `x` with the three columns collapsed together
-#data$x <- apply( data[ , cols ] , 1 , paste , collapse = "-" )
-
-# remove the unnecessary columns
-#data <- data[ , !( names( data ) %in% cols ) ]
-
-```
-
-```{r}
-lapply(df, as.character) |> as.data.frame() |> paste()
-```
-
 
 ```{r}
 data("Loblolly")

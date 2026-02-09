@@ -10,6 +10,13 @@ test_that("lhs_works", {
   expect_match(parse_formula(fmla4)$lhs, "y")
 })
 
+test_that("rhs_works", {
+  expect_match(parse_formula(fmla1)$rhs, "~ x1 + x2 + x3 + x1:x2", fixed = TRUE)
+  expect_match(parse_formula(fmla2)$rhs, "~ x1 + x2", fixed = TRUE)
+  expect_match(parse_formula(fmla3)$rhs, "~ x1 + x2 + x3 + x1:x2 + x1:x3 + x2:x3 + x1:x2:x3", fixed = TRUE)
+  expect_match(parse_formula(fmla4)$rhs, "~ 1", fixed = TRUE)
+})
+
 test_that("fixed_works", {
   expect_setequal(parse_formula(fmla1)$fixed, c("x1", "x2", "x3", "x1:x2"))
   expect_setequal(parse_formula(fmla2)$fixed, c("x1", "x2"))

@@ -1,8 +1,8 @@
 #' Prepare data for being converted to a design matrix: convert character variables to factors, give appropriate contrasts for Bayesian inference, and optionally mean-center numeric predictors.
-#' @param formula_info
+#' @param formula_info **
 #' @param data A data frame.
 #' @param center ****
-#' @returns
+#' @returns **
 prepare_data = function(formula_info, data, center = TRUE){
   if(length(formula_info$x_names) == 0){
     return(data[,formula_info$y_name, drop = FALSE])

@@ -12,10 +12,6 @@
 #'
 
 make_stan_data = function(formula_info, data, family = "normal_linear", prior_scale = 1){
-  # ***** setup *****
-  x_names = formula_info$x_names
-  intercept_only = (length(formula_info$fixed) == 0) # is it an intercept-only model?
-
   # ** convert Y to an integer vector if needed **
   if(family %in% c("bernoulli_logistic")){
     Y = as.integer(data[, formula_info$lhs]) - 1
@@ -23,18 +19,17 @@ make_stan_data = function(formula_info, data, family = "normal_linear", prior_sc
     Y = data[, formula_info$lhs]
   }
 
-  if(!intercept_only){
+  if(!formula_info$intercept_only){
     # ***** NOT INTERCEPT-ONLY *****
 
     # ** set up design matrix (minus intercept) **
-    formula_without_lhs = formula(paste0("~ ", paste(formula_info$fixed, collapse = " + ")))
-    X = model.matrix(formula_without_lhs, data = data)[,-1,drop = FALSE]
+    X = model.matrix(formula(formula_info$rhs), data = data)[,-1,drop = FALSE]
 
     # ** figure out which predictors are factors **
-    is_factor = sapply(data[,x_names,drop=FALSE], is.factor)
+    is_factor = sapply(data[,formula_info$x_names,drop=FALSE], is.factor)
     is_numeric = !is_factor
-    x_factor_names = x_names[is_factor]
-    x_numeric_names = x_names[is_numeric]
+    x_factor_names = formula_info$x_names[is_factor]
+    x_numeric_names = formula_info$x_names[is_numeric]
 
     # ** compute Xcol_scale **
 

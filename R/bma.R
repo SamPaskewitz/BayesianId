@@ -57,8 +57,7 @@ bma = function(full_model,
 
   # compute Bayes factors and posterior model odds/probabilities
   log_evidence = model_log_evidence(fit_list)
-  log_bfs = log_evidence - log_evidence[1]
-  bfs = exp(log_bfs)
+  bfs = exp(log_evidence - lse(log_evidence))
   prior_model_odds = prior_model_probs/prior_model_probs[1]
   post_model_probs = exp(log_evidence + log(prior_model_probs) - lse(log_evidence + log(prior_model_probs)))
   post_model_odds = post_model_probs/post_model_probs[1]
@@ -74,7 +73,6 @@ bma = function(full_model,
                 post_model_odds = post_model_odds,
                 post_model_probs = post_model_probs,
                 log_model_evidence = log_evidence,
-                log_model_bfs = log_bfs,
                 model_bfs = bfs,
                 fit_list = fit_list,
                 model_class = class(full_model),

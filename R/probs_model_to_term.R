@@ -7,15 +7,18 @@
 
 probs_model_to_term = function(model_probs, model_info){
   # set up empty vector
-  par_probs = rep(0.0, times = model_info$n_terms)
-  names(par_probs) = model_info$term_names
+  term_probs = rep(0.0, times = model_info$n_terms)
+  names(term_probs) = model_info$term_names
 
-  # add up model probabilities to compute parameter probabilities
+  # add up model probabilities to compute term probabilities
   for(i in 1:model_info$n_terms){
     term = model_info$term_names[i]
     includes_term = model_info$included_table[names(model_probs), term]
-    par_probs[i] = sum(model_probs[includes_term])
+    term_probs[i] = sum(model_probs[includes_term])
   }
 
-  return(par_probs)
+  # fix probs that are slightly > 1 (by approx error) to be slightly < 1
+  term_probs[term_probs > 1] = 1 - .Machine$double.eps
+
+  return(term_probs)
 }
