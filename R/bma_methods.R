@@ -99,8 +99,6 @@ coef.bma = function(obj){
     coef_name = coef_names[i]
     # Does each model include the coef?
     incl = sapply(obj$fit_list, function(x){coef_name %in% get_coef_names(x)})
-    # exclude models with effectively zero posterior prob
-    incl = incl&(obj$post_model_probs > 1e-2)
     # post probs for models that include the coef ("pi")
     pi = exp(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl])))
     # posterior means from models that include the coef
@@ -158,8 +156,6 @@ contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){
   if(sum(incl) == 0){
     stop("None of the models includes all requested factors.")
   }
-  # exclude models with effectively zero posterior prob
-  incl = incl&(obj$post_model_probs > 1e-2)
   # post probs for models that include the factors ("pi")
   pi = exp(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl])))
   # compute emmeans for all selected models
