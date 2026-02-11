@@ -1,10 +1,10 @@
 ***** PLUG & PLAY SUPPORT (BMA) *****
 
+- write a function for mediation analysis
+
 - write bma "plot" method
 
 - write bma "predict" method
-
-- add bma "emmeans" support
 
 - write tests for bma with "lm" objects
 
@@ -15,7 +15,7 @@
 - write tests for bma with "breg" objects
 
 ***** UX AND BUG TESTING *****
-
+Fix "Warning: argument is not numeric or logical: returning NA" when using emmeans with breg objects.
 
 ***** HYPOTHESIS TESTING *****
 

@@ -128,6 +128,7 @@ coef.bma = function(obj){
 #' @param obj A "bma" object.
 #' @param factors The names(s) of the factor or factors for which to compute contrasts. If multiple factor names are listed, then the corresponding interaction contrasts are computed. See the examples below.
 #' @param ref Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces. See the examples below.
+#' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
 #' @returns A table (data frame) with the following information:
 #' mean: posterior mean
 #' sd: posterior standard deviation
@@ -135,19 +136,24 @@ coef.bma = function(obj){
 #' 97.5 %: upper end of 95% posterior credible interval
 #' @details
 #' This is based on the 'contrast' method of the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA). The contrasts computed are based on the 'trt.vs.ctrl' method.
-#' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors. In other words, they should be interpreted as estimates of the contrasts IF they are all non-zero.
+#' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors.
 #' Posterior credible intervals are computed using a normal approximation.
 #' ** ADD EXAMPLES
-#' @importFrom emmeans emmeans contrast
+#' @importFrom emmeans emmeans
+#' @importFrom emmeans contrast
 #' @export
 #' @method contrast bma
-contrast.bma = function(obj, factors, ref){
+contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){
   # check that "factors" is of type "character"
   if(!is.character(factors)){
     stop("The argument 'factors' should be of type 'character'.")
   }
   # Does each model include all the factors?
-  incl = sapply(obj$fit_list, function(x){all(factors %in% get_term_names(x))})
+  if(length(factors) == 1){
+    incl = obj$model_info$included_table[,factors]
+  } else{
+    incl = apply(obj$model_info$included_table[,factors], 1, all) |> as.vector()
+  }
   # if no models include all the factors, return an error
   if(sum(incl) == 0){
     stop("None of the models includes all requested factors.")
@@ -160,13 +166,14 @@ contrast.bma = function(obj, factors, ref){
   emmeans_list = lapply(obj$fit_list[incl], function(x){emmeans(x, specs = factors)})
   # compute contrasts for all selected models
   contrast_list = lapply(emmeans_list, function(x){contrast(x, method = "trt.vs.ctrl", ref = ref, infer = FALSE) |> as.data.frame()})
+  nc = nrow(contrast_list[[1]])
   # set up table for BMA contrasts
-  contrast_table = data.frame(contrast = contrast_list[[1]]$contrast, mean = 0.0, sd = 1.0, "2.5 %" = 0.0, "97.5 %" = 0.0, check.names = FALSE)
+  contrast_table = data.frame(row.names = contrast_list[[1]]$contrast, mean = rep(0.0, nc), sd = rep(1.0, nc), "2.5 %" = rep(0.0, nc), "97.5 %" = rep(0.0, nc), check.names = FALSE)
   # Bayesian model averaging (Hoeting, Madigan, Raftery, & Volinsky, 1999)
   if(sum(incl) > 1){ # multiple models include the factors
     for(i in 1:nrow(contrast_table)){
       mu = sapply(contrast_list, function(x){x$estimate[i]})
-      sigma = sapply(contrast_list, function(x){x$se[i]})
+      sigma = sapply(contrast_list, function(x){x$SE[i]})
       contrast_table[i, "mean"] = sum(mu*pi)
       contrast_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + mu^2)) - contrast_table[i, "mean"]^2)
       contrast_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
@@ -177,6 +184,10 @@ contrast.bma = function(obj, factors, ref){
     contrast_table[,"sd"] = contrast_list[[1]]$SE
     contrast_table[,"2.5 %"] = qnorm(p = 0.025, mean = contrast_table[,"mean"], sd = contrast_table[,"sd"])
     contrast_table[,"97.5 %"] = qnorm(p = 0.975, mean = contrast_table[,"mean"], sd = contrast_table[,"sd"])
+  }
+  # make output "pretty" if desired
+  if(pretty){
+    contrast_table = contrast_table |> signif(digits = 5)
   }
 
   return(contrast_table)

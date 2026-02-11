@@ -4,14 +4,14 @@
 \alias{contrast.bma}
 \title{Get BMA estimates of contrasts (for interpreting factors).}
 \usage{
-\method{contrast}{bma}(obj, factors, ref)
+\method{contrast}{bma}(obj, factors, ref = 1)
 }
 \arguments{
 \item{obj}{A "bma" object.}
 
 \item{factors}{The names(s) of the factor or factors for which to compute contrasts. If multiple factor names are listed, then the corresponding interaction contrasts are computed. See the examples below.}
 
-\item{ref}{description}
+\item{ref}{Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces. See the examples below.}
 }
 \value{
 A table (data frame) with the following information:
@@ -25,7 +25,7 @@ Get BMA estimates of contrasts (for interpreting factors).
 }
 \details{
 This is based on the 'contrast' method of the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA). The contrasts computed are based on the 'trt.vs.ctrl' method.
-All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors. In other words, they should be interpreted as estimates of the contrasts IF they are all non-zero.
+All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors.
 Posterior credible intervals are computed using a normal approximation.
 ** ADD EXAMPLES
 }

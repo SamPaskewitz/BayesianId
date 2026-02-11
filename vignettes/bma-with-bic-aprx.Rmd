@@ -26,7 +26,7 @@ head(penguins)
 ```
 
 ```{r full_model}
-mass_lm_full = lm(body_mass ~ island + sex + flipper_len,
+mass_lm_full = lm(body_mass ~ island*sex + flipper_len,
                   data = na.omit(penguins))
 ```
 
@@ -38,65 +38,9 @@ plot(mass_lm_full)
 mass_lm_bma = bma(mass_lm_full)
 ```
 
-```{r}
-contrast(mass_lm_bma, factors = "island", ref = "Dream")
+```{r, contrast}
+contrast(mass_lm_bma, factors = c("island", "sex"), ref = "Biscoe male")
 ```
-
-```{r}
-factors = c("island", "sex")
-obj = mass_lm_bma
-ref = 1
-
-# check that "factors" is of type "character"
-  if(!is.character(factors)){
-    stop("The argument 'factors' should be of type 'character'.")
-  }
-  # Does each model include all the factors?
-  incl = sapply(obj$fit_list, function(x){all(factors %in% get_term_names(x))})
-  # if no models include all the factors, return an error
-  if(sum(incl) == 0){
-    stop("None of the models includes all requested factors.")
-  }
-  # exclude models with effectively zero posterior prob (p(M|D) <= 0.01)
-  incl = incl&(obj$post_model_probs > 1e-2)
-  # post probs for models that include the factors ("pi")
-  pi = exp(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl])))
-  # compute emmeans for all selected models
-  emmeans_list = lapply(obj$fit_list[incl], function(x){emmeans(x, specs = factors)})
-  # compute contrasts for all selected models
-  contrast_list = lapply(emmeans_list, function(x){contrast(x, method = "trt.vs.ctrl", ref = ref, infer = FALSE) |> as.data.frame()})
-  # set up table for BMA contrasts
-  contrast_table = data.frame(contrast = contrast_list[[1]]$contrast, mean = 0.0, sd = 1.0, "2.5 %" = 0.0, "97.5 %" = 0.0, check.names = FALSE)
-  # Bayesian model averaging (Hoeting, Madigan, Raftery, & Volinsky, 1999)
-  if(sum(incl) > 1){ # multiple models include the factors
-    for(i in 1:nrow(contrast_table)){
-      mu = sapply(contrast_list, function(x){x$estimate[i]})
-      sigma = sapply(contrast_list, function(x){x$SE[i]})
-      contrast_table[i, "mean"] = sum(mu*pi)
-      contrast_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + mu^2)) - contrast_table[i, "mean"]^2)
-      contrast_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
-      contrast_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
-    }
-  } else{ # only one model includes the factors
-    contrast_table[,"mean"] = contrast_list[[1]]$estimate
-    contrast_table[,"sd"] = contrast_list[[1]]$SE
-    contrast_table[,"2.5 %"] = qnorm(p = 0.025, mean = contrast_table[,"mean"], sd = contrast_table[,"sd"])
-    contrast_table[,"97.5 %"] = qnorm(p = 0.975, mean = contrast_table[,"mean"], sd = contrast_table[,"sd"])
-  }
-```
-
-```{r}
-contrast_table
-```
-```{r}
-sapply(contrast_list, function(x){x$estimate})
-```
-
-```{r}
-sum(c(contrast_list[[1]]$estimate[5], contrast_list[[2]]$estimate[5])*pi)
-```
-
-
 
 
 ```{r print}

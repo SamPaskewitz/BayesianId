@@ -69,11 +69,3 @@ get_coef_names = function(obj){
     return(coef(obj) |> names())
   }
 }
-
-#' Get the names of terms from a fitted model.
-#' @param obj A fitted regression model.
-#' @returns The names of the terms.
-#'
-get_term_names = function(obj){
-  return((terms(obj) |> attributes())$term.labels)
-}
