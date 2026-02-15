@@ -31,12 +31,14 @@ transformed parameters {
   real b0;  // actual intercept
   b = sigma*delta./Xcol_scale;
   b0 = Ymean + sigma*delta0;
+  vector[Ncens] Ymax_vector;
+  Ymax_vector = rep_vector(Ymax, Ncens);
 }
 model {
   // likelihood including constants
   if (!prior_only) {
     target += normal_id_glm_lpdf(Yncens | Xncens, b0, b, sigma); // non-censored data
-    target += normal_lccdf(Ymax | b0 + Xncens*b, sigma); // censored data
+    target += normal_lccdf(Ymax_vector | b0 + Xcens*b, sigma); // censored data
   }
   // priors including constants
   target += cauchy_lpdf(delta0 | 0, prior_scale);

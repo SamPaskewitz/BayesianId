@@ -18,7 +18,6 @@ summary.breg = function(obj){
   print(obj$call)
   cat("\nSampling details and estimates:\n")
   print(obj$stanfit, pars = c("Intercept", obj$coef_names), probs = c(0.025, 0.975), digits_summary = 3)
-  cat("\nFactor means (estimated marginal means):\n")
 }
 
 #' Get parameter estimates (posterior means) from a "breg" object.
@@ -258,4 +257,14 @@ factor_means = function(obj, f = NULL){
 #' @method terms breg
 terms.breg = function(obj){
   return(model.frame(obj$formula, obj$data) |> terms())
+}
+
+#' Print the Stan code.
+#' @param obj A "breg" object (fitted model).
+#' @returns The Stan code (as text).
+#' @importFrom rstan get_stancode
+#' @export
+#' @method get_stancode breg
+get_stancode.breg = function(obj){
+  get_stancode(obj$stanfit) |> cat()
 }

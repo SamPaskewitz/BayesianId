@@ -4,7 +4,7 @@
 \alias{contrast.bma}
 \title{Get BMA estimates of contrasts (for interpreting factors).}
 \usage{
-\method{contrast}{bma}(obj, factors, ref = 1)
+\method{contrast}{bma}(obj, factors, ref = 1, pretty = TRUE)
 }
 \arguments{
 \item{obj}{A "bma" object.}
@@ -12,6 +12,8 @@
 \item{factors}{The names(s) of the factor or factors for which to compute contrasts. If multiple factor names are listed, then the corresponding interaction contrasts are computed. See the examples below.}
 
 \item{ref}{Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces. See the examples below.}
+
+\item{pretty}{Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.}
 }
 \value{
 A table (data frame) with the following information:
