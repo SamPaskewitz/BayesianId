@@ -68,4 +68,6 @@
 
 - add other methods suggested by "rstantools"
 
-- add a "stancode" method for seeing the Stan code
+- add code for posterior predictive scatterplots (y = data, x = a predictor)
+
+- figure out a better definition of delta0 (if possible) for logistic models

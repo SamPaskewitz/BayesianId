@@ -87,7 +87,7 @@ vcov.breg = function(obj, pars = c("Intercept", obj$coef_names)){
 
 #' Compute posterior credible intervals for model parameters.
 #' @param obj A "breg" object (fitted model).
-#' @param prob Probability of the interval (e.g. 0.9 for a 90% interval).
+#' @param prob Probability of the interval (e.g. 0.9 for a 90\% interval).
 #' @param pars Parameters to select. By default these are just the model coefficients (fixed effects) plus the intercept.
 #' @returns Posterior credible intervals for selected parameters.
 #' @importFrom rstantools posterior_interval

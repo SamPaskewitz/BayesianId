@@ -9,7 +9,7 @@
 \arguments{
 \item{obj}{A "breg" object (fitted model).}
 
-\item{prob}{Probability of the interval (e.g. 0.9 for a 90% interval).}
+\item{prob}{Probability of the interval (e.g. 0.9 for a 90\% interval).}
 
 \item{pars}{Parameters to select. By default these are just the model coefficients (fixed effects) plus the intercept.}
 }
