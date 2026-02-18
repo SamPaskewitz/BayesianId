@@ -31,7 +31,7 @@ static constexpr std::array<const char*, 14> locations_array__ =
   {" (found before start of program)",
   " (in 'bernoulli_logistic_intercept_est', line 9, column 2 to column 14)",
   " (in 'bernoulli_logistic_intercept_est', line 12, column 2 to column 10)",
-  " (in 'bernoulli_logistic_intercept_est', line 13, column 2 to column 29)",
+  " (in 'bernoulli_logistic_intercept_est', line 13, column 2 to column 34)",
   " (in 'bernoulli_logistic_intercept_est', line 18, column 4 to column 43)",
   " (in 'bernoulli_logistic_intercept_est', line 17, column 19 to line 19, column 3)",
   " (in 'bernoulli_logistic_intercept_est', line 17, column 2 to line 19, column 3)",
@@ -146,7 +146,7 @@ public:
       delta0 = in__.template read<local_scalar_t__>();
       local_scalar_t__ b0 = DUMMY_VAR__;
       current_statement__ = 3;
-      b0 = (stan::math::logit(Ymean) + delta0);
+      b0 = (stan::math::logit(Ymean) + (1.81 * delta0));
       {
         current_statement__ = 6;
         if (stan::math::logical_negation(prior_only)) {
@@ -204,7 +204,7 @@ public:
         return ;
       }
       current_statement__ = 3;
-      b0 = (stan::math::logit(Ymean) + delta0);
+      b0 = (stan::math::logit(Ymean) + (1.81 * delta0));
       if (emit_transformed_parameters__) {
         out__.write(b0);
       }

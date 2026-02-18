@@ -15,8 +15,8 @@ parameters {
 transformed parameters {
   vector[K] b;  // actual regression coefficients
   real b0;  // actual intercept
-  b = delta./Xcol_scale;
-  b0 = logit(Ymean) + delta0;
+  b = 1.81*delta./Xcol_scale;
+  b0 = logit(Ymean) + 1.81*delta0;
 }
 model {
   // likelihood including constants

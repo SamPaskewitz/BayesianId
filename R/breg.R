@@ -31,7 +31,7 @@
 #' Note that the denominator for these standardized coefficients is not \eqn{\text{SD}(y)} (as in the standardized coefficients ordinarily reported), but instead \eqn{\sigma} (the residual standard deviation). The \eqn{\delta}'s are thus more closely related to Cohen's d.
 #'
 #' For logistic, binomial, and ordered logistic regression models the standardized parameters are defined as:
-#' \deqn{\delta_0 = \frac{\beta_0}{1.81}}
+#' \deqn{\delta_0 = \frac{\beta_0 - \text{logit}(\bar{y})}{1.81}}
 #' \deqn{\delta_i = \frac{\beta_i \text{SD}(x_i)}{1.81} \text{ if } x_i \text{ is a real or integer predictor}}
 #' \deqn{\delta_i = \frac{\beta_i}{1.81} \text{ if } x_i \text{ is a contrast code for a factor}}
 #' Why divide by 1.81? The latent variable interpretation of logistic regression (and related models) states that:

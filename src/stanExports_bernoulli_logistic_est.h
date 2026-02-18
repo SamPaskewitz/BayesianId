@@ -33,8 +33,8 @@ static constexpr std::array<const char*, 26> locations_array__ =
   " (in 'bernoulli_logistic_est', line 13, column 2 to column 14)",
   " (in 'bernoulli_logistic_est', line 16, column 2 to column 14)",
   " (in 'bernoulli_logistic_est', line 17, column 2 to column 10)",
-  " (in 'bernoulli_logistic_est', line 18, column 2 to column 24)",
-  " (in 'bernoulli_logistic_est', line 19, column 2 to column 29)",
+  " (in 'bernoulli_logistic_est', line 18, column 2 to column 29)",
+  " (in 'bernoulli_logistic_est', line 19, column 2 to column 34)",
   " (in 'bernoulli_logistic_est', line 24, column 4 to column 53)",
   " (in 'bernoulli_logistic_est', line 23, column 19 to line 25, column 3)",
   " (in 'bernoulli_logistic_est', line 23, column 2 to line 25, column 3)",
@@ -233,10 +233,11 @@ public:
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(K, DUMMY_VAR__);
       local_scalar_t__ b0 = DUMMY_VAR__;
       current_statement__ = 5;
-      stan::model::assign(b, stan::math::elt_divide(delta, Xcol_scale),
+      stan::model::assign(b,
+        stan::math::elt_divide(stan::math::multiply(1.81, delta), Xcol_scale),
         "assigning variable b");
       current_statement__ = 6;
-      b0 = (stan::math::logit(Ymean) + delta0);
+      b0 = (stan::math::logit(Ymean) + (1.81 * delta0));
       {
         current_statement__ = 9;
         if (stan::math::logical_negation(prior_only)) {
@@ -306,10 +307,11 @@ public:
         return ;
       }
       current_statement__ = 5;
-      stan::model::assign(b, stan::math::elt_divide(delta, Xcol_scale),
+      stan::model::assign(b,
+        stan::math::elt_divide(stan::math::multiply(1.81, delta), Xcol_scale),
         "assigning variable b");
       current_statement__ = 6;
-      b0 = (stan::math::logit(Ymean) + delta0);
+      b0 = (stan::math::logit(Ymean) + (1.81 * delta0));
       if (emit_transformed_parameters__) {
         out__.write(b);
         out__.write(b0);
