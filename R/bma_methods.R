@@ -78,7 +78,7 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
 #' 97.5 %: upper end of 95% posterior credible interval
 #' @details
 #' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
-#' Posterior credible intervals are computed using a normal approximation.
+#' Posterior credible intervals are computed using a mixture of normals approximation.
 #' @export
 #' @method coef bma
 coef.bma = function(obj){
@@ -187,4 +187,32 @@ contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){
   }
 
   return(contrast_table)
+}
+
+#' Plot the posterior distribution of estimates.
+#' @param obj A "bma" object.
+#' @param coef The coefficient whose posterior distribution you want to plot.
+#' @details The posterior distribution is approximated with a mixture of normal distributions.
+#' @importFrom dplyr mutate
+#' @import ggplot2
+#' @export
+#' @method plot bma
+plot.bma = function(obj, coef){
+  # Does each model include the coef?
+  incl = sapply(obj$fit_list, function(x){coef %in% get_coef_names(x)})
+  # post probs for models that include the coef ("pi")
+  pi = exp(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl])))
+  # posterior means from models that include the coef
+  mu = sapply(obj$fit_list[incl], function(x){coef(x)[coef]})
+  # posterior SD's from models that include the coef
+  sigma = sapply(obj$fit_list[incl], function(x){vcov(x)[coef, coef] |> sqrt()})
+  # 0.001 and 0.999 quantiles (to determine the plot's x-axis range)
+  lower = qmix(0.001, pi, mu, sigma)
+  upper = qmix(0.999, pi, mu, sigma)
+  # create a data frame for the plot
+  plot_data = data.frame(beta = seq(from = lower, to = upper, length.out = 200)) |>
+    mutate(post = dmix(beta, pi, mu, sigma))
+  # make the plot
+  plot_data |> ggplot(aes(x = beta, y = post)) +
+    geom_line(color = "blue") + theme_bw() + ylab("posterior density")
 }

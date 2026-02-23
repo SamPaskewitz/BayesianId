@@ -18,8 +18,6 @@
 
 - fix "Warning: argument is not numeric or logical: returning NA" when using emmeans with breg objects
 
-- figure out why censored regression isn't working well for the wealth gap data and fix if needed
-
 - fix the problem where the relevant emmeans function aren't all being imported automatically
 
 ***** HYPOTHESIS TESTING *****
@@ -60,7 +58,7 @@
 
 - remove any dependence on brms or brms formulas
 
-- better treatment of default prior scales (c.f. BayesFactor)
+- better treatment of default prior scales (c.f. BayesFactor, or do something better)
 
 - better tests for "breg" (compare to known correct output from brms or something)
 

@@ -25,6 +25,22 @@ pmix = function(q, pi, mu, sigma){
   return(sum(pi*pnorm(q, mean = mu, sd = sigma)))
 }
 
+#' Probability density function for a (univariate) mixture of normals.
+#' @param x The value for which we want to find the probability density.
+#' @param pi A vector of mixture weights.
+#' @param mu A vector of means.
+#' @param sigma A vector of standard deviations.
+#' @returns The probability density.
+#'
+dmix = function(x, pi, mu, sigma){
+  if(length(x) == 1){
+    return(sum(pi*dnorm(x, mean = mu, sd = sigma)))
+  } else{
+    fun = function(x){sum(pi*dnorm(x, mean = mu, sd = sigma))}
+    return(sapply(x, fun))
+  }
+}
+
 #' Quantile function for a (univariate) mixture of normals.
 #' @param p The probability for which we want to find the quantile.
 #' @param pi A vector of mixture weights.

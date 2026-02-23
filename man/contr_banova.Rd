@@ -18,4 +18,6 @@ Make contrast codes for Bayesian ANOVA.
 \details{
 Special care needs to be taken with Bayesian ANOVA to make sure that all factor level means (and pairwise mean differences) have equal prior distributions. R's default coding scheme (treatment coding) does not accomplish this: priors will not be equal. This function implements a normalized forward Helmert contrast, which will produce equal priors across factor levels as described in the paper below (note that they don't explicitly say that they're describing normalized forward Helmert contrasts in that paper, but that is what they're doing).
 Rouder, J. N., Morey, R. D., Speckman, P. L., & Province, J. M. (2012). Default Bayes factors for ANOVA designs. Journal of Mathematical Psychology, 56(5), 356–374. https://doi.org/10.1016/j.jmp.2012.08.001
+
+Note that the contrasts have been adapted to facilitate putting the prior on pair-wise mean differences, as in bayestestR::contr.equalprior_pairs.
 }

@@ -21,5 +21,5 @@ Get BMA estimates of coefficients.
 }
 \details{
 All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
-Posterior credible intervals are computed using a normal approximation.
+Posterior credible intervals are computed using a mixture of normals approximation.
 }
