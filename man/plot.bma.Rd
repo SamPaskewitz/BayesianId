@@ -4,7 +4,7 @@
 \alias{plot.bma}
 \title{Plot the posterior distribution of estimates.}
 \usage{
-\method{plot}{bma}(obj, term)
+\method{plot}{bma}(obj, coef)
 }
 \arguments{
 \item{obj}{A "bma" object.}

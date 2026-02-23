@@ -2,8 +2,6 @@
 
 - write a function for mediation analysis
 
-- write bma "plot" method
-
 - write bma "predict" method
 
 - write tests for bma with "lm" objects
@@ -17,8 +15,6 @@
 ***** UX AND BUG TESTING *****
 
 - fix "Warning: argument is not numeric or logical: returning NA" when using emmeans with breg objects
-
-- fix the problem where the relevant emmeans function aren't all being imported automatically
 
 ***** HYPOTHESIS TESTING *****
 
@@ -68,4 +64,4 @@
 
 - add code for posterior predictive scatterplots (y = data, x = a predictor)
 
-- figure out a better definition of delta0 (if possible) for logistic models
+- figure out a better definition of delta0 (if possible) for logistic models; or otherwise just use a uniform prior for beta0 in all cases (and don't worry about defining delta0)

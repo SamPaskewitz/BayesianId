@@ -76,7 +76,10 @@ bma = function(full_model,
                 model_bfs = bfs,
                 fit_list = fit_list,
                 model_class = class(full_model),
-                model_info = model_info)
+                model_info = model_info,
+                data = model.frame(full_model)
+                )
+  output$is_factor = sapply(output$data, is.factor) | sapply(output$data, is.character)
   class(output) = "bma"
 
   return(output)

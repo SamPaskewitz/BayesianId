@@ -268,3 +268,14 @@ terms.breg = function(obj){
 get_stancode.breg = function(obj){
   get_stancode(obj$stanfit) |> cat()
 }
+
+#' Return the data frame used for fitting the model.
+#' @param obj A "breg" object (fitted model).
+#' @returns The model data frame.
+#' @details Note that this will return any variables that have been mean-centered in the model fitting process as mean-centered.
+#' @importFrom rstan model.frame
+#' @export
+#' @method model.frame breg
+model.frame.breg = function(obj){
+  return(obj$data)
+}
