@@ -12,9 +12,11 @@
 
 - write tests for bma with "breg" objects
 
-***** UX AND BUG TESTING *****
+***** UX AND BUG FIXING *****
 
 - fix "Warning: argument is not numeric or logical: returning NA" when using emmeans with breg objects
+
+- make it so the emmeans functions are properly imported when my package gets loaded
 
 ***** HYPOTHESIS TESTING *****
 

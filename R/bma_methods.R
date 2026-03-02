@@ -33,8 +33,10 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
     tab[, "BF"] = tab[, "post_odds"]/tab[, "prior_odds"]
     row.names(tab) = obj$model_info$term_names
   } else if(type == "est"){
-    tab = coef(obj)
-  } else if(type == "model_probs"){
+    tab = coef(obj)[,c("mean", "sd", "2.5 %", "97.5 %")]
+  } else if(type == "dir_probs"){
+    tab = coef(obj)[,c("p(β<0|D,β≠0)", "p(β>0|D,β≠0)")]
+  }  else if(type == "model_probs"){
     tab = data.frame("p(M)" = obj$prior_model_probs,
                      "p(M | D)" = obj$post_model_probs,
                      check.names = FALSE # prevent names from getting messed up
@@ -52,12 +54,13 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
     }
   # make output pretty (optionally)
   if(pretty){
-    if(type %in% c("term_probs", "model_probs")){
-      tab = tab |> round(digits = 3)
-      tab[tab[,1] == 1.000, 1] = ">0.999"
-      tab[tab[,1] == 0.000, 1] = "<0.001"
-      tab[tab[,2] == 1.000, 2] = ">0.999"
-      tab[tab[,2] == 0.000, 2] = "<0.001"
+    if(type %in% c("term_probs", "model_probs", "dir_probs")){
+      #tab = tab |> round(digits = 3)
+      #tab[tab[,1] == 1.000, 1] = ">0.999"
+      #tab[tab[,1] == 0.000, 1] = "<0.001"
+      #tab[tab[,2] == 1.000, 2] = ">0.999"
+      #tab[tab[,2] == 0.000, 2] = "<0.001"
+      tab = tab |> format_prob()
     } else if(type %in% c("term_odds", "model_odds")){
       tab = tab |> signif(digits = 3) |> format(scientific = TRUE)
     } else if(type == "est"){
@@ -76,9 +79,11 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
 #' sd: posterior standard deviation
 #' 2.5 %: lower end of 95% posterior credible interval
 #' 97.5 %: upper end of 95% posterior credible interval
+#' p(β<0|D,β≠0): posterior probability that the coefficient is negative
+#' p(β>0|D,β≠0): posterior probability that the coefficient is positive
 #' @details
-#' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
-#' Posterior credible intervals are computed using a mixture of normals approximation.
+#' All estimates (posterior mean, standard deviation, credible intervals, and probability of direction) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
+#' Posterior credible intervals and directional probabilities are computed using a mixture of normals approximation.
 #' @export
 #' @method coef bma
 coef.bma = function(obj){
@@ -111,13 +116,16 @@ coef.bma = function(obj){
       est_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + mu^2)) - est_table[i, "mean"]^2)
       est_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
       est_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
+      est_table[i, "p(β<0|D,β≠0)"] = pmix(q = 0, pi = pi, mu = mu, sigma = sigma)
     } else{ # only one model includes the coef
       est_table[i, "mean"] = mu
       est_table[i, "sd"] = sigma
       est_table[i, "2.5 %"] = qnorm(p = 0.025, mean = mu, sd = sigma)
       est_table[i, "97.5 %"] = qnorm(p = 0.975, mean = mu, sd = sigma)
+      est_table[i, "p(β<0|D,β≠0)"] = pnorm(q = 0, mean = mu, sd = sigma)
     }
   }
+  est_table[, "p(β>0|D,β≠0)"] = 1 - est_table[, "p(β<0|D,β≠0)"]
 
   return(est_table)
 }
@@ -132,6 +140,8 @@ coef.bma = function(obj){
 #' sd: posterior standard deviation
 #' 2.5 %: lower end of 95% posterior credible interval
 #' 97.5 %: upper end of 95% posterior credible interval
+#' p(c<0|D,c≠0): posterior probability that the contrast is negative (if non-zero)
+#' p(c>0|D,c≠0): posterior probability that the contrast is positive (if non-zero)
 #' @details
 #' This is based on the 'contrast' method of the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA). The contrasts computed are based on the 'trt.vs.ctrl' method.
 #' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors.
@@ -166,24 +176,30 @@ contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){
   # set up table for BMA contrasts
   contrast_table = data.frame(row.names = contrast_list[[1]]$contrast, mean = rep(0.0, nc), sd = rep(1.0, nc), "2.5 %" = rep(0.0, nc), "97.5 %" = rep(0.0, nc), check.names = FALSE)
   # Bayesian model averaging (Hoeting, Madigan, Raftery, & Volinsky, 1999)
-  if(sum(incl) > 1){ # multiple models include the factors
-    for(i in 1:nrow(contrast_table)){
+  for(i in 1:nrow(contrast_table)){
+    if(sum(incl) > 1){ # multiple models include the factors
       mu = sapply(contrast_list, function(x){x$estimate[i]})
       sigma = sapply(contrast_list, function(x){x$SE[i]})
       contrast_table[i, "mean"] = sum(mu*pi)
       contrast_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + mu^2)) - contrast_table[i, "mean"]^2)
       contrast_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
       contrast_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
+      contrast_table[i, "p(c<0|D,c≠0)"] = pmix(q = 0, pi = pi, mu = mu, sigma = sigma)
+    } else{ # only one model includes the factors
+      mu = contrast_list[[1]]$estimate
+      sigma = contrast_list[[1]]$SE
+      contrast_table[i, "mean"] = mu
+      contrast_table[i, "sd"] = sigma
+      contrast_table[i, "2.5 %"] = qnorm(p = 0.025, mean = mu, sd = sigma)
+      contrast_table[i, "97.5 %"] = qnorm(p = 0.975, mean = mu, sd = sigma)
+      contrast_table[i, "p(c<0|D,c≠0)"] = pnorm(q = 0, mean = mu, sd = sigma)
     }
-  } else{ # only one model includes the factors
-    contrast_table[,"mean"] = contrast_list[[1]]$estimate
-    contrast_table[,"sd"] = contrast_list[[1]]$SE
-    contrast_table[,"2.5 %"] = qnorm(p = 0.025, mean = contrast_table[,"mean"], sd = contrast_table[,"sd"])
-    contrast_table[,"97.5 %"] = qnorm(p = 0.975, mean = contrast_table[,"mean"], sd = contrast_table[,"sd"])
   }
+  contrast_table[, "p(c>0|D,c≠0)"] = 1 - contrast_table[, "p(c<0|D,c≠0)"]
   # make output "pretty" if desired
   if(pretty){
-    contrast_table = contrast_table |> signif(digits = 5)
+    contrast_table[,c("mean", "sd", "2.5 %", "97.5 %")] = contrast_table[,c("mean", "sd", "2.5 %", "97.5 %")] |> signif(digits = 5)
+    contrast_table[,c("p(c<0|D,c≠0)", "p(c>0|D,c≠0)")] = contrast_table[,c("p(c<0|D,c≠0)", "p(c>0|D,c≠0)")] |> format_prob()
   }
 
   return(contrast_table)

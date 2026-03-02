@@ -80,6 +80,10 @@ summary(mass_lm_bma, type = "model_odds")
 summary(mass_lm_bma, type = "est")
 ```
 
+```{r dir_probs}
+summary(mass_lm_bma, type = "dir_probs")
+```
+
 
 
 

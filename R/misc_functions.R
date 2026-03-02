@@ -85,3 +85,14 @@ get_coef_names = function(obj){
     return(coef(obj) |> names())
   }
 }
+
+#' Format probabilities.
+#' @param tab A data frame or matrix of probabilities to format.
+format_prob = function(tab){
+  tab = tab |> round(digits = 3)
+  for(i in 1:ncol(tab)){
+    tab[tab[,i] == 1.000, i] = ">0.999"
+    tab[tab[,i] == 0.000, i] = "<0.001"
+  }
+  return(tab)
+}
