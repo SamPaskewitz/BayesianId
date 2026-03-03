@@ -18,7 +18,7 @@ probs_model_to_term = function(model_probs, model_info){
   }
 
   # fix probs that are slightly > 1 (by approx error) to be slightly < 1
-  term_probs[term_probs > 1] = 1 - .Machine$double.eps
+  term_probs = bound_probs(term_probs)
 
   return(term_probs)
 }

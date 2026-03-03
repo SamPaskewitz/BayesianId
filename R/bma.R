@@ -57,7 +57,7 @@ bma = function(full_model,
 
   # compute Bayes factors and posterior model odds/probabilities
   log_evidence = model_log_evidence(fit_list)
-  bfs = exp(log_evidence - lse(log_evidence))
+  bfs = exp(log_evidence - log_evidence[1])
   prior_model_odds = prior_model_probs/prior_model_probs[1]
   post_model_probs = exp(log_evidence + log(prior_model_probs) - lse(log_evidence + log(prior_model_probs)))
   post_model_odds = post_model_probs/post_model_probs[1]
@@ -77,7 +77,9 @@ bma = function(full_model,
                 fit_list = fit_list,
                 model_class = class(full_model),
                 model_info = model_info,
-                data = model.frame(full_model)
+                data = model.frame(full_model),
+                coef_names = get_coef_names(full_model),
+                term_names = model_info$term_names
                 )
   output$is_factor = sapply(output$data, is.factor) | sapply(output$data, is.character)
   class(output) = "bma"

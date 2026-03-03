@@ -18,7 +18,6 @@ probs_term_to_model = function(main_probs, intr_condprobs, model_info){
   if(!all((main_probs > 0) & (main_probs <= 1))){
     stop("Main effect probabilities must be > 0 and <= 1.")
   }
-  # FIX FOR INTERACTIONS
 
   # initialize model_probs
   model_probs = rep(1.0, times = model_info$n_models)

@@ -80,9 +80,28 @@ summary(mass_lm_bma, type = "model_odds")
 summary(mass_lm_bma, type = "est")
 ```
 
-```{r dir_probs}
-summary(mass_lm_bma, type = "dir_probs")
+```{r directional}
+summary(mass_lm_bma, type = "directional")
 ```
+```{r}
+names(mass_lm_bma)
+```
+
+```{r}
+intersect(mass_lm_bma$model_info$term_names, mass_lm_bma$coef_names)
+```
+
+```{r}
+mass_lm_bma$coef_names
+```
+
+
+
+```{r}
+coef(mass_lm_bma)[!mass_lm_bma$is_factor,"p(β<0|D,β≠0)"]/0.5
+summary(mass_lm_bma, type = "term_odds", pretty = FALSE)[!mass_lm_bma$is_factor, "BF"]
+```
+
 
 
 

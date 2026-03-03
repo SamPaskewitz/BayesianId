@@ -96,3 +96,11 @@ format_prob = function(tab){
   }
   return(tab)
 }
+
+#' Fix probabilities that are slightly > 1 (by approx error) to be slightly < 1, and similarly fix probabilities that are slightly < 0 (by approx error) to be slightly > 0.
+#' @param probs A vector of probabilities.
+bound_probs = function(probs){
+  probs[probs > 1] = 1 - .Machine$double.eps
+  probs[probs < 0] = .Machine$double.eps
+  return(probs)
+}

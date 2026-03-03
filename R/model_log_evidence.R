@@ -1,6 +1,6 @@
 #' Compute log model evidence (marginal likelihood) for a list of models.
 #' @param model_list A list of fitted regression models, either breg objects or MLE fits from "lm", "glm", "lmer" etc.
-#' @returns A vector of log Bayes factors.
+#' @returns A vector of log evidence.
 #' @details If the fitted models are brmsfit objects, the log model evidence is computed using bridge sampling. If not, it is assummed that they were fitted by MLE, and log model evidence is computed using the BIC approximation.
 
 model_log_evidence = function(fit_list){

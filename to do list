@@ -18,6 +18,8 @@
 
 - make it so the emmeans functions are properly imported when my package gets loaded
 
+- change the BMA "summary" method (type = "est") to - by default - omit coefficients for factor contrast codes and instead provide more appropriate contrast estimates
+
 ***** HYPOTHESIS TESTING *****
 
 - add support for interval null hypotheses

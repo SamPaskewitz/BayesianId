@@ -34,8 +34,25 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
     row.names(tab) = obj$model_info$term_names
   } else if(type == "est"){
     tab = coef(obj)[,c("mean", "sd", "2.5 %", "97.5 %")]
-  } else if(type == "dir_probs"){
-    tab = coef(obj)[,c("p(β<0|D,β≠0)", "p(β>0|D,β≠0)")]
+  } else if(type == "directional"){
+    # get applicable terms (terms with same names as coefficients)
+    to_use = intersect(obj$coef_names, obj$term_names)
+    # Bayes factors for the encompassing hypothesis (H1) vs. point null (H0)
+    term_odds = summary(obj, type = "term_odds", pretty = FALSE)
+    log_BF10 = log(term_odds[to_use, "post_odds"]) - log(term_odds[to_use, "prior_odds"])
+    # Bayes factors for directional hypotheses (H2 and H3) vs. the encompassing hypothesis (H1)
+    # we use the Savage-Dickey style encompassing prior approach (BF21 = post/prior)
+    # because the prior is symmetric around 0, both prior direction probabilities are 0.5
+    log_BF21 = log(coef(obj)[to_use,"p(β<0|D,β≠0)"]) - log(0.5)
+    log_BF31 = log(coef(obj)[to_use,"p(β>0|D,β≠0)"]) - log(0.5)
+    # Bayes factors for directional hypotheses (H2 and H3) vs. the point null (H0)
+    BF20 = exp(log_BF21 + log_BF10)
+    BF30 = exp(log_BF31 + log_BF10)
+    tab = data.frame("BF (β<0 vs. β=0)" = BF20,
+                     "BF (β>0 vs. β=0)" = BF30,
+                     check.names = FALSE # prevent names from getting messed up
+                     )
+    row.names(tab) = to_use
   }  else if(type == "model_probs"){
     tab = data.frame("p(M)" = obj$prior_model_probs,
                      "p(M | D)" = obj$post_model_probs,
@@ -55,13 +72,8 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
   # make output pretty (optionally)
   if(pretty){
     if(type %in% c("term_probs", "model_probs", "dir_probs")){
-      #tab = tab |> round(digits = 3)
-      #tab[tab[,1] == 1.000, 1] = ">0.999"
-      #tab[tab[,1] == 0.000, 1] = "<0.001"
-      #tab[tab[,2] == 1.000, 2] = ">0.999"
-      #tab[tab[,2] == 0.000, 2] = "<0.001"
       tab = tab |> format_prob()
-    } else if(type %in% c("term_odds", "model_odds")){
+    } else if(type %in% c("term_odds", "model_odds", "directional")){
       tab = tab |> signif(digits = 3) |> format(scientific = TRUE)
     } else if(type == "est"){
       tab = tab |> signif(digits = 3)
@@ -88,7 +100,7 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
 #' @method coef bma
 coef.bma = function(obj){
   # figure out coefficient names
-  coef_names = get_coef_names(obj$fit_list[[1]])
+  coef_names = obj$coef_names
   n_coef = length(coef_names)
 
   # set up table for coefficients
@@ -125,6 +137,9 @@ coef.bma = function(obj){
       est_table[i, "p(β<0|D,β≠0)"] = pnorm(q = 0, mean = mu, sd = sigma)
     }
   }
+  # fix probs that are slightly > 1 (by approx error) to be slightly < 1
+  est_table[, "p(β<0|D,β≠0)"] = bound_probs(est_table[, "p(β<0|D,β≠0)"])
+  # compute p(c>0|D,c≠0)
   est_table[, "p(β>0|D,β≠0)"] = 1 - est_table[, "p(β<0|D,β≠0)"]
 
   return(est_table)
@@ -195,7 +210,11 @@ contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){
       contrast_table[i, "p(c<0|D,c≠0)"] = pnorm(q = 0, mean = mu, sd = sigma)
     }
   }
+  # fix probs that are slightly > 1 (by approx error) to be slightly < 1
+  contrast_table[, "p(c<0|D,c≠0)"] = bound_probs(contrast_table[, "p(c<0|D,c≠0)"])
+  # compute p(c>0|D,c≠0)
   contrast_table[, "p(c>0|D,c≠0)"] = 1 - contrast_table[, "p(c<0|D,c≠0)"]
+
   # make output "pretty" if desired
   if(pretty){
     contrast_table[,c("mean", "sd", "2.5 %", "97.5 %")] = contrast_table[,c("mean", "sd", "2.5 %", "97.5 %")] |> signif(digits = 5)
