@@ -34,26 +34,41 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
     row.names(tab) = obj$model_info$term_names
   } else if(type == "est"){
     tab = coef(obj)[,c("mean", "sd", "2.5 %", "97.5 %")]
-  } else if(type == "directional"){
+  } else if(type == "dir_BF"){
     # get applicable terms (terms with same names as coefficients)
     to_use = intersect(obj$coef_names, obj$term_names)
     # Bayes factors for the encompassing hypothesis (H1) vs. point null (H0)
     term_odds = summary(obj, type = "term_odds", pretty = FALSE)
     log_BF10 = log(term_odds[to_use, "post_odds"]) - log(term_odds[to_use, "prior_odds"])
     # Bayes factors for directional hypotheses (H2 and H3) vs. the encompassing hypothesis (H1)
-    # we use the Savage-Dickey style encompassing prior approach (BF21 = post/prior)
+    # we use the Savage-Dickey style encompassing prior approach (BF = post/prior)
     # because the prior is symmetric around 0, both prior direction probabilities are 0.5
     log_BF21 = log(coef(obj)[to_use,"p(β<0|D,β≠0)"]) - log(0.5)
     log_BF31 = log(coef(obj)[to_use,"p(β>0|D,β≠0)"]) - log(0.5)
     # Bayes factors for directional hypotheses (H2 and H3) vs. the point null (H0)
     BF20 = exp(log_BF21 + log_BF10)
     BF30 = exp(log_BF31 + log_BF10)
-    tab = data.frame("BF (β<0 vs. β=0)" = BF20,
-                     "BF (β>0 vs. β=0)" = BF30,
+    tab = data.frame("β<0 vs. β=0" = BF20,
+                     "β>0 vs. β=0" = BF30,
                      check.names = FALSE # prevent names from getting messed up
                      )
     row.names(tab) = to_use
-  }  else if(type == "model_probs"){
+  } else if(type == "dir_probs"){
+    # compute posterior probabilities of directional hypotheses and the point null
+    # we assume that the two dir hypotheses and point null are the only hypotheses
+    # we will also assume equal prior odds (we might revise this later)
+    dir_BF = summary(obj, type = "dir_BF", pretty = FALSE)
+    BF20 = dir_BF[,"β<0 vs. β=0"]
+    BF30 = dir_BF[,"β>0 vs. β=0"]
+    BF00 = 1
+    tab = data.frame("p(β<0|D)" = bound_probs(BF20/(BF20 + BF30 + 1)),
+                     "p(β>0|D)" = bound_probs(BF30/(BF20 + BF30 + 1)),
+                     "p(β=0|D)" = bound_probs(1/(BF20 + BF30 + 1)),
+                     check.names = FALSE # prevent names from getting messed up
+                     )
+    row.names(tab) = row.names(dir_BF)
+
+  } else if(type == "model_probs"){
     tab = data.frame("p(M)" = obj$prior_model_probs,
                      "p(M | D)" = obj$post_model_probs,
                      check.names = FALSE # prevent names from getting messed up
@@ -73,7 +88,7 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
   if(pretty){
     if(type %in% c("term_probs", "model_probs", "dir_probs")){
       tab = tab |> format_prob()
-    } else if(type %in% c("term_odds", "model_odds", "directional")){
+    } else if(type %in% c("term_odds", "model_odds", "dir_BF")){
       tab = tab |> signif(digits = 3) |> format(scientific = TRUE)
     } else if(type == "est"){
       tab = tab |> signif(digits = 3)
