@@ -29,8 +29,8 @@ using namespace stan::math;
 stan::math::profile_map profiles__;
 static constexpr std::array<const char*, 22> locations_array__ =
   {" (found before start of program)",
-  " (in 'right_censored_linear_sim', line 8, column 2 to column 14)",
-  " (in 'right_censored_linear_sim', line 9, column 2 to column 10)",
+  " (in 'right_censored_linear_sim', line 8, column 2 to column 10)",
+  " (in 'right_censored_linear_sim', line 9, column 2 to column 14)",
   " (in 'right_censored_linear_sim', line 10, column 2 to column 22)",
   " (in 'right_censored_linear_sim', line 13, column 2 to column 21)",
   " (in 'right_censored_linear_sim', line 14, column 2 to column 30)",
@@ -47,7 +47,7 @@ static constexpr std::array<const char*, 22> locations_array__ =
   " (in 'right_censored_linear_sim', line 4, column 18 to column 19)",
   " (in 'right_censored_linear_sim', line 4, column 2 to column 29)",
   " (in 'right_censored_linear_sim', line 5, column 2 to column 12)",
-  " (in 'right_censored_linear_sim', line 8, column 9 to column 10)",
+  " (in 'right_censored_linear_sim', line 9, column 9 to column 10)",
   " (in 'right_censored_linear_sim', line 13, column 9 to column 16)",
   " (in 'right_censored_linear_sim', line 14, column 8 to column 15)"};
 #include <stan_meta_header.hpp>
@@ -143,7 +143,7 @@ public:
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
-    num_params_r__ = K + 1 + 1;
+    num_params_r__ = 1 + K + 1;
   }
   inline std::string model_name() const final {
     return "model_right_censored_linear_sim";
@@ -172,13 +172,13 @@ public:
     // suppress unused var warning
     (void) function__;
     try {
+      local_scalar_t__ b0 = DUMMY_VAR__;
+      current_statement__ = 1;
+      b0 = in__.template read<local_scalar_t__>();
       Eigen::Matrix<local_scalar_t__,-1,1> b =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(K, DUMMY_VAR__);
-      current_statement__ = 1;
-      b = in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(K);
-      local_scalar_t__ b0 = DUMMY_VAR__;
       current_statement__ = 2;
-      b0 = in__.template read<local_scalar_t__>();
+      b = in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(K);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = in__.template read_constrain_lb<local_scalar_t__,
@@ -220,20 +220,20 @@ public:
     // suppress unused var warning
     (void) function__;
     try {
+      double b0 = std::numeric_limits<double>::quiet_NaN();
+      current_statement__ = 1;
+      b0 = in__.template read<local_scalar_t__>();
       Eigen::Matrix<double,-1,1> b =
         Eigen::Matrix<double,-1,1>::Constant(K,
           std::numeric_limits<double>::quiet_NaN());
-      current_statement__ = 1;
-      b = in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(K);
-      double b0 = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 2;
-      b0 = in__.template read<local_scalar_t__>();
+      b = in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(K);
       double sigma = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 3;
       sigma = in__.template read_constrain_lb<local_scalar_t__,
                 jacobian__>(0, lp__);
-      out__.write(b);
       out__.write(b0);
+      out__.write(b);
       out__.write(sigma);
       if (stan::math::logical_negation(
             (stan::math::primitive_value(emit_transformed_parameters__) ||
@@ -290,17 +290,17 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
+      local_scalar_t__ b0 = DUMMY_VAR__;
+      current_statement__ = 1;
+      b0 = in__.read<local_scalar_t__>();
+      out__.write(b0);
       Eigen::Matrix<local_scalar_t__,-1,1> b =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(K, DUMMY_VAR__);
-      current_statement__ = 1;
+      current_statement__ = 2;
       stan::model::assign(b,
         in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(K),
         "assigning variable b");
       out__.write(b);
-      local_scalar_t__ b0 = DUMMY_VAR__;
-      current_statement__ = 2;
-      b0 = in__.read<local_scalar_t__>();
-      out__.write(b0);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = in__.read<local_scalar_t__>();
@@ -321,38 +321,38 @@ public:
     (void) DUMMY_VAR__;
     try {
       current_statement__ = 1;
-      context__.validate_dims("parameter initialization", "b", "double",
-        std::vector<size_t>{static_cast<size_t>(K)});
-      current_statement__ = 2;
       context__.validate_dims("parameter initialization", "b0", "double",
         std::vector<size_t>{});
+      current_statement__ = 2;
+      context__.validate_dims("parameter initialization", "b", "double",
+        std::vector<size_t>{static_cast<size_t>(K)});
       current_statement__ = 3;
       context__.validate_dims("parameter initialization", "sigma", "double",
         std::vector<size_t>{});
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
+      local_scalar_t__ b0 = DUMMY_VAR__;
+      current_statement__ = 1;
+      b0 = context__.vals_r("b0")[(1 - 1)];
+      out__.write(b0);
       Eigen::Matrix<local_scalar_t__,-1,1> b =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(K, DUMMY_VAR__);
       {
         std::vector<local_scalar_t__> b_flat__;
-        current_statement__ = 1;
+        current_statement__ = 2;
         b_flat__ = context__.vals_r("b");
-        current_statement__ = 1;
+        current_statement__ = 2;
         pos__ = 1;
-        current_statement__ = 1;
+        current_statement__ = 2;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 1;
+          current_statement__ = 2;
           stan::model::assign(b, b_flat__[(pos__ - 1)],
             "assigning variable b", stan::model::index_uni(sym1__));
-          current_statement__ = 1;
+          current_statement__ = 2;
           pos__ = (pos__ + 1);
         }
       }
       out__.write(b);
-      local_scalar_t__ b0 = DUMMY_VAR__;
-      current_statement__ = 2;
-      b0 = context__.vals_r("b0")[(1 - 1)];
-      out__.write(b0);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = context__.vals_r("sigma")[(1 - 1)];
@@ -365,7 +365,7 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"b", "b0", "sigma"};
+    names__ = std::vector<std::string>{"b0", "b", "sigma"};
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {
       std::vector<std::string> temp{"mu", "Y_tilde"};
@@ -377,9 +377,9 @@ public:
   get_dims(std::vector<std::vector<size_t>>& dimss__, const bool
            emit_transformed_parameters__ = true, const bool
            emit_generated_quantities__ = true) const {
-    dimss__ = std::vector<std::vector<size_t>>{std::vector<size_t>{static_cast<
-                                                                    size_t>(K)},
-                std::vector<size_t>{}, std::vector<size_t>{}};
+    dimss__ = std::vector<std::vector<size_t>>{std::vector<size_t>{},
+                std::vector<size_t>{static_cast<size_t>(K)},
+                std::vector<size_t>{}};
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {
       std::vector<std::vector<size_t>>
@@ -393,11 +393,11 @@ public:
   constrained_param_names(std::vector<std::string>& param_names__, bool
                           emit_transformed_parameters__ = true, bool
                           emit_generated_quantities__ = true) const final {
+    param_names__.emplace_back(std::string() + "b0");
     for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
       param_names__.emplace_back(std::string() + "b" + '.' +
         std::to_string(sym1__));
     }
-    param_names__.emplace_back(std::string() + "b0");
     param_names__.emplace_back(std::string() + "sigma");
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {
@@ -415,11 +415,11 @@ public:
   unconstrained_param_names(std::vector<std::string>& param_names__, bool
                             emit_transformed_parameters__ = true, bool
                             emit_generated_quantities__ = true) const final {
+    param_names__.emplace_back(std::string() + "b0");
     for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
       param_names__.emplace_back(std::string() + "b" + '.' +
         std::to_string(sym1__));
     }
-    param_names__.emplace_back(std::string() + "b0");
     param_names__.emplace_back(std::string() + "sigma");
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {
@@ -434,10 +434,10 @@ public:
     }
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(N_tilde) + "},\"block\":\"generated_quantities\"},{\"name\":\"Y_tilde\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N_tilde) + ",\"element_type\":{\"name\":\"real\"}},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(N_tilde) + "},\"block\":\"generated_quantities\"},{\"name\":\"Y_tilde\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N_tilde) + ",\"element_type\":{\"name\":\"real\"}},\"block\":\"generated_quantities\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(N_tilde) + "},\"block\":\"generated_quantities\"},{\"name\":\"Y_tilde\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N_tilde) + ",\"element_type\":{\"name\":\"real\"}},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(N_tilde) + "},\"block\":\"generated_quantities\"},{\"name\":\"Y_tilde\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N_tilde) + ",\"element_type\":{\"name\":\"real\"}},\"block\":\"generated_quantities\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
@@ -446,7 +446,7 @@ public:
               emit_transformed_parameters = true, const bool
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
-    const size_t num_params__ = ((K + 1) + 1);
+    const size_t num_params__ = ((1 + K) + 1);
     const size_t num_transformed = emit_transformed_parameters * (0);
     const size_t num_gen_quantities = emit_generated_quantities * ((N_tilde +
       N_tilde));
@@ -464,7 +464,7 @@ public:
               emit_transformed_parameters = true, bool
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
-    const size_t num_params__ = ((K + 1) + 1);
+    const size_t num_params__ = ((1 + K) + 1);
     const size_t num_transformed = emit_transformed_parameters * (0);
     const size_t num_gen_quantities = emit_generated_quantities * ((N_tilde +
       N_tilde));

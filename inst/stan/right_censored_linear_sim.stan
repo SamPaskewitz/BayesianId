@@ -5,8 +5,8 @@ data {
   real Ymax; // upper limit of Y (censoring point)
 }
 parameters {
-  vector[K] b;  // actual regression coefficients
   real b0;  // actual intercept
+  vector[K] b;  // actual regression coefficients
   real<lower=0> sigma;  // dispersion parameter
 }
 generated quantities {

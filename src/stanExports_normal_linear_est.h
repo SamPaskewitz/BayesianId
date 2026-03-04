@@ -27,21 +27,16 @@ namespace model_normal_linear_est_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 28> locations_array__ =
+static constexpr std::array<const char*, 22> locations_array__ =
   {" (found before start of program)",
-  " (in 'normal_linear_est', line 12, column 2 to column 18)",
+  " (in 'normal_linear_est', line 12, column 2 to column 10)",
   " (in 'normal_linear_est', line 13, column 2 to column 14)",
   " (in 'normal_linear_est', line 14, column 2 to column 22)",
-  " (in 'normal_linear_est', line 17, column 2 to column 14)",
-  " (in 'normal_linear_est', line 18, column 2 to column 10)",
-  " (in 'normal_linear_est', line 19, column 2 to column 30)",
-  " (in 'normal_linear_est', line 20, column 2 to column 28)",
-  " (in 'normal_linear_est', line 25, column 4 to column 54)",
-  " (in 'normal_linear_est', line 24, column 19 to line 26, column 3)",
-  " (in 'normal_linear_est', line 24, column 2 to line 26, column 3)",
-  " (in 'normal_linear_est', line 28, column 2 to column 49)",
-  " (in 'normal_linear_est', line 29, column 2 to column 48)",
-  " (in 'normal_linear_est', line 30, column 2 to column 26)",
+  " (in 'normal_linear_est', line 19, column 4 to column 54)",
+  " (in 'normal_linear_est', line 18, column 19 to line 20, column 3)",
+  " (in 'normal_linear_est', line 18, column 2 to line 20, column 3)",
+  " (in 'normal_linear_est', line 22, column 2 to column 62)",
+  " (in 'normal_linear_est', line 23, column 2 to column 26)",
   " (in 'normal_linear_est', line 2, column 2 to column 17)",
   " (in 'normal_linear_est', line 3, column 9 to column 10)",
   " (in 'normal_linear_est', line 3, column 2 to column 14)",
@@ -54,8 +49,7 @@ static constexpr std::array<const char*, 28> locations_array__ =
   " (in 'normal_linear_est', line 7, column 2 to column 23)",
   " (in 'normal_linear_est', line 8, column 2 to column 17)",
   " (in 'normal_linear_est', line 9, column 2 to column 28)",
-  " (in 'normal_linear_est', line 12, column 9 to column 10)",
-  " (in 'normal_linear_est', line 17, column 9 to column 10)"};
+  " (in 'normal_linear_est', line 13, column 9 to column 10)"};
 #include <stan_meta_header.hpp>
 class model_normal_linear_est final : public model_base_crtp<model_normal_linear_est> {
 private:
@@ -91,17 +85,17 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 14;
+      current_statement__ = 9;
       context__.validate_dims("data initialization", "N", "int",
         std::vector<size_t>{});
       N = std::numeric_limits<int>::min();
-      current_statement__ = 14;
+      current_statement__ = 9;
       N = context__.vals_i("N")[(1 - 1)];
-      current_statement__ = 14;
+      current_statement__ = 9;
       stan::math::check_greater_or_equal(function__, "N", N, 1);
-      current_statement__ = 15;
+      current_statement__ = 10;
       stan::math::validate_non_negative_index("Y", "N", N);
-      current_statement__ = 16;
+      current_statement__ = 11;
       context__.validate_dims("data initialization", "Y", "double",
         std::vector<size_t>{static_cast<size_t>(N)});
       Y_data__ = Eigen::Matrix<double,-1,1>::Constant(N,
@@ -109,38 +103,38 @@ public:
       new (&Y) Eigen::Map<Eigen::Matrix<double,-1,1>>(Y_data__.data(), N);
       {
         std::vector<local_scalar_t__> Y_flat__;
-        current_statement__ = 16;
+        current_statement__ = 11;
         Y_flat__ = context__.vals_r("Y");
-        current_statement__ = 16;
+        current_statement__ = 11;
         pos__ = 1;
-        current_statement__ = 16;
+        current_statement__ = 11;
         for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
-          current_statement__ = 16;
+          current_statement__ = 11;
           stan::model::assign(Y, Y_flat__[(pos__ - 1)],
             "assigning variable Y", stan::model::index_uni(sym1__));
-          current_statement__ = 16;
+          current_statement__ = 11;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 17;
+      current_statement__ = 12;
       context__.validate_dims("data initialization", "Ymean", "double",
         std::vector<size_t>{});
       Ymean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 17;
+      current_statement__ = 12;
       Ymean = context__.vals_r("Ymean")[(1 - 1)];
-      current_statement__ = 18;
+      current_statement__ = 13;
       context__.validate_dims("data initialization", "K", "int",
         std::vector<size_t>{});
       K = std::numeric_limits<int>::min();
-      current_statement__ = 18;
+      current_statement__ = 13;
       K = context__.vals_i("K")[(1 - 1)];
-      current_statement__ = 18;
+      current_statement__ = 13;
       stan::math::check_greater_or_equal(function__, "K", K, 1);
-      current_statement__ = 19;
+      current_statement__ = 14;
       stan::math::validate_non_negative_index("X", "N", N);
-      current_statement__ = 20;
+      current_statement__ = 15;
       stan::math::validate_non_negative_index("X", "K", K);
-      current_statement__ = 21;
+      current_statement__ = 16;
       context__.validate_dims("data initialization", "X", "double",
         std::vector<size_t>{static_cast<size_t>(N), static_cast<size_t>(K)});
       X_data__ = Eigen::Matrix<double,-1,-1>::Constant(N, K,
@@ -148,26 +142,26 @@ public:
       new (&X) Eigen::Map<Eigen::Matrix<double,-1,-1>>(X_data__.data(), N, K);
       {
         std::vector<local_scalar_t__> X_flat__;
-        current_statement__ = 21;
+        current_statement__ = 16;
         X_flat__ = context__.vals_r("X");
-        current_statement__ = 21;
+        current_statement__ = 16;
         pos__ = 1;
-        current_statement__ = 21;
+        current_statement__ = 16;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 21;
+          current_statement__ = 16;
           for (int sym2__ = 1; sym2__ <= N; ++sym2__) {
-            current_statement__ = 21;
+            current_statement__ = 16;
             stan::model::assign(X, X_flat__[(pos__ - 1)],
               "assigning variable X", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 21;
+            current_statement__ = 16;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 22;
+      current_statement__ = 17;
       stan::math::validate_non_negative_index("Xcol_scale", "K", K);
-      current_statement__ = 23;
+      current_statement__ = 18;
       context__.validate_dims("data initialization", "Xcol_scale", "double",
         std::vector<size_t>{static_cast<size_t>(K)});
       Xcol_scale_data__ = Eigen::Matrix<double,-1,1>::Constant(K,
@@ -176,42 +170,40 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(Xcol_scale_data__.data(), K);
       {
         std::vector<local_scalar_t__> Xcol_scale_flat__;
-        current_statement__ = 23;
+        current_statement__ = 18;
         Xcol_scale_flat__ = context__.vals_r("Xcol_scale");
-        current_statement__ = 23;
+        current_statement__ = 18;
         pos__ = 1;
-        current_statement__ = 23;
+        current_statement__ = 18;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 23;
+          current_statement__ = 18;
           stan::model::assign(Xcol_scale, Xcol_scale_flat__[(pos__ - 1)],
             "assigning variable Xcol_scale", stan::model::index_uni(sym1__));
-          current_statement__ = 23;
+          current_statement__ = 18;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 24;
+      current_statement__ = 19;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 24;
+      current_statement__ = 19;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 25;
+      current_statement__ = 20;
       context__.validate_dims("data initialization", "prior_scale", "double",
         std::vector<size_t>{});
       prior_scale = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 25;
+      current_statement__ = 20;
       prior_scale = context__.vals_r("prior_scale")[(1 - 1)];
-      current_statement__ = 25;
+      current_statement__ = 20;
       stan::math::check_greater_or_equal(function__, "prior_scale",
         prior_scale, 0);
-      current_statement__ = 26;
-      stan::math::validate_non_negative_index("delta", "K", K);
-      current_statement__ = 27;
+      current_statement__ = 21;
       stan::math::validate_non_negative_index("b", "K", K);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
-    num_params_r__ = K + 1 + 1;
+    num_params_r__ = 1 + K + 1;
   }
   inline std::string model_name() const final {
     return "model_normal_linear_est";
@@ -240,38 +232,29 @@ public:
     // suppress unused var warning
     (void) function__;
     try {
-      Eigen::Matrix<local_scalar_t__,-1,1> delta =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(K, DUMMY_VAR__);
+      local_scalar_t__ b0 = DUMMY_VAR__;
       current_statement__ = 1;
-      delta = in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(K);
-      local_scalar_t__ delta0 = DUMMY_VAR__;
+      b0 = in__.template read<local_scalar_t__>();
+      Eigen::Matrix<local_scalar_t__,-1,1> b =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(K, DUMMY_VAR__);
       current_statement__ = 2;
-      delta0 = in__.template read<local_scalar_t__>();
+      b = in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(K);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = in__.template read_constrain_lb<local_scalar_t__,
                 jacobian__>(0, lp__);
-      Eigen::Matrix<local_scalar_t__,-1,1> b =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(K, DUMMY_VAR__);
-      local_scalar_t__ b0 = DUMMY_VAR__;
-      current_statement__ = 6;
-      stan::model::assign(b,
-        stan::math::elt_divide(stan::math::multiply(sigma, delta), Xcol_scale),
-        "assigning variable b");
-      current_statement__ = 7;
-      b0 = (Ymean + (sigma * delta0));
       {
-        current_statement__ = 10;
+        current_statement__ = 6;
         if (stan::math::logical_negation(prior_only)) {
-          current_statement__ = 8;
+          current_statement__ = 4;
           lp_accum__.add(stan::math::normal_id_glm_lpdf<false>(Y, X, b0, b,
                            sigma));
         }
-        current_statement__ = 11;
-        lp_accum__.add(stan::math::cauchy_lpdf<false>(delta0, 0, prior_scale));
-        current_statement__ = 12;
-        lp_accum__.add(stan::math::cauchy_lpdf<false>(delta, 0, prior_scale));
-        current_statement__ = 13;
+        current_statement__ = 7;
+        lp_accum__.add(stan::math::cauchy_lpdf<false>(b, 0,
+                         stan::math::elt_divide((sigma * prior_scale),
+                           Xcol_scale)));
+        current_statement__ = 8;
         lp_accum__.add((-2 * stan::math::log(sigma)));
       }
     } catch (const std::exception& e) {
@@ -311,39 +294,25 @@ public:
     // suppress unused var warning
     (void) function__;
     try {
-      Eigen::Matrix<double,-1,1> delta =
+      double b0 = std::numeric_limits<double>::quiet_NaN();
+      current_statement__ = 1;
+      b0 = in__.template read<local_scalar_t__>();
+      Eigen::Matrix<double,-1,1> b =
         Eigen::Matrix<double,-1,1>::Constant(K,
           std::numeric_limits<double>::quiet_NaN());
-      current_statement__ = 1;
-      delta = in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(K);
-      double delta0 = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 2;
-      delta0 = in__.template read<local_scalar_t__>();
+      b = in__.template read<Eigen::Matrix<local_scalar_t__,-1,1>>(K);
       double sigma = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 3;
       sigma = in__.template read_constrain_lb<local_scalar_t__,
                 jacobian__>(0, lp__);
-      Eigen::Matrix<double,-1,1> b =
-        Eigen::Matrix<double,-1,1>::Constant(K,
-          std::numeric_limits<double>::quiet_NaN());
-      double b0 = std::numeric_limits<double>::quiet_NaN();
-      out__.write(delta);
-      out__.write(delta0);
+      out__.write(b0);
+      out__.write(b);
       out__.write(sigma);
       if (stan::math::logical_negation(
             (stan::math::primitive_value(emit_transformed_parameters__) ||
             stan::math::primitive_value(emit_generated_quantities__)))) {
         return ;
-      }
-      current_statement__ = 6;
-      stan::model::assign(b,
-        stan::math::elt_divide(stan::math::multiply(sigma, delta), Xcol_scale),
-        "assigning variable b");
-      current_statement__ = 7;
-      b0 = (Ymean + (sigma * delta0));
-      if (emit_transformed_parameters__) {
-        out__.write(b);
-        out__.write(b0);
       }
       if (stan::math::logical_negation(emit_generated_quantities__)) {
         return ;
@@ -368,17 +337,17 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      Eigen::Matrix<local_scalar_t__,-1,1> delta =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(K, DUMMY_VAR__);
+      local_scalar_t__ b0 = DUMMY_VAR__;
       current_statement__ = 1;
-      stan::model::assign(delta,
-        in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(K),
-        "assigning variable delta");
-      out__.write(delta);
-      local_scalar_t__ delta0 = DUMMY_VAR__;
+      b0 = in__.read<local_scalar_t__>();
+      out__.write(b0);
+      Eigen::Matrix<local_scalar_t__,-1,1> b =
+        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(K, DUMMY_VAR__);
       current_statement__ = 2;
-      delta0 = in__.read<local_scalar_t__>();
-      out__.write(delta0);
+      stan::model::assign(b,
+        in__.read<Eigen::Matrix<local_scalar_t__,-1,1>>(K),
+        "assigning variable b");
+      out__.write(b);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = in__.read<local_scalar_t__>();
@@ -399,38 +368,38 @@ public:
     (void) DUMMY_VAR__;
     try {
       current_statement__ = 1;
-      context__.validate_dims("parameter initialization", "delta", "double",
-        std::vector<size_t>{static_cast<size_t>(K)});
-      current_statement__ = 2;
-      context__.validate_dims("parameter initialization", "delta0", "double",
+      context__.validate_dims("parameter initialization", "b0", "double",
         std::vector<size_t>{});
+      current_statement__ = 2;
+      context__.validate_dims("parameter initialization", "b", "double",
+        std::vector<size_t>{static_cast<size_t>(K)});
       current_statement__ = 3;
       context__.validate_dims("parameter initialization", "sigma", "double",
         std::vector<size_t>{});
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      Eigen::Matrix<local_scalar_t__,-1,1> delta =
+      local_scalar_t__ b0 = DUMMY_VAR__;
+      current_statement__ = 1;
+      b0 = context__.vals_r("b0")[(1 - 1)];
+      out__.write(b0);
+      Eigen::Matrix<local_scalar_t__,-1,1> b =
         Eigen::Matrix<local_scalar_t__,-1,1>::Constant(K, DUMMY_VAR__);
       {
-        std::vector<local_scalar_t__> delta_flat__;
-        current_statement__ = 1;
-        delta_flat__ = context__.vals_r("delta");
-        current_statement__ = 1;
+        std::vector<local_scalar_t__> b_flat__;
+        current_statement__ = 2;
+        b_flat__ = context__.vals_r("b");
+        current_statement__ = 2;
         pos__ = 1;
-        current_statement__ = 1;
+        current_statement__ = 2;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 1;
-          stan::model::assign(delta, delta_flat__[(pos__ - 1)],
-            "assigning variable delta", stan::model::index_uni(sym1__));
-          current_statement__ = 1;
+          current_statement__ = 2;
+          stan::model::assign(b, b_flat__[(pos__ - 1)],
+            "assigning variable b", stan::model::index_uni(sym1__));
+          current_statement__ = 2;
           pos__ = (pos__ + 1);
         }
       }
-      out__.write(delta);
-      local_scalar_t__ delta0 = DUMMY_VAR__;
-      current_statement__ = 2;
-      delta0 = context__.vals_r("delta0")[(1 - 1)];
-      out__.write(delta0);
+      out__.write(b);
       local_scalar_t__ sigma = DUMMY_VAR__;
       current_statement__ = 3;
       sigma = context__.vals_r("sigma")[(1 - 1)];
@@ -443,73 +412,51 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"delta", "delta0", "sigma"};
-    if (emit_transformed_parameters__) {
-      std::vector<std::string> temp{"b", "b0"};
-      names__.reserve(names__.size() + temp.size());
-      names__.insert(names__.end(), temp.begin(), temp.end());
-    }
+    names__ = std::vector<std::string>{"b0", "b", "sigma"};
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline void
   get_dims(std::vector<std::vector<size_t>>& dimss__, const bool
            emit_transformed_parameters__ = true, const bool
            emit_generated_quantities__ = true) const {
-    dimss__ = std::vector<std::vector<size_t>>{std::vector<size_t>{static_cast<
-                                                                    size_t>(K)},
-                std::vector<size_t>{}, std::vector<size_t>{}};
-    if (emit_transformed_parameters__) {
-      std::vector<std::vector<size_t>>
-        temp{std::vector<size_t>{static_cast<size_t>(K)},
-             std::vector<size_t>{}};
-      dimss__.reserve(dimss__.size() + temp.size());
-      dimss__.insert(dimss__.end(), temp.begin(), temp.end());
-    }
+    dimss__ = std::vector<std::vector<size_t>>{std::vector<size_t>{},
+                std::vector<size_t>{static_cast<size_t>(K)},
+                std::vector<size_t>{}};
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline void
   constrained_param_names(std::vector<std::string>& param_names__, bool
                           emit_transformed_parameters__ = true, bool
                           emit_generated_quantities__ = true) const final {
+    param_names__.emplace_back(std::string() + "b0");
     for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-      param_names__.emplace_back(std::string() + "delta" + '.' +
+      param_names__.emplace_back(std::string() + "b" + '.' +
         std::to_string(sym1__));
     }
-    param_names__.emplace_back(std::string() + "delta0");
     param_names__.emplace_back(std::string() + "sigma");
-    if (emit_transformed_parameters__) {
-      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        param_names__.emplace_back(std::string() + "b" + '.' +
-          std::to_string(sym1__));
-      }
-      param_names__.emplace_back(std::string() + "b0");
-    }
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline void
   unconstrained_param_names(std::vector<std::string>& param_names__, bool
                             emit_transformed_parameters__ = true, bool
                             emit_generated_quantities__ = true) const final {
+    param_names__.emplace_back(std::string() + "b0");
     for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-      param_names__.emplace_back(std::string() + "delta" + '.' +
+      param_names__.emplace_back(std::string() + "b" + '.' +
         std::to_string(sym1__));
     }
-    param_names__.emplace_back(std::string() + "delta0");
     param_names__.emplace_back(std::string() + "sigma");
-    if (emit_transformed_parameters__) {
-      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        param_names__.emplace_back(std::string() + "b" + '.' +
-          std::to_string(sym1__));
-      }
-      param_names__.emplace_back(std::string() + "b0");
-    }
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"delta\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"delta0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"transformed_parameters\"},{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"delta\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"delta0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"transformed_parameters\"},{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
@@ -518,8 +465,8 @@ public:
               emit_transformed_parameters = true, const bool
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
-    const size_t num_params__ = ((K + 1) + 1);
-    const size_t num_transformed = emit_transformed_parameters * ((K + 1));
+    const size_t num_params__ = ((1 + K) + 1);
+    const size_t num_transformed = emit_transformed_parameters * (0);
     const size_t num_gen_quantities = emit_generated_quantities * (0);
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;
@@ -535,8 +482,8 @@ public:
               emit_transformed_parameters = true, bool
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
-    const size_t num_params__ = ((K + 1) + 1);
-    const size_t num_transformed = emit_transformed_parameters * ((K + 1));
+    const size_t num_params__ = ((1 + K) + 1);
+    const size_t num_transformed = emit_transformed_parameters * (0);
     const size_t num_gen_quantities = emit_generated_quantities * (0);
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;

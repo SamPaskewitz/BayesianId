@@ -1,4 +1,4 @@
-#' Fit a Bayesian regression model using Stan.
+#' Fit a Bayesian regression model using Stan's MCMC algorithm.
 #'
 #' @param formula An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
 #' @param data A data frame containing the variables in the model.
@@ -95,11 +95,9 @@ breg = function(formula, data, family = "normal_linear", center = TRUE, prior_sc
 
   # ** rename parameters **
   names(stanfit)[names(stanfit) == "b0"] = "Intercept"
-  names(stanfit)[names(stanfit) == "delta0"] = "delta_Intercept"
   if(!intercept_only){
     coef_names = colnames(stan_data$X)
     names(stanfit)[names(stanfit) %in% paste0("b[",1:n_coef,"]")] = coef_names
-    names(stanfit)[names(stanfit) %in% paste0("delta[",1:n_coef,"]")] = paste0("delta_", coef_names)
   } else{
     coef_names = NULL
   }

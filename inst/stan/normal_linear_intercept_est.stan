@@ -6,12 +6,8 @@ data {
   real<lower=0> prior_scale; // scale of prior distribution on standarized coefficients
 }
 parameters {
-  real delta0;  // standardized intercept
-  real<lower=0> sigma;  // dispersion parameter
-}
-transformed parameters {
   real b0;  // actual intercept
-  b0 = Ymean + sigma*delta0;
+  real<lower=0> sigma;  // dispersion parameter
 }
 model {
   // likelihood including constants
@@ -19,6 +15,5 @@ model {
     target += normal_lpdf(Y | b0, sigma);
   }
   // priors including constants
-  target += cauchy_lpdf(delta0 | 0, prior_scale);
   target += -2*log(sigma);
 }

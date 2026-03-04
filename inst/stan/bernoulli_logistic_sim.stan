@@ -4,8 +4,8 @@ data {
   matrix[N_tilde, K] X_tilde;  // population-level design matrix (no intercept)
 }
 parameters {
-  vector[K] b;  // actual regression coefficients
   real b0;  // actual intercept
+  vector[K] b;  // actual regression coefficients
 }
 generated quantities {
   vector[N_tilde] mu; // linear predictor

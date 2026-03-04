@@ -2,7 +2,7 @@
 % Please edit documentation in R/breg_methods.R
 \name{vcov.breg}
 \alias{vcov.breg}
-\title{Computes the posterior variance-covariance matrix of model parameters.}
+\title{Return the posterior variance-covariance matrix of model parameters.}
 \usage{
 \method{vcov}{breg}(obj, pars = c("Intercept", obj$coef_names))
 }
@@ -15,5 +15,5 @@
 The posterior variance-covariance matrix.
 }
 \description{
-Computes the posterior variance-covariance matrix of model parameters.
+Return the posterior variance-covariance matrix of model parameters.
 }

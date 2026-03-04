@@ -15,11 +15,13 @@ mean: posterior mean
 sd: posterior standard deviation
 2.5 %: lower end of 95% posterior credible interval
 97.5 %: upper end of 95% posterior credible interval
+p(β<0|D,β≠0): posterior probability that the coefficient is negative
+p(β>0|D,β≠0): posterior probability that the coefficient is positive
 }
 \description{
 Get BMA estimates of coefficients.
 }
 \details{
-All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
-Posterior credible intervals are computed using a mixture of normals approximation.
+All estimates (posterior mean, standard deviation, credible intervals, and probability of direction) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
+Posterior credible intervals and directional probabilities are computed using a mixture of normals approximation.
 }

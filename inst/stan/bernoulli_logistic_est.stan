@@ -9,14 +9,8 @@ data {
   real<lower=0> prior_scale; // scale of prior distribution on standarized coefficients (delta's)
 }
 parameters {
-  vector[K] delta;  // standardized coefficients
-  real delta0;  // standardized intercept
-}
-transformed parameters {
-  vector[K] b;  // actual regression coefficients
   real b0;  // actual intercept
-  b = 1.81*delta./Xcol_scale;
-  b0 = logit(Ymean) + 1.81*delta0;
+  vector[K] b;  // actual regression coefficients
 }
 model {
   // likelihood including constants
@@ -24,6 +18,5 @@ model {
     target += bernoulli_logit_glm_lpmf(Y | X, b0, b);
   }
   // priors including constants
-  target += cauchy_lpdf(delta0 | 0, prior_scale);
-  target += cauchy_lpdf(delta | 0, prior_scale);
+  target += cauchy_lpdf(b | 0, 1.81*prior_scale./Xcol_scale);
 }

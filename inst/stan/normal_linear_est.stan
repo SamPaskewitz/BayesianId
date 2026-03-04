@@ -9,15 +9,9 @@ data {
   real<lower=0> prior_scale; // scale of prior distribution on standarized coefficients (delta's)
 }
 parameters {
-  vector[K] delta;  // standardized coefficients
-  real delta0;  // standardized intercept
-  real<lower=0> sigma;  // dispersion parameter
-}
-transformed parameters {
-  vector[K] b;  // actual regression coefficients
   real b0;  // actual intercept
-  b = sigma*delta./Xcol_scale;
-  b0 = Ymean + sigma*delta0;
+  vector[K] b;  // actual regression coefficients
+  real<lower=0> sigma;  // dispersion parameter
 }
 model {
   // likelihood including constants
@@ -25,7 +19,6 @@ model {
     target += normal_id_glm_lpdf(Y | X, b0, b, sigma);
   }
   // priors including constants
-  target += cauchy_lpdf(delta0 | 0, prior_scale);
-  target += cauchy_lpdf(delta | 0, prior_scale);
+  target += cauchy_lpdf(b | 0, sigma*prior_scale./Xcol_scale);
   target += -2*log(sigma);
 }

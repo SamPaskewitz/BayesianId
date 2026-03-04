@@ -10,7 +10,7 @@ model_log_evidence(fit_list)
 \item{model_list}{A list of fitted regression models, either breg objects or MLE fits from "lm", "glm", "lmer" etc.}
 }
 \value{
-A vector of log Bayes factors.
+A vector of log evidence.
 }
 \description{
 Compute log model evidence (marginal likelihood) for a list of models.

@@ -22,31 +22,86 @@ nrow(test_data) |> print()
 
 ```{r}
 tic = Sys.time()
-bar = breg(y ~ f1, 
+bar = breg(f2 ~ x1 + x2, 
            data = test_data,
-           family = "normal_linear",
+           #family = "normal_linear",
            #family = "right_censored_linear",
-           #family = "bernoulli_logistic",
-           chains = 2,
-           iter = 10000
+           family = "bernoulli_logistic",
+           chains = 4,
+           iter = 10000,
+           center = TRUE
            )
 toc = Sys.time()
 print(toc - tic)
 ```
 
 ```{r}
+summary(bar)
+```
+
+```{r}
+barfight = glm(f2 ~ x1 + x2, data = prepare_data(parse_formula(f2 ~ x1 + x2), test_data), family = "binomial")
+barfight |> coef() |> round(3)
+```
+
+```{r}
+Barsoom = lapreg(f2 ~ x1 + x2, data = test_data, family = "bernoulli_logistic")
+Barsoom$optim_fit$par |> round(3)
+```
+
+```{r}
+print(Barsoom)
+```
+
+```{r}
+summary(Barsoom)
+```
+
+```{r}
+coef(Barsoom) |> round(3)
+```
+
+```{r}
+coef(barfight) |> round(3)
+```
+
+
+```{r}
+vcov(Barsoom) |> round(5)
+```
+
+```{r}
+vcov(barfight) |> round(5)
+```
+
+
+```{r}
+posterior_interval(Barsoom) |> round(3)
+```
+
+```{r}
+confint(barfight) |> round(3)
+```
+
+```{r}
+terms(Barsoom)
+```
+
+```{r}
+model.frame(Barsoom) |> head()
+```
+
+```{r}
+plot(Barsoom)
+```
+
+```{r}
 plot(bar)
 ```
 
-```{r}
-emmeans(bar, "f1") |> summary()
-```
 
 
-```{r}
-library(emmeans)
-emmeans(bar, "f1") |> summary()
-```
+
 
 ```{r}
 data("Loblolly")
@@ -70,6 +125,7 @@ foo
 ```{r}
 foo$random
 ```
+
 ```{r}
 bar = paste(foo$lhs, "~", paste(foo$random$Seed, collapse = " + ")) |> formula()
 bar

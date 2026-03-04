@@ -20,6 +20,10 @@
 
 - change the BMA "summary" method (type = "est") to - by default - omit coefficients for factor contrast codes and instead provide more appropriate contrast estimates
 
+- the directional probabilities in "coef.bma", the hypothesis probabilities in "summary.bma(type = 'dir_probs')", and the term probabilities in "summary.bma(type = 'term_probs')" are probably quite confusing for a new person; fix this through proper documentation etc.
+
+- get the "get_stancode" method for breg objects to actually work
+
 ***** HYPOTHESIS TESTING *****
 
 - add support for interval null hypotheses
@@ -54,13 +58,23 @@
 
 - sampling-based BMA credible intervals etc. for MCMC fits (instead of normal approximation)
 
-***** STAN SUPPORT (BREG) *****
+***** STAN SUPPORT (BREG AND LAPREG) *****
 
 - remove any dependence on brms or brms formulas
 
 - better treatment of default prior scales (c.f. BayesFactor, or do something better)
 
+- add Bayes factor support for "lreg" models
+
+- add emmeans support for "lreg" models
+
+- add a "predict" method for "lreg" models
+
 - better tests for "breg" (compare to known correct output from brms or something)
+
+- tests for "lreg"
+
+- better support for different types of posterior predictive plots
 
 - add random effects to existing models
 

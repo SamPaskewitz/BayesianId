@@ -27,15 +27,12 @@ namespace model_bernoulli_logistic_intercept_est_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 14> locations_array__ =
+static constexpr std::array<const char*, 11> locations_array__ =
   {" (found before start of program)",
-  " (in 'bernoulli_logistic_intercept_est', line 9, column 2 to column 14)",
-  " (in 'bernoulli_logistic_intercept_est', line 12, column 2 to column 10)",
-  " (in 'bernoulli_logistic_intercept_est', line 13, column 2 to column 34)",
-  " (in 'bernoulli_logistic_intercept_est', line 18, column 4 to column 43)",
-  " (in 'bernoulli_logistic_intercept_est', line 17, column 19 to line 19, column 3)",
-  " (in 'bernoulli_logistic_intercept_est', line 17, column 2 to line 19, column 3)",
-  " (in 'bernoulli_logistic_intercept_est', line 21, column 2 to column 49)",
+  " (in 'bernoulli_logistic_intercept_est', line 9, column 2 to column 10)",
+  " (in 'bernoulli_logistic_intercept_est', line 14, column 4 to column 43)",
+  " (in 'bernoulli_logistic_intercept_est', line 13, column 19 to line 15, column 3)",
+  " (in 'bernoulli_logistic_intercept_est', line 13, column 2 to line 15, column 3)",
   " (in 'bernoulli_logistic_intercept_est', line 2, column 2 to column 17)",
   " (in 'bernoulli_logistic_intercept_est', line 3, column 8 to column 9)",
   " (in 'bernoulli_logistic_intercept_est', line 3, column 2 to column 17)",
@@ -72,41 +69,41 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 8;
+      current_statement__ = 5;
       context__.validate_dims("data initialization", "N", "int",
         std::vector<size_t>{});
       N = std::numeric_limits<int>::min();
-      current_statement__ = 8;
+      current_statement__ = 5;
       N = context__.vals_i("N")[(1 - 1)];
-      current_statement__ = 8;
+      current_statement__ = 5;
       stan::math::check_greater_or_equal(function__, "N", N, 1);
-      current_statement__ = 9;
+      current_statement__ = 6;
       stan::math::validate_non_negative_index("Y", "N", N);
-      current_statement__ = 10;
+      current_statement__ = 7;
       context__.validate_dims("data initialization", "Y", "int",
         std::vector<size_t>{static_cast<size_t>(N)});
       Y = std::vector<int>(N, std::numeric_limits<int>::min());
-      current_statement__ = 10;
+      current_statement__ = 7;
       Y = context__.vals_i("Y");
-      current_statement__ = 11;
+      current_statement__ = 8;
       context__.validate_dims("data initialization", "Ymean", "double",
         std::vector<size_t>{});
       Ymean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 11;
+      current_statement__ = 8;
       Ymean = context__.vals_r("Ymean")[(1 - 1)];
-      current_statement__ = 12;
+      current_statement__ = 9;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 12;
+      current_statement__ = 9;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 13;
+      current_statement__ = 10;
       context__.validate_dims("data initialization", "prior_scale", "double",
         std::vector<size_t>{});
       prior_scale = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 13;
+      current_statement__ = 10;
       prior_scale = context__.vals_r("prior_scale")[(1 - 1)];
-      current_statement__ = 13;
+      current_statement__ = 10;
       stan::math::check_greater_or_equal(function__, "prior_scale",
         prior_scale, 0);
     } catch (const std::exception& e) {
@@ -141,20 +138,15 @@ public:
     // suppress unused var warning
     (void) function__;
     try {
-      local_scalar_t__ delta0 = DUMMY_VAR__;
-      current_statement__ = 1;
-      delta0 = in__.template read<local_scalar_t__>();
       local_scalar_t__ b0 = DUMMY_VAR__;
-      current_statement__ = 3;
-      b0 = (stan::math::logit(Ymean) + (1.81 * delta0));
+      current_statement__ = 1;
+      b0 = in__.template read<local_scalar_t__>();
       {
-        current_statement__ = 6;
+        current_statement__ = 4;
         if (stan::math::logical_negation(prior_only)) {
-          current_statement__ = 4;
+          current_statement__ = 2;
           lp_accum__.add(stan::math::bernoulli_logit_lpmf<false>(Y, b0));
         }
-        current_statement__ = 7;
-        lp_accum__.add(stan::math::cauchy_lpdf<false>(delta0, 0, prior_scale));
       }
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -193,20 +185,14 @@ public:
     // suppress unused var warning
     (void) function__;
     try {
-      double delta0 = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 1;
-      delta0 = in__.template read<local_scalar_t__>();
       double b0 = std::numeric_limits<double>::quiet_NaN();
-      out__.write(delta0);
+      current_statement__ = 1;
+      b0 = in__.template read<local_scalar_t__>();
+      out__.write(b0);
       if (stan::math::logical_negation(
             (stan::math::primitive_value(emit_transformed_parameters__) ||
             stan::math::primitive_value(emit_generated_quantities__)))) {
         return ;
-      }
-      current_statement__ = 3;
-      b0 = (stan::math::logit(Ymean) + (1.81 * delta0));
-      if (emit_transformed_parameters__) {
-        out__.write(b0);
       }
       if (stan::math::logical_negation(emit_generated_quantities__)) {
         return ;
@@ -231,10 +217,10 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      local_scalar_t__ delta0 = DUMMY_VAR__;
+      local_scalar_t__ b0 = DUMMY_VAR__;
       current_statement__ = 1;
-      delta0 = in__.read<local_scalar_t__>();
-      out__.write(delta0);
+      b0 = in__.read<local_scalar_t__>();
+      out__.write(b0);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -251,14 +237,14 @@ public:
     (void) DUMMY_VAR__;
     try {
       current_statement__ = 1;
-      context__.validate_dims("parameter initialization", "delta0", "double",
+      context__.validate_dims("parameter initialization", "b0", "double",
         std::vector<size_t>{});
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      local_scalar_t__ delta0 = DUMMY_VAR__;
+      local_scalar_t__ b0 = DUMMY_VAR__;
       current_statement__ = 1;
-      delta0 = context__.vals_r("delta0")[(1 - 1)];
-      out__.write(delta0);
+      b0 = context__.vals_r("b0")[(1 - 1)];
+      out__.write(b0);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -267,12 +253,8 @@ public:
   get_param_names(std::vector<std::string>& names__, const bool
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
-    names__ = std::vector<std::string>{"delta0"};
-    if (emit_transformed_parameters__) {
-      std::vector<std::string> temp{"b0"};
-      names__.reserve(names__.size() + temp.size());
-      names__.insert(names__.end(), temp.begin(), temp.end());
-    }
+    names__ = std::vector<std::string>{"b0"};
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline void
@@ -280,38 +262,30 @@ public:
            emit_transformed_parameters__ = true, const bool
            emit_generated_quantities__ = true) const {
     dimss__ = std::vector<std::vector<size_t>>{std::vector<size_t>{}};
-    if (emit_transformed_parameters__) {
-      std::vector<std::vector<size_t>> temp{std::vector<size_t>{}};
-      dimss__.reserve(dimss__.size() + temp.size());
-      dimss__.insert(dimss__.end(), temp.begin(), temp.end());
-    }
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline void
   constrained_param_names(std::vector<std::string>& param_names__, bool
                           emit_transformed_parameters__ = true, bool
                           emit_generated_quantities__ = true) const final {
-    param_names__.emplace_back(std::string() + "delta0");
-    if (emit_transformed_parameters__) {
-      param_names__.emplace_back(std::string() + "b0");
-    }
+    param_names__.emplace_back(std::string() + "b0");
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline void
   unconstrained_param_names(std::vector<std::string>& param_names__, bool
                             emit_transformed_parameters__ = true, bool
                             emit_generated_quantities__ = true) const final {
-    param_names__.emplace_back(std::string() + "delta0");
-    if (emit_transformed_parameters__) {
-      param_names__.emplace_back(std::string() + "b0");
-    }
+    param_names__.emplace_back(std::string() + "b0");
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"delta0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"delta0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
@@ -321,7 +295,7 @@ public:
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
     const size_t num_params__ = 1;
-    const size_t num_transformed = emit_transformed_parameters * (1);
+    const size_t num_transformed = emit_transformed_parameters * (0);
     const size_t num_gen_quantities = emit_generated_quantities * (0);
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;
@@ -338,7 +312,7 @@ public:
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
     const size_t num_params__ = 1;
-    const size_t num_transformed = emit_transformed_parameters * (1);
+    const size_t num_transformed = emit_transformed_parameters * (0);
     const size_t num_gen_quantities = emit_generated_quantities * (0);
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;

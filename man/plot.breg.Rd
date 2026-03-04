@@ -2,7 +2,7 @@
 % Please edit documentation in R/breg_methods.R
 \name{plot.breg}
 \alias{plot.breg}
-\title{Create various types of plot for model coefficients.}
+\title{Create various types of plot.}
 \usage{
 \method{plot}{breg}(obj, type = "post_pred", pars = obj$coef_names)
 }
@@ -14,7 +14,7 @@
 \item{pars}{Parameters to select. By default these are just the model coefficients (fixed effects).}
 }
 \description{
-Create various types of plot for model coefficients.
+Create various types of plot.
 }
 \details{
 The following plot types are available:

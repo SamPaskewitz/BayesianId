@@ -21,6 +21,8 @@ mean: posterior mean
 sd: posterior standard deviation
 2.5 %: lower end of 95% posterior credible interval
 97.5 %: upper end of 95% posterior credible interval
+p(c<0|D,c≠0): posterior probability that the contrast is negative (if non-zero)
+p(c>0|D,c≠0): posterior probability that the contrast is positive (if non-zero)
 }
 \description{
 Get BMA estimates of contrasts (for interpreting factors).

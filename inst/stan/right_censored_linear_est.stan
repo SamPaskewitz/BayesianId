@@ -22,15 +22,11 @@ transformed data {
   Xcens = X[which_cens,];
 }
 parameters {
-  vector[K] delta;  // standardized coefficients
-  real delta0;  // standardized intercept
+  real b0;  // actual intercept
+  vector[K] b;  // actual regression coefficients
   real<lower=0> sigma;  // dispersion parameter
 }
 transformed parameters {
-  vector[K] b;  // actual regression coefficients
-  real b0;  // actual intercept
-  b = sigma*delta./Xcol_scale;
-  b0 = Ymean + sigma*delta0;
   vector[Ncens] Ymax_vector;
   Ymax_vector = rep_vector(Ymax, Ncens);
 }
@@ -41,7 +37,6 @@ model {
     target += normal_lccdf(Ymax_vector | b0 + Xcens*b, sigma); // censored data
   }
   // priors including constants
-  target += cauchy_lpdf(delta0 | 0, prior_scale);
-  target += cauchy_lpdf(delta | 0, prior_scale);
+  target += cauchy_lpdf(b | 0, sigma*prior_scale./Xcol_scale);
   target += -2*log(sigma);
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/breg.R
 \name{breg}
 \alias{breg}
-\title{Fit a Bayesian regression model using Stan.}
+\title{Fit a Bayesian regression model using Stan's MCMC algorithm.}
 \usage{
 breg(
   formula,
@@ -39,7 +39,7 @@ breg(
 A fitted Bayesian regression model (of class "breg").
 }
 \description{
-Fit a Bayesian regression model using Stan.
+Fit a Bayesian regression model using Stan's MCMC algorithm.
 }
 \details{
 \subsection{Available Models}{

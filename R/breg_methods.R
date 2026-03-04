@@ -31,7 +31,7 @@ coef.breg = function(obj, pars = c("Intercept", obj$coef_names)){
   return(sumtab)
 }
 
-#' Create various types of plot for model coefficients.
+#' Create various types of plot.
 #' @param obj A "breg" object (fitted model).
 #' @param type The type of plot. See "details" for a list of available options.
 #' @param pars Parameters to select. By default these are just the model coefficients (fixed effects).
@@ -47,7 +47,6 @@ coef.breg = function(obj, pars = c("Intercept", obj$coef_names)){
 #' You could use those Rstan plotting functions directly on obj$stanfit for more options and flexibility.
 #' Also, note that the results are ggplot2 objects, so could use ggplot2 to modify them (e.g. add a different title).
 #' @importFrom rstan stan_plot stan_trace stan_dens
-#' @importFrom bayesplot ppc_dens_overlay ppc_hist
 #' @export
 #' @method plot breg
 plot.breg = function(obj, type = "post_pred", pars = obj$coef_names){
@@ -55,9 +54,9 @@ plot.breg = function(obj, type = "post_pred", pars = obj$coef_names){
     ppred = posterior_predict(obj, ndraws = 5)
     # select type of post pred plot
     if(obj$model_name %in% c("bernoulli_logistic")){
-      pt = ppc_hist(y = obj$data[,obj$formula_info$lhs], yrep = ppred, bins = 2)
+      pt = bayesplot::ppc_bars(y = obj$data[,obj$formula_info$lhs] |> as.numeric() - 1, yrep = ppred)
     } else{
-      pt = ppc_dens_overlay(y = obj$data[,obj$formula_info$lhs], yrep = ppred)
+      pt = bayesplot::ppc_dens_overlay(y = obj$data[,obj$formula_info$lhs], yrep = ppred)
     }
   } else if(type == "intervals"){
     pt = stan_plot(obj$stanfit, pars = pars)
@@ -71,7 +70,7 @@ plot.breg = function(obj, type = "post_pred", pars = obj$coef_names){
   return(pt)
 }
 
-#' Computes the posterior variance-covariance matrix of model parameters.
+#' Return the posterior variance-covariance matrix of model parameters.
 #' @param obj A "breg" object (fitted model).
 #' @param pars Parameters to select. By default these are just the model coefficients (fixed effects) plus the intercept.
 #' @returns The posterior variance-covariance matrix.
@@ -273,7 +272,6 @@ get_stancode.breg = function(obj){
 #' @param obj A "breg" object (fitted model).
 #' @returns The model data frame.
 #' @details Note that this will return any variables that have been mean-centered in the model fitting process as mean-centered.
-#' @importFrom rstan model.frame
 #' @export
 #' @method model.frame breg
 model.frame.breg = function(obj){
