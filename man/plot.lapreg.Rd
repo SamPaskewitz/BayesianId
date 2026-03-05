@@ -4,10 +4,12 @@
 \alias{plot.lapreg}
 \title{Create a posterior predictive plot for diagnostic purposes.}
 \usage{
-\method{plot}{lapreg}(obj)
+\method{plot}{lapreg}(obj, group = NA)
 }
 \arguments{
 \item{obj}{A "lapreg" object (fitted model).}
+
+\item{group}{Name of a grouping variable (optional).}
 }
 \description{
 Create a posterior predictive plot for diagnostic purposes.

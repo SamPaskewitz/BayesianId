@@ -40,7 +40,7 @@ lapreg = function(formula, data, family = "normal_linear", center = TRUE, prior_
   optim_fit = rstan::optimizing(stan_model_to_use,
                                 data = stan_data,
                                 init = init,
-                                draws = 5,
+                                draws = 9, # needs to be an odd number for ppc_intervals to work properly with binary data (it plots the medians of yrep)
                                 hessian = TRUE)
 
   # ** rename parameters **

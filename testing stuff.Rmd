@@ -12,78 +12,35 @@ library(BayesianId)
 
 ```{r}
 data("penguins")
-test_data = na.omit(penguins) %>% dplyr::rename(y = sex, x1 = flipper_len, x2 = bill_len)
+test_data = na.omit(penguins) %>% dplyr::rename(y = sex, x1 = flipper_len, x2 = bill_len, f1 = island)
 
-fit = lapreg(y ~ x1 + x2, data = test_data, family = "bernoulli_logistic", prior_scale = 100) # large prior scale -> results should be similar to MLE
-compare = glm(y ~ x1 + x2, data = prepare_data(parse_formula(y ~ x1 + x2), test_data), family = binomial())
+fit = lapreg(y ~ x1 + x2 + f1, data = test_data, family = "bernoulli_logistic", prior_scale = 100) # large prior scale -> results should be similar to MLE
+compare = glm(y ~ x1 + x2 + f1, data = prepare_data(parse_formula(y ~ x1 + x2 + f1), test_data), family = binomial())
 ```
 
 ```{r}
-fit$optim_fit$value
-# perhaps it's "bernoulli_logit_glm_lpmf" that's messing things up by dropping some constants
-# no, it's the Hessian matrix being verrueckt
+data("penguins")
+test_data = na.omit(penguins) %>% dplyr::rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex) |> dplyr::mutate(y = ifelse(y > 5000, 5000, y))
+
+fit = lapreg(y ~ x1 + x2 + f1, data = test_data, prior_scale = 100, family = "right_censored_linear") # large prior scale -> results should be similar to MLE
+compare = censReg::censReg(y ~ x1 + x2 + f1, right = 5000, data = prepare_data(parse_formula(y ~ x1 + x2 + f1), test_data))
 ```
 
 ```{r}
-fit$log_evidence
-```
-
-
-```{r}
-solve(-fit$optim_fit$hessian) |> round(5)
+plot.lapreg(fit, group = "f1", x = "x1")
 ```
 
 ```{r}
-solve(-fit$optim_fit$hessian) |> det() |> log()
+plot.lapreg(fit, group = "f1")
 ```
 
 ```{r}
-determinant(fit$optim_fit$hessian, logarithm = TRUE)$modulus[1]
-```
-
-
-
-```{r}
-det(fit$optim_fit$hessian)
+plot.lapreg(fit)
 ```
 
 ```{r}
-333*log(0.5)
+plot.lapreg(fit, x = "x1")
 ```
-
-```{r}
-logLik(compare)
-```
-
-
-```{r}
-plot(Barsoom)
-```
-
-```{r}
-plot(bar)
-```
-
-```{r}
-library(BayesFactor)
-library(dplyr)
-n = 8
-mu_a = 10
-mu_b = 13
-sigma = 1
-
-df = data.frame(group = c("a", "b") |> rep(each = n),
-                y = c(rnorm(n = n, mean = mu_a, sd = sigma),
-                      rnorm(n = n, mean = mu_b, sd = sigma))
-                )
-
-t.test(y ~ group, data = df, var.equal = TRUE)
-ttestBF(formula = y ~ group, data = df)
-1/ttestBF(formula = y ~ group, data = df)
-```
-
-
-
 
 ```{r}
 data("Loblolly")

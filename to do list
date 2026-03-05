@@ -70,6 +70,8 @@
 
 - add a "predict" method for "lapreg" models
 
+- add a new data option to the "simulate" method for "lapreg" models
+
 - better tests for "breg" (compare to known correct output from brms or something)
 
 - better support for different types of posterior predictive plots

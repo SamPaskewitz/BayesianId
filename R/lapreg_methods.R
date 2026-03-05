@@ -72,11 +72,12 @@ model.frame.lapreg = function(obj){
   return(obj$data)
 }
 
-#' Create a posterior predictive plot for diagnostic purposes.
+#' Simulate from the posterior predictive distribution.
 #' @param obj A "lapreg" object (fitted model).
+#' @details Currently this is very limited, and is just a support for posterior predictive plots. In the future I should add the option to use new data.
 #' @export
-#' @method plot lapreg
-plot.lapreg = function(obj){
+#' @method simulate lapreg
+simulate.lapreg = function(obj){
   # figure out which Stan model code to use
   stan_model_to_use = stanmodels[[paste0(obj$model_name, "_sim")]]
 
@@ -100,12 +101,59 @@ plot.lapreg = function(obj){
   cnames = paste0("Y_tilde[", 1:obj$stan_data$N, "]")
   Y_tilde_samples = all_samples[, cnames] |> drop()
 
-  # select type of post pred plot
-  if(obj$model_name %in% c("bernoulli_logistic")){
-    pt = bayesplot::ppc_bars(y = obj$data[,obj$formula_info$lhs] |> as.numeric() - 1, yrep = Y_tilde_samples)
+  return(Y_tilde_samples)
+}
+
+#' Create a posterior predictive plot for diagnostic purposes.
+#' @param obj A "lapreg" object (fitted model).
+#' @param group Name of a grouping variable (optional).
+#' @param x Name of an x-axis variable for a scatterplot (optional).
+#' @details
+#' The type of plot created depends on the predicted/dependent variable ("y") and whether "group" or "x" is specified.
+#'
+#' If "x" is specified, then the data is represented as a scatterplot with "x" on the x-axis and both "y" (the real data) and "yrep" (the median of the simulated data) on the y-axis. This plot uses "ppc_intervals" from bayesplot, but with the intervals removed because I find them visually distracting.
+#'
+#' If "x" is not specified and "y" is binary or categorical, then you get a bar plot showing the actual data counts along with the median count from the simulated data. This uses "ppc_bars" with the intervals removed (again, I find them visually distracting).
+#'
+#' If "x" is not specified and "y" is numeric, then you get kernel density estimates of the distribution of the real data ("y", darker line) and the simulated data ("yrep", lighter lines, one for each simulated data set).
+#'
+#' If "group" is specified then there will be a subplot for each level of the grouping variable (using the "_grouped" version of the appropriate bayesplot function).
+#' @export
+#' @method plot lapreg
+plot.lapreg = function(obj, group = NA, x = NA){
+  # simulate data from the posterior predictive distribution
+  Y_tilde_samples = simulate(obj)
+
+  # fix up y if it's binary (so bayesplot won't complain)
+  if(obj$data[,obj$formula_info$lhs] |> is.factor()){
+    y = obj$data[,obj$formula_info$lhs] |> as.numeric() - 1
   } else{
-    pt = bayesplot::ppc_dens_overlay(y = obj$data[,obj$formula_info$lhs], yrep = Y_tilde_samples)
+    y = obj$data[,obj$formula_info$lhs]
   }
+
+  # select type of post pred plot
+  if(is.na(x)){
+    if(obj$model_name %in% c("bernoulli_logistic")){
+      if(is.na(group)){
+        pt = bayesplot::ppc_bars(y = y, yrep = Y_tilde_samples, prob = 0)
+      } else{
+        pt = bayesplot::ppc_bars_grouped(y = y, yrep = Y_tilde_samples, group = obj$data[,group], prob = 0)
+      }
+    } else{
+      if(is.na(group)){
+        pt = bayesplot::ppc_dens_overlay(y = y, yrep = Y_tilde_samples)
+      } else{
+        pt = bayesplot::ppc_dens_overlay_grouped(y = y, yrep = Y_tilde_samples, group = obj$data[,group])
+      }
+    }
+  } else{
+    if(is.na(group)){
+      pt = bayesplot::ppc_intervals(y = y, yrep = Y_tilde_samples, x = obj$data[,x], prob = 0.001, prob_outer = 0.001) + ggplot2::xlab(x)
+    } else{
+      pt = bayesplot::ppc_intervals_grouped(y = y, yrep = Y_tilde_samples, group = obj$data[,group], x = obj$data[,x], prob = 0.001, prob_outer = 0.001) + ggplot2::xlab(x)
+    }
+  }
+
 
   return(pt)
 }
