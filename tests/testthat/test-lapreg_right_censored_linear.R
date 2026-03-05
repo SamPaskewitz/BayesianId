@@ -16,6 +16,10 @@ test_that("similar CI's", {
   expect_equal(posterior_interval(fit, prob = 0.95), confint(compare, level = 0.95)[1:3,], tolerance = 1e-2)
 })
 
+test_that("log_evidence similar to -0.5*BIC", {
+  expect_equal(fit$log_evidence, -0.5*BIC(compare), tolerance = 1e-1)
+})
+
 test_that("print method runs", {
   expect_no_error(print(fit))
 })

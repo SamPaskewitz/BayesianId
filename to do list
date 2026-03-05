@@ -64,15 +64,13 @@
 
 - better treatment of default prior scales (c.f. BayesFactor, or do something better)
 
-- add Bayes factor support for "lreg" models
+- add Bayes factor support for "lapreg" models
 
-- add emmeans support for "lreg" models
+- add emmeans support for "lapreg" models
 
-- add a "predict" method for "lreg" models
+- add a "predict" method for "lapreg" models
 
 - better tests for "breg" (compare to known correct output from brms or something)
-
-- tests for "lreg"
 
 - better support for different types of posterior predictive plots
 
@@ -81,5 +79,7 @@
 - add other methods suggested by "rstantools"
 
 - add code for posterior predictive scatterplots (y = data, x = a predictor)
+
+- either do something with the "prior_only" business or get rid of it
 
 - figure out a better definition of delta0 (if possible) for logistic models; or otherwise just use a uniform prior for beta0 in all cases (and don't worry about defining delta0)

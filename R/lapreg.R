@@ -58,11 +58,16 @@ lapreg = function(formula, data, family = "normal_linear", center = TRUE, prior_
   # ** compute the posterior covariance matrix **
   Sigma = solve(-optim_fit$hessian[c("(Intercept)", coef_names), c("(Intercept)", coef_names)])
 
+  # ** compute log evidence (log marginal likelihood) using the Laplace approximation **
+  n_par = nrow(optim_fit$hessian)
+  log_evidence = optim_fit$value - 0.5*determinant(optim_fit$hessian, logarithm = TRUE)$modulus[1] + 0.5*n_par*log(2*pi)
+
   # ** assemble a "lapreg" object **
   output = list(optim_fit = optim_fit,
                 mu = optim_fit$par[c("(Intercept)", coef_names)], # posterior mean
                 sigma = diag(Sigma) |> sqrt(), # posterior SD
                 Sigma = Sigma, # posterior covariance matrix
+                log_evidence = log_evidence,
                 model_name = model_name,
                 intercept_only = intercept_only,
                 formula = formula,
