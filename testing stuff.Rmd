@@ -22,11 +22,11 @@ nrow(test_data) |> print()
 
 ```{r}
 tic = Sys.time()
-bar = breg(f2 ~ x1 + x2, 
+bar = breg(y ~ x1 + x2, 
            data = test_data,
-           #family = "normal_linear",
+           family = "normal_linear",
            #family = "right_censored_linear",
-           family = "bernoulli_logistic",
+           #family = "bernoulli_logistic",
            chains = 4,
            iter = 10000,
            center = TRUE
@@ -36,16 +36,12 @@ print(toc - tic)
 ```
 
 ```{r}
-summary(bar)
-```
-
-```{r}
-barfight = glm(f2 ~ x1 + x2, data = prepare_data(parse_formula(f2 ~ x1 + x2), test_data), family = "binomial")
+barfight = glm(y ~ x1 + x2, data = BayesianId:::prepare_data(BayesianId:::parse_formula(y ~ x1 + x2), test_data), family = gaussian())
 barfight |> coef() |> round(3)
 ```
 
 ```{r}
-Barsoom = lapreg(f2 ~ x1 + x2, data = test_data, family = "bernoulli_logistic")
+Barsoom = lapreg(y_cens ~ x1 + x2, data = test_data, family = "right_censored_linear")
 Barsoom$optim_fit$par |> round(3)
 ```
 
@@ -74,6 +70,11 @@ vcov(Barsoom) |> round(5)
 vcov(barfight) |> round(5)
 ```
 
+```{r}
+vcov(bar) |> round(5)
+```
+
+
 
 ```{r}
 posterior_interval(Barsoom) |> round(3)
@@ -84,8 +85,17 @@ confint(barfight) |> round(3)
 ```
 
 ```{r}
+confint(barfight) |> class()
+```
+
+
+```{r}
 terms(Barsoom)
 ```
+```{r}
+names(Barsoom)
+```
+
 
 ```{r}
 model.frame(Barsoom) |> head()
@@ -99,6 +109,23 @@ plot(Barsoom)
 plot(bar)
 ```
 
+```{r}
+library(BayesFactor)
+library(dplyr)
+n = 8
+mu_a = 10
+mu_b = 13
+sigma = 1
+
+df = data.frame(group = c("a", "b") |> rep(each = n),
+                y = c(rnorm(n = n, mean = mu_a, sd = sigma),
+                      rnorm(n = n, mean = mu_b, sd = sigma))
+                )
+
+t.test(y ~ group, data = df, var.equal = TRUE)
+ttestBF(formula = y ~ group, data = df)
+1/ttestBF(formula = y ~ group, data = df)
+```
 
 
 

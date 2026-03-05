@@ -45,10 +45,11 @@ vcov.lapreg = function(obj){
 #' @export
 #' @method posterior_interval lapreg
 posterior_interval.lapreg = function(obj, prob = 0.9){
-  intervals = data.frame(lower = qnorm(p = (1 - prob)/2, mean = obj$mu, sd = obj$sigma),
-                         upper = qnorm(p = 1 - (1 - prob)/2, mean = obj$mu, sd = obj$sigma)
-                         )
-  colnames(intervals) = c((1 - prob)/2, 1 - (1 - prob)/2)
+  alpha = 1 - prob
+  intervals = data.frame(lower = qnorm(p = alpha/2, mean = obj$mu, sd = obj$sigma),
+                         upper = qnorm(p = 1 - alpha/2, mean = obj$mu, sd = obj$sigma)
+                         ) |> as.matrix()
+  colnames(intervals) = paste(100*c(alpha/2, 1 - alpha/2), "%")
   return(intervals)
 }
 
@@ -103,7 +104,7 @@ plot.lapreg = function(obj){
   if(obj$model_name %in% c("bernoulli_logistic")){
     pt = bayesplot::ppc_bars(y = obj$data[,obj$formula_info$lhs] |> as.numeric() - 1, yrep = Y_tilde_samples)
   } else{
-    pt = bayesplot::ppc_dens_overlay(y = obj$data[,obj$formula_info$lhs], yrep = ppred)
+    pt = bayesplot::ppc_dens_overlay(y = obj$data[,obj$formula_info$lhs], yrep = Y_tilde_samples)
   }
 
   return(pt)

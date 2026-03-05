@@ -17,18 +17,16 @@ transformed data {
   vector[Nncens] Yncens;  // response variable (non-censored data)
   matrix[Nncens, K] Xncens; // design matrix for non-censored data
   matrix[Ncens, K] Xcens; // design matrix for censored data
+  vector[Ncens] Ymax_vector;
   Yncens = Y[which_ncens];
   Xncens = X[which_ncens,];
   Xcens = X[which_cens,];
+  Ymax_vector = rep_vector(Ymax, Ncens);
 }
 parameters {
   real b0;  // actual intercept
   vector[K] b;  // actual regression coefficients
   real<lower=0> sigma;  // dispersion parameter
-}
-transformed parameters {
-  vector[Ncens] Ymax_vector;
-  Ymax_vector = rep_vector(Ymax, Ncens);
 }
 model {
   // likelihood including constants

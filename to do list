@@ -52,7 +52,7 @@
 
 - get something better than basic BIC for "lmer" and "glmer" models
 
-- error message in "bma" for mixed effects models fit by REML
+- write an error message in "bma" for mixed effects models fit by REML
 
 - GLIB-style estimation
 

@@ -44,7 +44,7 @@ lapreg = function(formula, data, family = "normal_linear", center = TRUE, prior_
                                 hessian = TRUE)
 
   # ** rename parameters **
-  names(optim_fit$par)[names(optim_fit$par) == "b0"] = "Intercept"
+  names(optim_fit$par)[names(optim_fit$par) == "b0"] = "(Intercept)"
   if(!intercept_only){
     n_coef = ncol(stan_data$X)
     coef_names = colnames(stan_data$X)
@@ -56,11 +56,11 @@ lapreg = function(formula, data, family = "normal_linear", center = TRUE, prior_
   colnames(optim_fit$hessian) = names(optim_fit$par)
 
   # ** compute the posterior covariance matrix **
-  Sigma = solve(-optim_fit$hessian[c("Intercept", coef_names), c("Intercept", coef_names)])
+  Sigma = solve(-optim_fit$hessian[c("(Intercept)", coef_names), c("(Intercept)", coef_names)])
 
   # ** assemble a "lapreg" object **
   output = list(optim_fit = optim_fit,
-                mu = optim_fit$par, # posterior mean
+                mu = optim_fit$par[c("(Intercept)", coef_names)], # posterior mean
                 sigma = diag(Sigma) |> sqrt(), # posterior SD
                 Sigma = Sigma, # posterior covariance matrix
                 model_name = model_name,

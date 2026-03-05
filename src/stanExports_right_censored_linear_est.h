@@ -29,17 +29,15 @@ using namespace stan::math;
 stan::math::profile_map profiles__;
 static constexpr std::array<const char*, 44> locations_array__ =
   {" (found before start of program)",
-  " (in 'right_censored_linear_est', line 25, column 2 to column 10)",
-  " (in 'right_censored_linear_est', line 26, column 2 to column 14)",
-  " (in 'right_censored_linear_est', line 27, column 2 to column 22)",
-  " (in 'right_censored_linear_est', line 30, column 2 to column 28)",
-  " (in 'right_censored_linear_est', line 31, column 2 to column 40)",
-  " (in 'right_censored_linear_est', line 36, column 4 to column 64)",
-  " (in 'right_censored_linear_est', line 37, column 4 to column 62)",
-  " (in 'right_censored_linear_est', line 35, column 19 to line 38, column 3)",
-  " (in 'right_censored_linear_est', line 35, column 2 to line 38, column 3)",
-  " (in 'right_censored_linear_est', line 40, column 2 to column 62)",
-  " (in 'right_censored_linear_est', line 41, column 2 to column 26)",
+  " (in 'right_censored_linear_est', line 27, column 2 to column 10)",
+  " (in 'right_censored_linear_est', line 28, column 2 to column 14)",
+  " (in 'right_censored_linear_est', line 29, column 2 to column 22)",
+  " (in 'right_censored_linear_est', line 34, column 4 to column 64)",
+  " (in 'right_censored_linear_est', line 35, column 4 to column 62)",
+  " (in 'right_censored_linear_est', line 33, column 19 to line 36, column 3)",
+  " (in 'right_censored_linear_est', line 33, column 2 to line 36, column 3)",
+  " (in 'right_censored_linear_est', line 38, column 2 to column 62)",
+  " (in 'right_censored_linear_est', line 39, column 2 to column 26)",
   " (in 'right_censored_linear_est', line 2, column 2 to column 17)",
   " (in 'right_censored_linear_est', line 3, column 9 to column 10)",
   " (in 'right_censored_linear_est', line 3, column 2 to column 14)",
@@ -67,11 +65,13 @@ static constexpr std::array<const char*, 44> locations_array__ =
   " (in 'right_censored_linear_est', line 19, column 9 to column 14)",
   " (in 'right_censored_linear_est', line 19, column 16 to column 17)",
   " (in 'right_censored_linear_est', line 19, column 2 to column 25)",
-  " (in 'right_censored_linear_est', line 20, column 2 to column 26)",
-  " (in 'right_censored_linear_est', line 21, column 2 to column 27)",
-  " (in 'right_censored_linear_est', line 22, column 2 to column 25)",
-  " (in 'right_censored_linear_est', line 26, column 9 to column 10)",
-  " (in 'right_censored_linear_est', line 30, column 9 to column 14)"};
+  " (in 'right_censored_linear_est', line 20, column 9 to column 14)",
+  " (in 'right_censored_linear_est', line 20, column 2 to column 28)",
+  " (in 'right_censored_linear_est', line 21, column 2 to column 26)",
+  " (in 'right_censored_linear_est', line 22, column 2 to column 27)",
+  " (in 'right_censored_linear_est', line 23, column 2 to column 25)",
+  " (in 'right_censored_linear_est', line 24, column 2 to column 40)",
+  " (in 'right_censored_linear_est', line 28, column 9 to column 10)"};
 #include <stan_meta_header.hpp>
 class model_right_censored_linear_est final : public model_base_crtp<model_right_censored_linear_est> {
 private:
@@ -91,12 +91,14 @@ private:
   Eigen::Matrix<double,-1,1> Yncens_data__;
   Eigen::Matrix<double,-1,-1> Xncens_data__;
   Eigen::Matrix<double,-1,-1> Xcens_data__;
+  Eigen::Matrix<double,-1,1> Ymax_vector_data__;
   Eigen::Map<Eigen::Matrix<double,-1,1>> Y{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> X{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> Xcol_scale{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> Yncens{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> Xncens{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> Xcens{nullptr, 0, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> Ymax_vector{nullptr, 0};
 public:
   ~model_right_censored_linear_est() {}
   model_right_censored_linear_est(stan::io::var_context& context__,
@@ -119,17 +121,17 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 12;
+      current_statement__ = 10;
       context__.validate_dims("data initialization", "N", "int",
         std::vector<size_t>{});
       N = std::numeric_limits<int>::min();
-      current_statement__ = 12;
+      current_statement__ = 10;
       N = context__.vals_i("N")[(1 - 1)];
-      current_statement__ = 12;
+      current_statement__ = 10;
       stan::math::check_greater_or_equal(function__, "N", N, 1);
-      current_statement__ = 13;
+      current_statement__ = 11;
       stan::math::validate_non_negative_index("Y", "N", N);
-      current_statement__ = 14;
+      current_statement__ = 12;
       context__.validate_dims("data initialization", "Y", "double",
         std::vector<size_t>{static_cast<size_t>(N)});
       Y_data__ = Eigen::Matrix<double,-1,1>::Constant(N,
@@ -137,38 +139,38 @@ public:
       new (&Y) Eigen::Map<Eigen::Matrix<double,-1,1>>(Y_data__.data(), N);
       {
         std::vector<local_scalar_t__> Y_flat__;
-        current_statement__ = 14;
+        current_statement__ = 12;
         Y_flat__ = context__.vals_r("Y");
-        current_statement__ = 14;
+        current_statement__ = 12;
         pos__ = 1;
-        current_statement__ = 14;
+        current_statement__ = 12;
         for (int sym1__ = 1; sym1__ <= N; ++sym1__) {
-          current_statement__ = 14;
+          current_statement__ = 12;
           stan::model::assign(Y, Y_flat__[(pos__ - 1)],
             "assigning variable Y", stan::model::index_uni(sym1__));
-          current_statement__ = 14;
+          current_statement__ = 12;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 15;
+      current_statement__ = 13;
       context__.validate_dims("data initialization", "Ymean", "double",
         std::vector<size_t>{});
       Ymean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 15;
+      current_statement__ = 13;
       Ymean = context__.vals_r("Ymean")[(1 - 1)];
-      current_statement__ = 16;
+      current_statement__ = 14;
       context__.validate_dims("data initialization", "K", "int",
         std::vector<size_t>{});
       K = std::numeric_limits<int>::min();
-      current_statement__ = 16;
+      current_statement__ = 14;
       K = context__.vals_i("K")[(1 - 1)];
-      current_statement__ = 16;
+      current_statement__ = 14;
       stan::math::check_greater_or_equal(function__, "K", K, 1);
-      current_statement__ = 17;
+      current_statement__ = 15;
       stan::math::validate_non_negative_index("X", "N", N);
-      current_statement__ = 18;
+      current_statement__ = 16;
       stan::math::validate_non_negative_index("X", "K", K);
-      current_statement__ = 19;
+      current_statement__ = 17;
       context__.validate_dims("data initialization", "X", "double",
         std::vector<size_t>{static_cast<size_t>(N), static_cast<size_t>(K)});
       X_data__ = Eigen::Matrix<double,-1,-1>::Constant(N, K,
@@ -176,26 +178,26 @@ public:
       new (&X) Eigen::Map<Eigen::Matrix<double,-1,-1>>(X_data__.data(), N, K);
       {
         std::vector<local_scalar_t__> X_flat__;
-        current_statement__ = 19;
+        current_statement__ = 17;
         X_flat__ = context__.vals_r("X");
-        current_statement__ = 19;
+        current_statement__ = 17;
         pos__ = 1;
-        current_statement__ = 19;
+        current_statement__ = 17;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 19;
+          current_statement__ = 17;
           for (int sym2__ = 1; sym2__ <= N; ++sym2__) {
-            current_statement__ = 19;
+            current_statement__ = 17;
             stan::model::assign(X, X_flat__[(pos__ - 1)],
               "assigning variable X", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 19;
+            current_statement__ = 17;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 20;
+      current_statement__ = 18;
       stan::math::validate_non_negative_index("Xcol_scale", "K", K);
-      current_statement__ = 21;
+      current_statement__ = 19;
       context__.validate_dims("data initialization", "Xcol_scale", "double",
         std::vector<size_t>{static_cast<size_t>(K)});
       Xcol_scale_data__ = Eigen::Matrix<double,-1,1>::Constant(K,
@@ -204,99 +206,107 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(Xcol_scale_data__.data(), K);
       {
         std::vector<local_scalar_t__> Xcol_scale_flat__;
-        current_statement__ = 21;
+        current_statement__ = 19;
         Xcol_scale_flat__ = context__.vals_r("Xcol_scale");
-        current_statement__ = 21;
+        current_statement__ = 19;
         pos__ = 1;
-        current_statement__ = 21;
+        current_statement__ = 19;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 21;
+          current_statement__ = 19;
           stan::model::assign(Xcol_scale, Xcol_scale_flat__[(pos__ - 1)],
             "assigning variable Xcol_scale", stan::model::index_uni(sym1__));
-          current_statement__ = 21;
+          current_statement__ = 19;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 22;
+      current_statement__ = 20;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 22;
+      current_statement__ = 20;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 23;
+      current_statement__ = 21;
       context__.validate_dims("data initialization", "prior_scale", "double",
         std::vector<size_t>{});
       prior_scale = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 23;
+      current_statement__ = 21;
       prior_scale = context__.vals_r("prior_scale")[(1 - 1)];
-      current_statement__ = 23;
+      current_statement__ = 21;
       stan::math::check_greater_or_equal(function__, "prior_scale",
         prior_scale, 0);
-      current_statement__ = 24;
+      current_statement__ = 22;
       context__.validate_dims("data initialization", "Nncens", "int",
         std::vector<size_t>{});
       Nncens = std::numeric_limits<int>::min();
-      current_statement__ = 24;
+      current_statement__ = 22;
       Nncens = context__.vals_i("Nncens")[(1 - 1)];
-      current_statement__ = 24;
+      current_statement__ = 22;
       stan::math::check_greater_or_equal(function__, "Nncens", Nncens, 1);
-      current_statement__ = 25;
+      current_statement__ = 23;
       context__.validate_dims("data initialization", "Ncens", "int",
         std::vector<size_t>{});
       Ncens = std::numeric_limits<int>::min();
-      current_statement__ = 25;
+      current_statement__ = 23;
       Ncens = context__.vals_i("Ncens")[(1 - 1)];
-      current_statement__ = 25;
+      current_statement__ = 23;
       stan::math::check_greater_or_equal(function__, "Ncens", Ncens, 1);
-      current_statement__ = 26;
+      current_statement__ = 24;
       context__.validate_dims("data initialization", "Ymax", "double",
         std::vector<size_t>{});
       Ymax = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 26;
+      current_statement__ = 24;
       Ymax = context__.vals_r("Ymax")[(1 - 1)];
-      current_statement__ = 27;
+      current_statement__ = 25;
       stan::math::validate_non_negative_index("which_ncens", "Nncens", Nncens);
-      current_statement__ = 28;
+      current_statement__ = 26;
       context__.validate_dims("data initialization", "which_ncens", "int",
         std::vector<size_t>{static_cast<size_t>(Nncens)});
       which_ncens = std::vector<int>(Nncens, std::numeric_limits<int>::min());
-      current_statement__ = 28;
+      current_statement__ = 26;
       which_ncens = context__.vals_i("which_ncens");
-      current_statement__ = 29;
+      current_statement__ = 27;
       stan::math::validate_non_negative_index("which_cens", "Ncens", Ncens);
-      current_statement__ = 30;
+      current_statement__ = 28;
       context__.validate_dims("data initialization", "which_cens", "int",
         std::vector<size_t>{static_cast<size_t>(Ncens)});
       which_cens = std::vector<int>(Ncens, std::numeric_limits<int>::min());
-      current_statement__ = 30;
+      current_statement__ = 28;
       which_cens = context__.vals_i("which_cens");
-      current_statement__ = 31;
+      current_statement__ = 29;
       stan::math::validate_non_negative_index("Yncens", "Nncens", Nncens);
-      current_statement__ = 32;
+      current_statement__ = 30;
       Yncens_data__ = Eigen::Matrix<double,-1,1>::Constant(Nncens,
                         std::numeric_limits<double>::quiet_NaN());
       new (&Yncens)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(Yncens_data__.data(), Nncens);
-      current_statement__ = 33;
+      current_statement__ = 31;
       stan::math::validate_non_negative_index("Xncens", "Nncens", Nncens);
-      current_statement__ = 34;
+      current_statement__ = 32;
       stan::math::validate_non_negative_index("Xncens", "K", K);
-      current_statement__ = 35;
+      current_statement__ = 33;
       Xncens_data__ = Eigen::Matrix<double,-1,-1>::Constant(Nncens, K,
                         std::numeric_limits<double>::quiet_NaN());
       new (&Xncens)
         Eigen::Map<Eigen::Matrix<double,-1,-1>>(Xncens_data__.data(), Nncens,
         K);
-      current_statement__ = 36;
+      current_statement__ = 34;
       stan::math::validate_non_negative_index("Xcens", "Ncens", Ncens);
-      current_statement__ = 37;
+      current_statement__ = 35;
       stan::math::validate_non_negative_index("Xcens", "K", K);
-      current_statement__ = 38;
+      current_statement__ = 36;
       Xcens_data__ = Eigen::Matrix<double,-1,-1>::Constant(Ncens, K,
                        std::numeric_limits<double>::quiet_NaN());
       new (&Xcens)
         Eigen::Map<Eigen::Matrix<double,-1,-1>>(Xcens_data__.data(), Ncens,
         K);
+      current_statement__ = 37;
+      stan::math::validate_non_negative_index("Ymax_vector", "Ncens", Ncens);
+      current_statement__ = 38;
+      Ymax_vector_data__ = Eigen::Matrix<double,-1,1>::Constant(Ncens,
+                             std::numeric_limits<double>::quiet_NaN());
+      new (&Ymax_vector)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(Ymax_vector_data__.data(),
+        Ncens);
       current_statement__ = 39;
       stan::model::assign(Yncens,
         stan::model::rvalue(Y, "Y", stan::model::index_multi(which_ncens)),
@@ -310,9 +320,10 @@ public:
         stan::model::rvalue(X, "X", stan::model::index_multi(which_cens),
           stan::model::index_omni()), "assigning variable Xcens");
       current_statement__ = 42;
-      stan::math::validate_non_negative_index("b", "K", K);
+      stan::model::assign(Ymax_vector, stan::math::rep_vector(Ymax, Ncens),
+        "assigning variable Ymax_vector");
       current_statement__ = 43;
-      stan::math::validate_non_negative_index("Ymax_vector", "Ncens", Ncens);
+      stan::math::validate_non_negative_index("b", "K", K);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -356,27 +367,22 @@ public:
       current_statement__ = 3;
       sigma = in__.template read_constrain_lb<local_scalar_t__,
                 jacobian__>(0, lp__);
-      Eigen::Matrix<local_scalar_t__,-1,1> Ymax_vector =
-        Eigen::Matrix<local_scalar_t__,-1,1>::Constant(Ncens, DUMMY_VAR__);
-      current_statement__ = 5;
-      stan::model::assign(Ymax_vector, stan::math::rep_vector(Ymax, Ncens),
-        "assigning variable Ymax_vector");
       {
-        current_statement__ = 9;
+        current_statement__ = 7;
         if (stan::math::logical_negation(prior_only)) {
-          current_statement__ = 6;
+          current_statement__ = 4;
           lp_accum__.add(stan::math::normal_id_glm_lpdf<false>(Yncens,
                            Xncens, b0, b, sigma));
-          current_statement__ = 7;
+          current_statement__ = 5;
           lp_accum__.add(stan::math::normal_lccdf(Ymax_vector,
                            stan::math::add(b0, stan::math::multiply(Xcens, b)),
                            sigma));
         }
-        current_statement__ = 10;
+        current_statement__ = 8;
         lp_accum__.add(stan::math::cauchy_lpdf<false>(b, 0,
                          stan::math::elt_divide((sigma * prior_scale),
                            Xcol_scale)));
-        current_statement__ = 11;
+        current_statement__ = 9;
         lp_accum__.add((-2 * stan::math::log(sigma)));
       }
     } catch (const std::exception& e) {
@@ -428,9 +434,6 @@ public:
       current_statement__ = 3;
       sigma = in__.template read_constrain_lb<local_scalar_t__,
                 jacobian__>(0, lp__);
-      Eigen::Matrix<double,-1,1> Ymax_vector =
-        Eigen::Matrix<double,-1,1>::Constant(Ncens,
-          std::numeric_limits<double>::quiet_NaN());
       out__.write(b0);
       out__.write(b);
       out__.write(sigma);
@@ -438,12 +441,6 @@ public:
             (stan::math::primitive_value(emit_transformed_parameters__) ||
             stan::math::primitive_value(emit_generated_quantities__)))) {
         return ;
-      }
-      current_statement__ = 5;
-      stan::model::assign(Ymax_vector, stan::math::rep_vector(Ymax, Ncens),
-        "assigning variable Ymax_vector");
-      if (emit_transformed_parameters__) {
-        out__.write(Ymax_vector);
       }
       if (stan::math::logical_negation(emit_generated_quantities__)) {
         return ;
@@ -544,11 +541,7 @@ public:
                   emit_transformed_parameters__ = true, const bool
                   emit_generated_quantities__ = true) const {
     names__ = std::vector<std::string>{"b0", "b", "sigma"};
-    if (emit_transformed_parameters__) {
-      std::vector<std::string> temp{"Ymax_vector"};
-      names__.reserve(names__.size() + temp.size());
-      names__.insert(names__.end(), temp.begin(), temp.end());
-    }
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline void
@@ -558,12 +551,7 @@ public:
     dimss__ = std::vector<std::vector<size_t>>{std::vector<size_t>{},
                 std::vector<size_t>{static_cast<size_t>(K)},
                 std::vector<size_t>{}};
-    if (emit_transformed_parameters__) {
-      std::vector<std::vector<size_t>>
-        temp{std::vector<size_t>{static_cast<size_t>(Ncens)}};
-      dimss__.reserve(dimss__.size() + temp.size());
-      dimss__.insert(dimss__.end(), temp.begin(), temp.end());
-    }
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline void
@@ -576,12 +564,7 @@ public:
         std::to_string(sym1__));
     }
     param_names__.emplace_back(std::string() + "sigma");
-    if (emit_transformed_parameters__) {
-      for (int sym1__ = 1; sym1__ <= Ncens; ++sym1__) {
-        param_names__.emplace_back(std::string() + "Ymax_vector" + '.' +
-          std::to_string(sym1__));
-      }
-    }
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline void
@@ -594,19 +577,14 @@ public:
         std::to_string(sym1__));
     }
     param_names__.emplace_back(std::string() + "sigma");
-    if (emit_transformed_parameters__) {
-      for (int sym1__ = 1; sym1__ <= Ncens; ++sym1__) {
-        param_names__.emplace_back(std::string() + "Ymax_vector" + '.' +
-          std::to_string(sym1__));
-      }
-    }
+    if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {}
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"Ymax_vector\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(Ncens) + "},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"Ymax_vector\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(Ncens) + "},\"block\":\"transformed_parameters\"}]");
+    return std::string("[{\"name\":\"b0\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"b\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(K) + "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
@@ -616,7 +594,7 @@ public:
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
     const size_t num_params__ = ((1 + K) + 1);
-    const size_t num_transformed = emit_transformed_parameters * (Ncens);
+    const size_t num_transformed = emit_transformed_parameters * (0);
     const size_t num_gen_quantities = emit_generated_quantities * (0);
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;
@@ -633,7 +611,7 @@ public:
               emit_generated_quantities = true, std::ostream*
               pstream = nullptr) const {
     const size_t num_params__ = ((1 + K) + 1);
-    const size_t num_transformed = emit_transformed_parameters * (Ncens);
+    const size_t num_transformed = emit_transformed_parameters * (0);
     const size_t num_gen_quantities = emit_generated_quantities * (0);
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;
