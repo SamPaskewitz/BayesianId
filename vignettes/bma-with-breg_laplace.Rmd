@@ -1,8 +1,8 @@
 ---
-title: "Bayesian Model Averaging with MCMC"
+title: "Bayesian Model Averaging with the Laplace Approximation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Bayesian Model Averaging with MCMC}
+  %\VignetteIndexEntry{Bayesian Model Averaging with the Laplace Approximation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -24,16 +24,21 @@ head(penguins)
 ```
 
 ```{r full_model}
-mass_breg_full = breg(body_mass ~ island*sex + flipper_len,
-                      data = na.omit(penguins))
+mass_breg_full = breg_laplace(body_mass ~ island*sex + flipper_len,
+                              data = na.omit(penguins),
+                              prior_scale = 0.707)
+mass_breg_full$log_evidence
 ```
 
 ```{r check_full_model}
-plot(mass_breg_full, type = "post_pred")
+plot(mass_breg_full)
 ```
 
 ```{r create_bma_object}
+tic = Sys.time()
 mass_breg_bma = bma(mass_breg_full)
+toc = Sys.time()
+print(toc - tic)
 ```
 
 ```{r print}
@@ -41,11 +46,7 @@ print(mass_breg_bma)
 ```
 
 ```{r, contrast}
-contrast(mass_breg_bma, factors = c("island", "sex"), ref = "Biscoe male")
-```
-
-```{r}
-model.frame.breg(mass_breg_full)
+#contrast(mass_breg_bma, factors = c("island", "sex"), ref = "Biscoe male")
 ```
 
 ```{r term_probs}

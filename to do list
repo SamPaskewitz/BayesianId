@@ -64,23 +64,21 @@
 
 - better treatment of default prior scales (c.f. BayesFactor, or do something better)
 
-- add Bayes factor support for "breg_laplace" models
-
 - add emmeans support for "breg_laplace" models
 
 - add a "predict" method for "breg_laplace" models
 
+- unify "breg_laplace" and "breg_mcmc" plotting methods etc. as much as possible
+
+- use "breg_laplace" to initialize "breg_mcmc"
+
 - add a new data option to the "simulate" method for "breg_laplace" models
 
-- better tests for "breg" (compare to known correct output from brms or something)
-
-- better support for different types of posterior predictive plots (for breg)
+- add a convenience "breg" function that either runs "breg_laplace" or "breg_mcmc"
 
 - add random effects to existing models
 
 - add other methods suggested by "rstantools"
-
-- add code for posterior predictive scatterplots (y = data, x = a predictor)
 
 - either do something with the "prior_only" business or get rid of it
 

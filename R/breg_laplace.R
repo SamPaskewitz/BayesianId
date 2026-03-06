@@ -5,7 +5,7 @@
 #' @param center Should the numeric predictor variables be mean-centered?
 #' @param prior_scale Scale for the prior distribution on model coefficients (see 'Details').
 #' @returns A fitted Bayesian regression model (of class "breg_laplace").
-#' @details ADD THIS
+#' @details Currently this uses the Newton algorithm for optimization, because in my experience it more reliably finds the maximum than LBFGS, despite being slower.
 #' @export
 breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0){
   # ** get formula info **
@@ -28,10 +28,10 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
   }
   stan_model_to_use = stanmodels[[paste0(model_name, "_est")]]
 
-  # ** set up initialization for sigma **
+  # ** set up initialization **
   # this is particularly important with censored data
   if(family %in% c("normal_linear", "right_censored_linear")){
-    init = list(sigma = sd(stan_data$Y))
+    init = list(sigma = sd(stan_data$Y), b0 = mean(stan_data$Y))
   } else{
     init = "random"
   }
@@ -41,7 +41,8 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
                                 data = stan_data,
                                 init = init,
                                 draws = 9, # needs to be an odd number for ppc_intervals to work properly with binary data (it plots the medians of yrep)
-                                hessian = TRUE)
+                                hessian = TRUE,
+                                algorithm = "Newton")
 
   # ** rename parameters **
   names(optim_fit$par)[names(optim_fit$par) == "b0"] = "(Intercept)"
@@ -56,7 +57,7 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
   colnames(optim_fit$hessian) = names(optim_fit$par)
 
   # ** compute the posterior covariance matrix **
-  Sigma = solve(-optim_fit$hessian[c("(Intercept)", coef_names), c("(Intercept)", coef_names)])
+  Sigma = solve(-optim_fit$hessian[c("(Intercept)", coef_names), c("(Intercept)", coef_names), drop = FALSE])
 
   # ** compute log evidence (log marginal likelihood) using the Laplace approximation **
   n_par = nrow(optim_fit$hessian)

@@ -14,6 +14,8 @@ model_log_evidence = function(fit_list){
       log_evidence[i] = bridgesampling::bridge_sampler(fit_list[[i]]$stanfit,
                                                        silent = TRUE)$logml
     }
+  } else if("breg_laplace" %in% class(fit_list[[1]])){
+    log_evidence = lapply(fit_list, function(x){x$log_evidence}) |> unlist()
   } else{
     # otherwise use the BIC approximation for MLE
     log_evidence = -0.5*(lapply(fit_list, BIC) |> unlist())

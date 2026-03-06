@@ -22,8 +22,15 @@ compare = glm(y ~ x1 + x2 + f1, data = prepare_data(parse_formula(y ~ x1 + x2 + 
 data("penguins")
 test_data = na.omit(penguins) %>% dplyr::rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex) |> dplyr::mutate(y = ifelse(y > 5000, 5000, y))
 
-fit = breg_mcmc(y ~ x1 + x2 + f1, data = test_data, prior_scale = 100, family = "right_censored_linear") # large prior scale -> results should be similar to MLE
+fit = breg_laplace(y ~ x1 + x2 + f1, 
+                   data = test_data, 
+                   prior_scale = 100, # large prior scale -> results should be similar to MLE
+                   family = "right_censored_linear",
+                   tol_obj = 1e-11,
+                   )
 compare = censReg::censReg(y ~ x1 + x2 + f1, right = 5000, data = prepare_data(parse_formula(y ~ x1 + x2 + f1), test_data))
+
+fit$optim_fit$value
 ```
 
 ```{r}

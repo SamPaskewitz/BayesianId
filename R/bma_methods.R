@@ -136,6 +136,7 @@ coef.bma = function(obj){
     # posterior means from models that include the coef
     mu = sapply(obj$fit_list[incl], function(x){coef(x)[coef_name]})
     # posterior SD's from models that include the coef
+    print(coef_name)
     sigma = sapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()})
     # Bayesian model averaging (Hoeting, Madigan, Raftery, & Volinsky, 1999)
     if(sum(incl) > 1){ # more than one model includes the coef

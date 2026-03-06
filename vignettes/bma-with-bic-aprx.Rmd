@@ -35,7 +35,10 @@ plot(mass_lm_full)
 ```
 
 ```{r create_bma_object}
+tic = Sys.time()
 mass_lm_bma = bma(mass_lm_full)
+toc = Sys.time()
+print(toc - tic)
 ```
 
 ```{r, contrast}
@@ -59,11 +62,6 @@ plot(mass_lm_bma, coef = "flipper_len")
 summary(mass_lm_bma, type = "term_probs")
 ```
 
-```{r}
-foo = summary(mass_lm_bma, type = "term_probs", pretty = FALSE)
-foo
-```
-
 ```{r term_odds}
 summary(mass_lm_bma, type = "term_odds")
 ```
@@ -83,26 +81,3 @@ summary(mass_lm_bma, type = "est")
 ```{r directional}
 summary(mass_lm_bma, type = "directional")
 ```
-```{r}
-names(mass_lm_bma)
-```
-
-```{r}
-intersect(mass_lm_bma$model_info$term_names, mass_lm_bma$coef_names)
-```
-
-```{r}
-mass_lm_bma$coef_names
-```
-
-
-
-```{r}
-coef(mass_lm_bma)[!mass_lm_bma$is_factor,"p(β<0|D,β≠0)"]/0.5
-summary(mass_lm_bma, type = "term_odds", pretty = FALSE)[!mass_lm_bma$is_factor, "BF"]
-```
-
-
-
-
-
