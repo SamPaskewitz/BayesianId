@@ -1,0 +1,66 @@
+# set up test data
+data("penguins")
+test_data = na.omit(penguins) |> dplyr::rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex)
+test_data = test_data |> dplyr::mutate(y_bin = test_data$f2, y_cens = ifelse(y > 4800, 4800, y))
+
+test_that("normal linear model runs with one numeric predictor", {
+  expect_no_warning(breg_mcmc(formula = y ~ x1,
+                         data = test_data,
+                         center = TRUE,
+                         chains = 2,
+                         iter = 1000))
+})
+
+test_that("normal linear model runs one factor predictor", {
+  expect_no_warning(breg_mcmc(formula = y ~ f1,
+                         data = test_data,
+                         center = TRUE,
+                         chains = 2,
+                         iter = 1000))
+})
+
+test_that("normal linear model runs with complex formula", {
+  expect_no_warning(breg_mcmc(formula = y ~ x1*x2*f1,
+                         data = test_data,
+                         center = TRUE,
+                         chains = 2,
+                         iter = 1000))
+})
+
+test_that("normal linear intercept model runs", {
+  expect_no_warning(breg_mcmc(formula = y ~ 1,
+                         data = test_data,
+                         chains = 2,
+                         iter = 1000))
+})
+
+test_that("right censored linear model runs", {
+  expect_no_warning(breg_mcmc(formula = y_cens ~ x1*x2*f1,
+                         family = "right_censored_linear",
+                         data = test_data,
+                         center = TRUE,
+                         chains = 2,
+                         iter = 1000))
+})
+
+test_that("right censored linear intercept model runs", {
+  expect_no_warning(breg_mcmc(formula = y_cens ~ 1,
+                         family = "right_censored_linear",
+                         data = test_data,
+                         chains = 2,
+                         iter = 1000))
+})
+
+test_that("bernoulli logistic model runs", {
+  expect_no_warning(breg_mcmc(formula = y_bin ~ x1*x2*f1,
+                         family = "bernoulli_logistic",
+                         data = test_data,
+                         iter = 1000))
+})
+
+test_that("bernoulli logistic intercept model runs", {
+  expect_no_warning(breg_mcmc(formula = y_bin ~ 1,
+                           family = "bernoulli_logistic",
+                           data = test_data,
+                           iter = 1000))
+})

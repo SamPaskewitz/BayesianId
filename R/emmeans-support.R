@@ -1,7 +1,7 @@
 #' @importFrom emmeans recover_data
 #' @export
-#' @method recover_data breg
-recover_data.breg <- function(object, ...) {
+#' @method recover_data breg_mcmc
+recover_data.breg_mcmc <- function(object, ...) {
   data = object$data[,object$formula_info$x_names,drop=FALSE]
   attr(data, "call") = object$call
   attr(data, "terms") = terms(object) |> delete.response()
@@ -12,8 +12,8 @@ recover_data.breg <- function(object, ...) {
 
 #' @importFrom emmeans emm_basis
 #' @export
-#' @method emm_basis breg
-emm_basis.breg = function(object, trms, xlev, grid, ...){
+#' @method emm_basis breg_mcmc
+emm_basis.breg_mcmc = function(object, trms, xlev, grid, ...){
   # Based on: https://github.com/rvlenth/emmeans/blob/master/R/brms-support.R
   m = model.frame(trms, grid, na.action = na.pass, xlev = xlev)
   contr = lapply(object$data, function(.) attr(., "contrasts"))
