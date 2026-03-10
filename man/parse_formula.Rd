@@ -7,7 +7,7 @@
 parse_formula(formula)
 }
 \arguments{
-\item{formula}{An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the model to be fitted. The details of model specification are explained in brmsformula.}
+\item{formula}{** REVISE}
 }
 \value{
 A list containing the following elements: lhs = left hand side, fixed = fixed effects, random = random effects, fixed_main = fixed effects that are not interactions, fixed_interaction = fixed effects that are interactions.

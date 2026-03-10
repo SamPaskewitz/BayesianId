@@ -48,7 +48,6 @@ coef.breg_mcmc = function(obj, pars = c("Intercept", obj$coef_names)){
 #' Also, note that the results are ggplot2 objects, so could use ggplot2 to modify them (e.g. add a different title).
 #' @importFrom rstan stan_plot stan_trace stan_dens
 #' @export
-#' @method plot breg_mcmc
 plot.breg_mcmc = function(obj, type = "post_pred", pars = obj$coef_names){
   if(type == "post_pred"){
     ppred = posterior_predict(obj, ndraws = 5)

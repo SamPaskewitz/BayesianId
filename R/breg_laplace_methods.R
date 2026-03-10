@@ -16,8 +16,8 @@ summary.breg_laplace = function(obj){
   cat("Call:\n")
   print(obj$call)
   cat("\nEstimates:\n")
-  sumtab = data.frame(mean = obj$mu,
-                      sd = obj$sigma) |>
+  sumtab = data.frame(mean = obj$post_mean,
+                      sd = obj$post_sd) |>
     cbind(posterior_interval(obj, prob = 0.95))
   print(sumtab |> signif(3))
 }
@@ -27,7 +27,7 @@ summary.breg_laplace = function(obj){
 #' @export
 #' @method coef breg_laplace
 coef.breg_laplace = function(obj){
-  return(obj$mu)
+  return(obj$post_mean)
 }
 
 #' Return the posterior variance-covariance matrix of model parameters (intercept plus fixed effects).
@@ -46,8 +46,8 @@ vcov.breg_laplace = function(obj){
 #' @method posterior_interval breg_laplace
 posterior_interval.breg_laplace = function(obj, prob = 0.9){
   alpha = 1 - prob
-  intervals = data.frame(lower = qnorm(p = alpha/2, mean = obj$mu, sd = obj$sigma),
-                         upper = qnorm(p = 1 - alpha/2, mean = obj$mu, sd = obj$sigma)
+  intervals = data.frame(lower = qnorm(p = alpha/2, mean = obj$post_mean, sd = obj$post_sd),
+                         upper = qnorm(p = 1 - alpha/2, mean = obj$post_mean, sd = obj$post_sd)
                          ) |> as.matrix()
   colnames(intervals) = paste(100*c(alpha/2, 1 - alpha/2), "%")
   return(intervals)
@@ -107,20 +107,19 @@ simulate.breg_laplace = function(obj){
 #' Create a posterior predictive plot for diagnostic purposes.
 #' @param obj A "breg_laplace" object (fitted model).
 #' @param group Name of a grouping variable (optional).
-#' @param x Name of an x-axis variable for a scatterplot (optional).
+#' @param xvar Name of an x-axis variable for a scatterplot (optional).
 #' @details
 #' The type of plot created depends on the predicted/dependent variable ("y") and whether "group" or "x" is specified.
 #'
-#' If "x" is specified, then the data is represented as a scatterplot with "x" on the x-axis and both "y" (the real data) and "yrep" (the median of the simulated data) on the y-axis. This plot uses "ppc_intervals" from bayesplot, but with the intervals removed because I find them visually distracting.
+#' If "xvar" is specified, then the data is represented as a scatterplot with "xvar" on the x-axis and both "y" (the real data) and "yrep" (points from one simulated data set) on the y-axis. This plot uses "ppc_intervals" from bayesplot, but with the intervals removed (and only one data set) because I find them visually distracting.
 #'
-#' If "x" is not specified and "y" is binary or categorical, then you get a bar plot showing the actual data counts along with the median count from the simulated data. This uses "ppc_bars" with the intervals removed (again, I find them visually distracting).
+#' If "xvar" is not specified and "y" is binary or categorical, then you get a bar plot showing the actual data counts along with the median count from the simulated data. This uses "ppc_bars" with the intervals removed (again, I find them visually distracting).
 #'
-#' If "x" is not specified and "y" is numeric, then you get kernel density estimates of the distribution of the real data ("y", darker line) and the simulated data ("yrep", lighter lines, one for each simulated data set).
+#' If "xvar" is not specified and "y" is numeric, then you get kernel density estimates of the distribution of the real data ("y", darker line) and the simulated data ("yrep", lighter lines, one for each simulated data set).
 #'
 #' If "group" is specified then there will be a subplot for each level of the grouping variable (using the "_grouped" version of the appropriate bayesplot function).
 #' @export
-#' @method plot breg_laplace
-plot.breg_laplace = function(obj, group = NA, x = NA){
+plot.breg_laplace = function(obj, group = NA, xvar = NA){
   # simulate data from the posterior predictive distribution
   Y_tilde_samples = simulate(obj)
 
@@ -132,7 +131,7 @@ plot.breg_laplace = function(obj, group = NA, x = NA){
   }
 
   # select type of post pred plot
-  if(is.na(x)){
+  if(is.na(xvar)){
     if(obj$model_name %in% c("bernoulli_logistic")){
       if(is.na(group)){
         pt = bayesplot::ppc_bars(y = y, yrep = Y_tilde_samples, prob = 0)
@@ -148,12 +147,10 @@ plot.breg_laplace = function(obj, group = NA, x = NA){
     }
   } else{
     if(is.na(group)){
-      pt = bayesplot::ppc_intervals(y = y, yrep = Y_tilde_samples, x = obj$data[,x], prob = 0.001, prob_outer = 0.001) + ggplot2::xlab(x)
+      pt = bayesplot::ppc_intervals(y = y, yrep = Y_tilde_samples[1,,drop=FALSE], x = obj$data[,xvar], prob = 0.001, prob_outer = 0.001) + ggplot2::xlab(xvar)
     } else{
-      pt = bayesplot::ppc_intervals_grouped(y = y, yrep = Y_tilde_samples, group = obj$data[,group], x = obj$data[,x], prob = 0.001, prob_outer = 0.001) + ggplot2::xlab(x)
+      pt = bayesplot::ppc_intervals_grouped(y = y, yrep = Y_tilde_samples[1,,drop=FALSE], group = obj$data[,group], x = obj$data[,xvar], prob = 0.001, prob_outer = 0.001) + ggplot2::xlab(xvar)
     }
   }
-
-
   return(pt)
 }

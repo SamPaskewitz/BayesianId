@@ -1,13 +1,8 @@
 #' Parse a regression model formula into its component parts.
-#' @param formula An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the model to be fitted. The details of model specification are explained in brmsformula.
+#' @param formula ** REVISE
 #' @returns A list containing the following elements: lhs = left hand side, fixed = fixed effects, random = random effects, fixed_main = fixed effects that are not interactions, fixed_interaction = fixed effects that are interactions.
 #'
 parse_formula = function(formula){
-  # Deal with brms formulas
-  if("brmsformula" %in% class(formula)){
-    formula = formula$formula
-  }
-
   # Get the complete left hand side (split around "~", then take part 1)
   lhs = strsplit(as.character(formula), "\\s*\\~\\s*")[[2]]
 

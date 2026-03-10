@@ -31,7 +31,7 @@ mass_breg_full$log_evidence
 ```
 
 ```{r check_full_model}
-plot(mass_breg_full)
+plot(mass_breg_full, xvar = "flipper_len")
 ```
 
 ```{r create_bma_object}

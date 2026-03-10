@@ -4,9 +4,7 @@ output: html_notebook
 ---
 
 ```{r}
-library(brms)
 library(tidyverse)
-library(BayesFactor)
 library(BayesianId)
 ```
 
@@ -15,7 +13,6 @@ data("penguins")
 test_data = na.omit(penguins) %>% dplyr::rename(y = sex, x1 = flipper_len, x2 = bill_len, f1 = island)
 
 fit = breg_laplace(y ~ x1 + x2 + f1, data = test_data, family = "bernoulli_logistic", prior_scale = 100) # large prior scale -> results should be similar to MLE
-compare = glm(y ~ x1 + x2 + f1, data = prepare_data(parse_formula(y ~ x1 + x2 + f1), test_data), family = binomial())
 ```
 
 ```{r}
@@ -25,24 +22,51 @@ test_data = na.omit(penguins) %>% dplyr::rename(y = body_mass, x1 = flipper_len,
 fit = breg_laplace(y ~ x1 + x2 + f1, 
                    data = test_data, 
                    prior_scale = 100, # large prior scale -> results should be similar to MLE
-                   family = "right_censored_linear",
-                   tol_obj = 1e-11,
+                   family = "right_censored_linear"
                    )
-compare = censReg::censReg(y ~ x1 + x2 + f1, right = 5000, data = prepare_data(parse_formula(y ~ x1 + x2 + f1), test_data))
 
 fit$optim_fit$value
 ```
 
 ```{r}
-plot.breg_laplace(fit, group = "f1", x = "x1")
+plot(fit, group = "f1", xvar = "x1")
 ```
+
+```{r}
+foo = simulate(fit)
+dim(foo)
+```
+
+```{r}
+
+```
+
+
+
+```{r}
+plot(fit, group = "f1")
+```
+
+```{r}
+class(fit)
+```
+
+```{r}
+#methods("plot")
+```
+
+```{r}
+#methods("vcov")
+```
+
+```{r}
+BayesianId:::plot.breg_laplace
+```
+
+
 
 ```{r}
 plot.breg_laplace(fit, group = "f1")
-```
-
-```{r}
-plot.breg_laplace(fit)
 ```
 
 ```{r}

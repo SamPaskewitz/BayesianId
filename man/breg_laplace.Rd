@@ -30,5 +30,5 @@ A fitted Bayesian regression model (of class "breg_laplace").
 Fit a Bayesian regression model using the Laplace (multivariate normal) approximation (with Stan's optimization functionality).
 }
 \details{
-ADD THIS
+Currently this uses the Newton algorithm for optimization, because in my experience it more reliably finds the maximum than LBFGS, despite being slower.
 }

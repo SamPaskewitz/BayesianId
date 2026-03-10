@@ -1,36 +1,25 @@
+Vague idea of how to judge a model in isolation:
+"How well would an alternative model need to fit for equal posterior odds (with equal prior odds)?"
+
 ***** PLUG & PLAY SUPPORT (BMA) *****
 
-- write a function for mediation analysis
+- IMPORTANT: for directional probs, make p(H0) equal to p(H0) for the BMA and assign p(H2) = p(H3) = 0.5*(1 - p(H0))
 
-- write bma "predict" method
-
-- write tests for bma with "lm" objects
-
-- write tests for bma with "glm" objects
-
-- write tests for bma with "lmer" objects
-
-- write tests for bma with "breg" objects
+- write tests for bma with "lm" and other objects
 
 ***** UX AND BUG FIXING *****
 
-- fix "Warning: argument is not numeric or logical: returning NA" when using emmeans with breg objects
+- fix "Warning: argument is not numeric or logical: returning NA" when using emmeans with breg_mcmc objects
 
 - make it so the emmeans functions are properly imported when my package gets loaded
-
-- change the BMA "summary" method (type = "est") to - by default - omit coefficients for factor contrast codes and instead provide more appropriate contrast estimates
 
 - the directional probabilities in "coef.bma", the hypothesis probabilities in "summary.bma(type = 'dir_probs')", and the term probabilities in "summary.bma(type = 'term_probs')" are probably quite confusing for a new person; fix this through proper documentation etc.
 
 - get the "get_stancode" method for breg objects to actually work
 
-***** HYPOTHESIS TESTING *****
-
-- add support for interval null hypotheses
-
-- add support for directional hypotheses
-
 ***** DOCUMENTATION ETC *****
+
+- license
 
 - double check help files and update as needed
 
@@ -50,17 +39,17 @@
 
 ***** BETTER MODEL CLASS SUPPPORT *****
 
-- get something better than basic BIC for "lmer" and "glmer" models
-
 - write an error message in "bma" for mixed effects models fit by REML
-
-- GLIB-style estimation
-
-- sampling-based BMA credible intervals etc. for MCMC fits (instead of normal approximation)
 
 ***** STAN SUPPORT (BREG) *****
 
 - remove any dependence on brms or brms formulas
+
+- add ordered logistic regression (for ordinal data)
+
+- add Poisson regression
+
+- add log-normal linear regression
 
 - better treatment of default prior scales (c.f. BayesFactor, or do something better)
 
@@ -70,8 +59,6 @@
 
 - unify "breg_laplace" and "breg_mcmc" plotting methods etc. as much as possible
 
-- use "breg_laplace" to initialize "breg_mcmc"
-
 - add a new data option to the "simulate" method for "breg_laplace" models
 
 - add a convenience "breg" function that either runs "breg_laplace" or "breg_mcmc"
@@ -80,6 +67,26 @@
 
 - add other methods suggested by "rstantools"
 
+- figure out a better definition of delta0 (if possible) for logistic models; or otherwise just use a uniform prior for beta0 in all cases (and don't worry about defining delta0)
+
+***** IDEAS FOR THE FUTURE *****
+
 - either do something with the "prior_only" business or get rid of it
 
-- figure out a better definition of delta0 (if possible) for logistic models; or otherwise just use a uniform prior for beta0 in all cases (and don't worry about defining delta0)
+- GLIB-style estimation
+
+- sampling-based BMA credible intervals etc. for MCMC fits (instead of normal approximation)
+
+- add support for interval null hypotheses
+
+- write a function for mediation analysis
+
+- get something better than basic BIC for "lmer" and "glmer" models
+
+- write a bma "predict" method
+
+- change the BMA "summary" method (type = "est") to - by default - omit coefficients for factor contrast codes and instead provide more appropriate contrast estimates
+
+- change Stan code to use delta as the "parameter" (which seems to run faster, particularly for MCMC), then use basic calculus (the product rule) to convert the Hessian for delta to the Hessian for beta once breg_laplace has been run
+
+- use "breg_laplace" to initialize "breg_mcmc"

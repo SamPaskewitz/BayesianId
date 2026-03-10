@@ -40,7 +40,7 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
   optim_fit = rstan::optimizing(stan_model_to_use,
                                 data = stan_data,
                                 init = init,
-                                draws = 9, # needs to be an odd number for ppc_intervals to work properly with binary data (it plots the medians of yrep)
+                                draws = 9,
                                 hessian = TRUE,
                                 algorithm = "Newton")
 
@@ -65,8 +65,8 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
 
   # ** assemble a "breg_laplace" object **
   output = list(optim_fit = optim_fit,
-                mu = optim_fit$par[c("(Intercept)", coef_names)], # posterior mean
-                sigma = diag(Sigma) |> sqrt(), # posterior SD
+                post_mean = optim_fit$par[c("(Intercept)", coef_names)], # posterior mean
+                post_sd = diag(Sigma) |> sqrt(), # posterior SD
                 Sigma = Sigma, # posterior covariance matrix
                 log_evidence = log_evidence,
                 model_name = model_name,
