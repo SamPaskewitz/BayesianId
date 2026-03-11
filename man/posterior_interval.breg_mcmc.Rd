@@ -4,7 +4,7 @@
 \alias{posterior_interval.breg_mcmc}
 \title{Compute posterior credible intervals for model parameters.}
 \usage{
-\method{posterior_interval}{breg_mcmc}(obj, prob = 0.9, pars = c("Intercept", obj$coef_names))
+\method{posterior_interval}{breg_mcmc}(obj, prob = 0.9, pars = c("(Intercept)", obj$coef_names))
 }
 \arguments{
 \item{obj}{A "breg_mcmc" object (fitted model).}

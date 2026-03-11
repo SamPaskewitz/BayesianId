@@ -36,6 +36,14 @@ test_that("model.frame method runs", {
   expect_no_error(model.frame(fit))
 })
 
+test_that("simulate method runs", {
+  expect_no_error(simulate(fit))
+})
+
 test_that("plot method runs", {
   expect_no_error(plot(fit))
+})
+
+test_that("show_stancode runs", {
+  expect_no_error(show_stancode(fit))
 })

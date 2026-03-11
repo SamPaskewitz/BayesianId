@@ -8,13 +8,7 @@ model_log_evidence = function(fit_list){
 
   # compute log model evidence (log marginal likelihoods)
   log_evidence = rep(0.0, times = n_models)
-  if("breg_mcmc" %in% class(fit_list[[1]])){
-    # use bridge sampling for MCMC
-    for(i in 1:n_models){
-      log_evidence[i] = bridgesampling::bridge_sampler(fit_list[[i]]$stanfit,
-                                                       silent = TRUE)$logml
-    }
-  } else if("breg_laplace" %in% class(fit_list[[1]])){
+  if("breg" %in% class(fit_list[[1]])){
     log_evidence = lapply(fit_list, function(x){x$log_evidence}) |> unlist()
   } else{
     # otherwise use the BIC approximation for MLE

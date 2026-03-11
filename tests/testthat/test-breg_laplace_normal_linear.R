@@ -2,7 +2,7 @@ data("penguins")
 test_data = na.omit(penguins) %>% dplyr::rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex)
 
 fit = breg_laplace(y ~ x1 + x2, data = test_data, prior_scale = 100) # large prior scale -> results should be similar to MLE
-compare = lm(y ~ x1 + x2, data = prepare_data(parse_formula(y ~ x1 + x2), test_data))
+compare = lm(y ~ x1 + x2, data = prepare_data(parse_formula(y ~ x1 + x2), test_data)) # MLE for comparison
 
 test_that("coef gives similar results", {
   expect_equal(coef(fit), coef(compare), tolerance = 1e-3)
@@ -36,6 +36,14 @@ test_that("model.frame method runs", {
   expect_no_error(model.frame(fit))
 })
 
+test_that("simulate method runs", {
+  expect_no_error(simulate(fit))
+})
+
 test_that("plot method runs", {
   expect_no_error(plot(fit))
+})
+
+test_that("show_stancode runs", {
+  expect_no_error(show_stancode(fit))
 })

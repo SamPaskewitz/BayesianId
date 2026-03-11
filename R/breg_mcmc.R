@@ -93,10 +93,10 @@ breg_mcmc = function(formula, data, family = "normal_linear", center = TRUE, pri
   if(family %in% c("normal_linear", "right_censored_linear")){
     par_names = c(par_names, "sigma")
   }
-  b_draws_matrix = as.matrix(stanfit)[,par_names]
+  draws_matrix = as.matrix(stanfit)[,par_names]
 
-  # ** rename parameters **
-  names(stanfit)[names(stanfit) == "b0"] = "Intercept"
+  # ** rename parameters in the stanfit object **
+  names(stanfit)[names(stanfit) == "b0"] = "(Intercept)"
   if(!intercept_only){
     coef_names = colnames(stan_data$X)
     names(stanfit)[names(stanfit) %in% paste0("b[",1:n_coef,"]")] = coef_names
@@ -104,8 +104,16 @@ breg_mcmc = function(formula, data, family = "normal_linear", center = TRUE, pri
     coef_names = NULL
   }
 
+  # ** compute variance-covariance matrix **
+  Sigma = as.matrix(stanfit)[,c("(Intercept)", coef_names)] |> cov()
+
   # ** assemble a "breg_mcmc" object **
   output = list(stanfit = stanfit,
+                draws_matrix = draws_matrix,
+                post_mean = as.matrix(stanfit)[, c("(Intercept)", coef_names)] |> colMeans(), # posterior mean
+                post_sd = as.matrix(stanfit)[, c("(Intercept)", coef_names)] |> apply(2, sd), # posterior SD
+                Sigma = Sigma, # posterior covariance matrix
+                log_evidence = bridgesampling::bridge_sampler(stanfit, silent = TRUE)$logml,
                 model_name = model_name,
                 intercept_only = intercept_only,
                 formula = formula,
@@ -114,8 +122,8 @@ breg_mcmc = function(formula, data, family = "normal_linear", center = TRUE, pri
                 data = data,
                 center = center,
                 coef_names = coef_names,
-                call = match.call(), # this records the function call, so the default "update" method works (I don't need to write my own version)
-                b_draws_matrix = b_draws_matrix)
-  class(output) = "breg_mcmc"
+                call = match.call() # this records the function call, so the default "update" method works (I don't need to write my own version)
+                )
+  class(output) = c("breg_mcmc", "breg")
   return(output)
 }

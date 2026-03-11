@@ -40,7 +40,7 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
   optim_fit = rstan::optimizing(stan_model_to_use,
                                 data = stan_data,
                                 init = init,
-                                draws = 9,
+                                draws = 10001,
                                 hessian = TRUE,
                                 algorithm = "Newton")
 
@@ -64,7 +64,7 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
   log_evidence = optim_fit$value - 0.5*determinant(optim_fit$hessian, logarithm = TRUE)$modulus[1] + 0.5*n_par*log(2*pi)
 
   # ** assemble a "breg_laplace" object **
-  output = list(optim_fit = optim_fit,
+  output = list(draws_matrix = optim_fit$theta_tilde,
                 post_mean = optim_fit$par[c("(Intercept)", coef_names)], # posterior mean
                 post_sd = diag(Sigma) |> sqrt(), # posterior SD
                 Sigma = Sigma, # posterior covariance matrix
@@ -78,6 +78,6 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
                 center = center,
                 coef_names = coef_names,
                 call = match.call())
-  class(output) = "breg_laplace"
+  class(output) = c("breg_laplace", "breg")
   return(output)
 }

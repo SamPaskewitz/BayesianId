@@ -1,29 +1,23 @@
 data("penguins")
-test_data = na.omit(penguins) %>% dplyr::rename(y = sex, x1 = flipper_len, x2 = bill_len)
+test_data = na.omit(penguins) %>% dplyr::rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex)
 
-fit = breg_laplace(y ~ x1 + x2, data = test_data, family = "bernoulli_logistic", prior_scale = 100) # large prior scale -> results should be similar to MLE
-compare = glm(y ~ x1 + x2, data = prepare_data(parse_formula(y ~ x1 + x2), test_data), family = binomial())
+fit = breg_mcmc(y ~ x1 + x2, data = test_data, seed = 1212)
+compare = breg_laplace(y ~ x1 + x2, data = test_data) # Laplace aprx for comparison
 
 test_that("coef gives similar results", {
   expect_equal(coef(fit), coef(compare), tolerance = 1e-3)
 })
 
 test_that("vcov gives similar results", {
-  expect_equal(vcov(fit), vcov(compare), tolerance = 1e-1)
+  expect_equal(vcov(fit), vcov(compare), tolerance = 1e-2)
 })
 
 test_that("similar CI's", {
   expect_equal(posterior_interval(fit, prob = 0.95), confint(compare, level = 0.95), tolerance = 1e-2)
 })
 
-test_that("log_evidence similar to -0.5*BIC", {
-  expect_equal(fit$log_evidence, -0.5*BIC(compare), tolerance = 1e-1)
-})
-
-test_that("predict (on the response scale) gives similar results", {
-  expect_equal(predict(fit) |> unname(),
-               predict(compare, type = "response") |> unname(),
-               tolerance = 1e-2)
+test_that("log_evidence similar", {
+  expect_equal(fit$log_evidence, compare$log_evidence, tolerance = 1e-2)
 })
 
 test_that("print method runs", {

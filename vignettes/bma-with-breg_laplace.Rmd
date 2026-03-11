@@ -46,7 +46,7 @@ print(mass_breg_bma)
 ```
 
 ```{r, contrast}
-#contrast(mass_breg_bma, factors = c("island", "sex"), ref = "Biscoe male")
+contrast(mass_breg_bma, factors = c("island", "sex"), ref = "Biscoe male")
 ```
 
 ```{r term_probs}

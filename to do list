@@ -19,11 +19,9 @@ Vague idea of how to judge a model in isolation:
 
 ***** DOCUMENTATION ETC *****
 
-- license
+- add a license
 
-- double check help files and update as needed
-
-- write documentation for the "breg" and "bma" classes
+- double check function documentation and update as needed
 
 - create a vignette showing basic usage
 
@@ -43,8 +41,6 @@ Vague idea of how to judge a model in isolation:
 
 ***** STAN SUPPORT (BREG) *****
 
-- remove any dependence on brms or brms formulas
-
 - add ordered logistic regression (for ordinal data)
 
 - add Poisson regression
@@ -53,25 +49,21 @@ Vague idea of how to judge a model in isolation:
 
 - better treatment of default prior scales (c.f. BayesFactor, or do something better)
 
-- add emmeans support for "breg_laplace" models
-
-- add a "predict" method for "breg_laplace" models
-
-- unify "breg_laplace" and "breg_mcmc" plotting methods etc. as much as possible
-
-- add a new data option to the "simulate" method for "breg_laplace" models
-
-- add a convenience "breg" function that either runs "breg_laplace" or "breg_mcmc"
-
-- add random effects to existing models
+- add random effects to existing models (possibly only supported by "breg_mcmc" until I figure out a good way to marginal likelihood from "breg_laplace" objects)
 
 - add other methods suggested by "rstantools"
 
-- figure out a better definition of delta0 (if possible) for logistic models; or otherwise just use a uniform prior for beta0 in all cases (and don't worry about defining delta0)
-
 ***** IDEAS FOR THE FUTURE *****
 
+- add a convenience "breg" function that either runs "breg_laplace" or "breg_mcmc"
+
+- remove any dependence on brms or brms formulas
+
 - either do something with the "prior_only" business or get rid of it
+
+- either do something with the "factor_means" function in "breg_mcmc_methods" or get rid of it
+
+- figure out how to get consistent posterior draws from "breg_laplace" (for response scale prediction etc)
 
 - GLIB-style estimation
 
