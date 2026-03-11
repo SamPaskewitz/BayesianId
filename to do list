@@ -15,8 +15,6 @@ Vague idea of how to judge a model in isolation:
 
 - the directional probabilities in "coef.bma", the hypothesis probabilities in "summary.bma(type = 'dir_probs')", and the term probabilities in "summary.bma(type = 'term_probs')" are probably quite confusing for a new person; fix this through proper documentation etc.
 
-- get the "get_stancode" method for breg objects to actually work
-
 ***** DOCUMENTATION ETC *****
 
 - add a license
@@ -32,8 +30,6 @@ Vague idea of how to judge a model in isolation:
 - TLDR for hypothesis testing: "What's the probability that there is an effect?"
 
 - TLDR for estimation: "If there is an effect, how big is it?"
-
-- write a guide for adding new models
 
 ***** BETTER MODEL CLASS SUPPPORT *****
 
@@ -54,6 +50,8 @@ Vague idea of how to judge a model in isolation:
 - add other methods suggested by "rstantools"
 
 ***** IDEAS FOR THE FUTURE *****
+
+- combine the plot methods for "breg_mcmc" and "breg_laplace" objects (as much as possible)
 
 - add a convenience "breg" function that either runs "breg_laplace" or "breg_mcmc"
 
@@ -82,3 +80,5 @@ Vague idea of how to judge a model in isolation:
 - change Stan code to use delta as the "parameter" (which seems to run faster, particularly for MCMC), then use basic calculus (the product rule) to convert the Hessian for delta to the Hessian for beta once breg_laplace has been run
 
 - use "breg_laplace" to initialize "breg_mcmc"
+
+- write a guide for adding new models (i.e. guidelines for new Stan code etc.)

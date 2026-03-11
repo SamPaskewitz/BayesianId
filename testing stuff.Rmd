@@ -42,7 +42,6 @@ predict(fit_glm, type = "response") |> names()
 plot(fit_laplace, group = "f1", xvar = "x1")
 ```
 
-
 ```{r}
 plot.breg(fit_mcmc, group = "f1", xvar = "x1")
 ```

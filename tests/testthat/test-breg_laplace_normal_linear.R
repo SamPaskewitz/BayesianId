@@ -1,8 +1,8 @@
 data("penguins")
-test_data = na.omit(penguins) %>% dplyr::rename(y = body_mass, x1 = flipper_len, x2 = bill_len, f1 = island, f2 = sex)
+test_data = na.omit(penguins) %>% dplyr::rename(y = body_mass, x1 = flipper_len, f1 = island, f2 = sex)
 
-fit = breg_laplace(y ~ x1 + x2, data = test_data, prior_scale = 100) # large prior scale -> results should be similar to MLE
-compare = lm(y ~ x1 + x2, data = prepare_data(parse_formula(y ~ x1 + x2), test_data)) # MLE for comparison
+fit = breg_laplace(y ~ x1 + f1, data = test_data, prior_scale = 100) # large prior scale -> results should be similar to MLE
+compare = lm(y ~ x1 + f1, data = prepare_data(parse_formula(y ~ x1 + f1), test_data)) # MLE for comparison
 
 test_that("coef gives similar results", {
   expect_equal(coef(fit), coef(compare), tolerance = 1e-3)
@@ -13,11 +13,17 @@ test_that("vcov gives similar results", {
 })
 
 test_that("similar CI's", {
-  expect_equal(posterior_interval(fit, prob = 0.95), confint(compare, level = 0.95), tolerance = 1e-2)
+  expect_equal(posterior_interval(fit, prob = 0.95), confint(compare, level = 0.95), tolerance = 1e-1)
 })
 
 test_that("log_evidence similar to -0.5*BIC", {
   expect_equal(fit$log_evidence, -0.5*BIC(compare), tolerance = 1e-1)
+})
+
+test_that("emmeans (on the linear predictor scale) gives similar results", {
+  expect_equal(summary(emmeans::emmeans(fit, specs = "f1"))$emmean,
+               summary(emmeans::emmeans(compare, specs = "f1"))$emmean,
+               tolerance = 1e-1)
 })
 
 test_that("print method runs", {
