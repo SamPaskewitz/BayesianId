@@ -11,12 +11,14 @@
 }
 \value{
 A table (data frame) with the following information:
-mean: posterior mean
-sd: posterior standard deviation
-2.5 %: lower end of 95% posterior credible interval
-97.5 %: upper end of 95% posterior credible interval
-p(β<0|D,β≠0): posterior probability that the coefficient is negative
-p(β>0|D,β≠0): posterior probability that the coefficient is positive
+\itemize{
+\item mean: posterior mean
+\item sd: posterior standard deviation
+\item 2.5 \%: lower end of 95\% posterior credible interval
+\item 97.5 \%: upper end of 95\% posterior credible interval
+\item p(β<0|D,β≠0): posterior probability that the coefficient is negative, if it's non-zero
+\item p(β>0|D,β≠0): posterior probability that the coefficient is positive, if it's non-zero
+}
 }
 \description{
 Get BMA estimates of coefficients.

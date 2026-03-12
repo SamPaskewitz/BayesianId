@@ -43,7 +43,10 @@ Fit a Bayesian regression model using Stan's MCMC algorithm.
 }
 \details{
 \subsection{Available Models}{
-ADD THIS
+\itemize{
+\item normal_linear: ADD DETAILS
+\item right_censored_linear:
+\item bernoulli_logistic:
 }
 \subsection{The Fitted Model Object}{
 ADD THIS
@@ -54,6 +57,7 @@ The code does not directly put priors on the intercept (\eqn{\beta_0}) or regres
 \deqn{\delta_0 \sim \text{Cauchy}(0, r)}
 \deqn{\delta_i \sim \text{Cauchy}(0, r) \text{ for } i = 1, 2, \ldots}
 where \eqn{r} is given by the prior_scale function argument.
+}
 
 For models based on a normal likelihood (or related models, e.g. with censored data), these standardized parameters are defined as follows:
 \deqn{\delta_0 = \frac{\beta_0 - \bar{y}}{\sigma}}

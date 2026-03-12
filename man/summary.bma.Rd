@@ -9,7 +9,7 @@
 \arguments{
 \item{obj}{A "bma" object.}
 
-\item{type}{Type of summary. Options are "term_probs", "term_odds", "model_probs", "model_odds", and "est" (defaults to "term_probs").}
+\item{type}{Type of summary. Options are "dir_probs", "dir_BF", "term_probs", "term_odds", "model_probs", "model_odds", and "est" (defaults to "term_probs"). See "Details".}
 
 \item{pretty}{Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.}
 }
@@ -17,6 +17,14 @@
 Summarize information about a "bma" object.
 }
 \details{
-GIVE INFO ABOUT SUMMARY TYPES
-The first model in the list is used as the denominator for model comparison Bayes factors, i.e. the Bayes factor for model i is defined as p(D | first model)/p(D | model i).
+Here is information about the different summary types.
+\itemize{
+\item dir_probs: Posterior probabilities from tests of whether each coefficient is negative (β<0), positive (β>0), or zero (β=0). FINISH WITH EXTRA DETAILS
+\item dir_BF: Bayes factors for tests of whether each coefficient is negative (β<0) or positive (β>0). The comparison hypothesis (the denominator) is the null hypothesis that β=0.
+\item term_probs: Prior and posterior probabilities from tests of whether each model term should be included (β≠0) or omitted (β=0).
+\item term_odds: Bayes factors, prior odds, and posterior odds from tests of whether each model term should be included (β≠0) or omitted (β=0).
+\item model_probs: Prior and posterior probabilities for each model.
+\item model_odds: Bayes factors, prior odds, and posterior odds for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
+\item est: Estimates (posterior mean, SD, and 95\% credible interval) for model coefficients. These are computed using a mixture of normals approximation.
+}
 }

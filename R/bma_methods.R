@@ -11,11 +11,17 @@ print.bma = function(obj){
 
 #' Summarize information about a "bma" object.
 #' @param obj A "bma" object.
-#' @param type Type of summary. Options are "term_probs", "term_odds", "model_probs", "model_odds", and "est" (defaults to "term_probs").
+#' @param type Type of summary. Options are "dir_probs", "dir_BF", "term_probs", "term_odds", "model_probs", "model_odds", and "est" (defaults to "term_probs"). See "Details".
 #' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
-#' @details
-#' GIVE INFO ABOUT SUMMARY TYPES
-#' The first model in the list is used as the denominator for model comparison Bayes factors, i.e. the Bayes factor for model i is defined as p(D | first model)/p(D | model i).
+#' @details Here is information about the different summary types.
+#' * dir_probs: Posterior probabilities from tests of whether each coefficient is negative (β<0), positive (β>0), or zero (β=0). FINISH WITH EXTRA DETAILS
+#' * dir_BF: Bayes factors for tests of whether each coefficient is negative (β<0) or positive (β>0). The comparison hypothesis (the denominator) is the null hypothesis that β=0.
+#' * term_probs: Prior and posterior probabilities from tests of whether each model term should be included (β≠0) or omitted (β=0).
+#' * term_odds: Bayes factors, prior odds, and posterior odds from tests of whether each model term should be included (β≠0) or omitted (β=0).
+#' * model_probs: Prior and posterior probabilities for each model.
+#' * model_odds: Bayes factors, prior odds, and posterior odds for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
+#' * est: Estimates (posterior mean, SD, and 95% credible interval) for model coefficients. These are computed using a mixture of normals approximation.
+#' @md
 #' @export
 #' @method summary bma
 summary.bma = function(obj, type = "term_probs", pretty = TRUE){
@@ -102,15 +108,16 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
 #' Get BMA estimates of coefficients.
 #' @param obj A "bma" object.
 #' @returns A table (data frame) with the following information:
-#' mean: posterior mean
-#' sd: posterior standard deviation
-#' 2.5 %: lower end of 95% posterior credible interval
-#' 97.5 %: upper end of 95% posterior credible interval
-#' p(β<0|D,β≠0): posterior probability that the coefficient is negative
-#' p(β>0|D,β≠0): posterior probability that the coefficient is positive
+#'  * mean: posterior mean
+#'  * sd: posterior standard deviation
+#'  * 2.5 %: lower end of 95% posterior credible interval
+#'  * 97.5 %: upper end of 95% posterior credible interval
+#'  * p(β<0|D,β≠0): posterior probability that the coefficient is negative, if it's non-zero
+#'  * p(β>0|D,β≠0): posterior probability that the coefficient is positive, if it's non-zero
 #' @details
 #' All estimates (posterior mean, standard deviation, credible intervals, and probability of direction) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
 #' Posterior credible intervals and directional probabilities are computed using a mixture of normals approximation.
+#' @md
 #' @export
 #' @method coef bma
 coef.bma = function(obj){
@@ -164,20 +171,20 @@ coef.bma = function(obj){
 #' Get BMA estimates of contrasts (for interpreting factors).
 #' @param obj A "bma" object.
 #' @param factors The names(s) of the factor or factors for which to compute contrasts. If multiple factor names are listed, then the corresponding interaction contrasts are computed. See the examples below.
-#' @param ref Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces. See the examples below.
+#' @param ref Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces.
 #' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
 #' @returns A table (data frame) with the following information:
-#' mean: posterior mean
-#' sd: posterior standard deviation
-#' 2.5 %: lower end of 95% posterior credible interval
-#' 97.5 %: upper end of 95% posterior credible interval
-#' p(c<0|D,c≠0): posterior probability that the contrast is negative (if non-zero)
-#' p(c>0|D,c≠0): posterior probability that the contrast is positive (if non-zero)
+#' * mean: posterior mean
+#' * sd: posterior standard deviation
+#' * 2.5 %: lower end of 95% posterior credible interval
+#' * 97.5 %: upper end of 95% posterior credible interval
+#' * p(c<0|D,c≠0): posterior probability that the contrast is negative (if non-zero)
+#' * p(c>0|D,c≠0): posterior probability that the contrast is positive (if non-zero)
 #' @details
 #' This is based on the 'contrast' method of the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA). The contrasts computed are based on the 'trt.vs.ctrl' method.
 #' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors.
 #' Posterior credible intervals are computed using a normal approximation.
-#' ** ADD EXAMPLES
+#' @md
 #' @importFrom emmeans emmeans
 #' @importFrom emmeans contrast
 #' @export
@@ -240,10 +247,10 @@ contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){
   return(contrast_table)
 }
 
-#' Plot the posterior distribution of estimates.
+#' Plot the posterior distribution of a regression coefficient.
 #' @param obj A "bma" object.
 #' @param coef The coefficient whose posterior distribution you want to plot.
-#' @details The posterior distribution is approximated with a mixture of normal distributions.
+#' @details The posterior distribution is approximated with a mixture of normals approximation. Only models that include the coefficient are included, i.e. the distribution plotted is the posterior distribution for the coefficient given that it is non-zero.
 #' @importFrom dplyr mutate
 #' @import ggplot2
 #' @export

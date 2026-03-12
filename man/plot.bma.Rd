@@ -2,7 +2,7 @@
 % Please edit documentation in R/bma_methods.R
 \name{plot.bma}
 \alias{plot.bma}
-\title{Plot the posterior distribution of estimates.}
+\title{Plot the posterior distribution of a regression coefficient.}
 \usage{
 \method{plot}{bma}(obj, coef)
 }
@@ -12,8 +12,8 @@
 \item{coef}{The coefficient whose posterior distribution you want to plot.}
 }
 \description{
-Plot the posterior distribution of estimates.
+Plot the posterior distribution of a regression coefficient.
 }
 \details{
-The posterior distribution is approximated with a mixture of normal distributions.
+The posterior distribution is approximated with a mixture of normals approximation. Only models that include the coefficient are included, i.e. the distribution plotted is the posterior distribution for the coefficient given that it is non-zero.
 }

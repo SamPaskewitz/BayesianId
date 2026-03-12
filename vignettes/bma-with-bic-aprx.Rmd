@@ -21,7 +21,9 @@ library(dplyr)
 
 ```{r load_data}
 data("penguins")
-penguins = penguins |> mutate(across(c("bill_len", "flipper_len"), ~ scale(.x, scale = FALSE)))
+penguins = penguins |> mutate(across(c("bill_len", "flipper_len"), ~ scale(.x, scale = FALSE, center = TRUE)))
+contrasts(penguins$island) = BayesianId:::contr_banova(3)
+contrasts(penguins$sex) = BayesianId:::contr_banova(2)
 head(penguins)
 ```
 

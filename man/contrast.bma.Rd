@@ -11,18 +11,20 @@
 
 \item{factors}{The names(s) of the factor or factors for which to compute contrasts. If multiple factor names are listed, then the corresponding interaction contrasts are computed. See the examples below.}
 
-\item{ref}{Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces. See the examples below.}
+\item{ref}{Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces.}
 
 \item{pretty}{Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.}
 }
 \value{
 A table (data frame) with the following information:
-mean: posterior mean
-sd: posterior standard deviation
-2.5 %: lower end of 95% posterior credible interval
-97.5 %: upper end of 95% posterior credible interval
-p(c<0|D,c≠0): posterior probability that the contrast is negative (if non-zero)
-p(c>0|D,c≠0): posterior probability that the contrast is positive (if non-zero)
+\itemize{
+\item mean: posterior mean
+\item sd: posterior standard deviation
+\item 2.5 \%: lower end of 95\% posterior credible interval
+\item 97.5 \%: upper end of 95\% posterior credible interval
+\item p(c<0|D,c≠0): posterior probability that the contrast is negative (if non-zero)
+\item p(c>0|D,c≠0): posterior probability that the contrast is positive (if non-zero)
+}
 }
 \description{
 Get BMA estimates of contrasts (for interpreting factors).
@@ -31,5 +33,4 @@ Get BMA estimates of contrasts (for interpreting factors).
 This is based on the 'contrast' method of the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA). The contrasts computed are based on the 'trt.vs.ctrl' method.
 All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors.
 Posterior credible intervals are computed using a normal approximation.
-** ADD EXAMPLES
 }
