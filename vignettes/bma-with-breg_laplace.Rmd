@@ -24,7 +24,7 @@ head(penguins)
 ```
 
 ```{r full_model}
-mass_breg_full = breg_laplace(body_mass ~ island*sex + flipper_len,
+mass_breg_full = breg_laplace(body_mass ~ island*sex + flipper_len + bill_len,
                               data = na.omit(penguins),
                               prior_scale = 0.707)
 mass_breg_full$log_evidence
@@ -55,6 +55,14 @@ summary(mass_breg_bma, type = "term_probs")
 
 ```{r term_odds}
 summary(mass_breg_bma, type = "term_odds")
+```
+
+```{r dir_probs}
+summary(mass_breg_bma, type = "dir_probs")
+```
+
+```{r dir_odds}
+summary(mass_breg_bma, type = "dir_odds")
 ```
 
 ```{r model_probs}

@@ -4,11 +4,9 @@ Is it possible to give a properly Bayesian interpretation to the idea of "severe
 
 ***** PLUG & PLAY SUPPORT (BMA) *****
 
-- IMPORTANT: for directional probs, make p(H0) equal to p(H0) for the BMA and assign p(H2) = p(H3) = 0.5*(1 - p(H0))
-
 - write tests for bma with "lm" and other objects
 
-- write an error message in "bma" for mixed effects models fit by REML
+- double check ALL of the math
 
 ***** UX AND BUG FIXING *****
 
@@ -48,6 +46,8 @@ Is it possible to give a properly Bayesian interpretation to the idea of "severe
 
 ***** IDEAS FOR THE FUTURE *****
 
+- write an error message in "bma" for mixed effects models fit by REML
+
 - combine the plot methods for "breg_mcmc" and "breg_laplace" objects (as much as possible)
 
 - add other methods suggested by "rstantools"
@@ -77,6 +77,8 @@ Is it possible to give a properly Bayesian interpretation to the idea of "severe
 - change the BMA "summary" method (type = "est") to - by default - omit coefficients for factor contrast codes and instead provide more appropriate contrast estimates
 
 - change Stan code to use delta as the "parameter" (which seems to run faster, particularly for MCMC), then use basic calculus (the product rule) to convert the Hessian for delta to the Hessian for beta once breg_laplace has been run
+
+- write "ANOVA" code (i.e. optionally test submodels with different factor levels equal to each other)
 
 - use "breg_laplace" to initialize "breg_mcmc"
 

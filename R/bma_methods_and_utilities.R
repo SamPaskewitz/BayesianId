@@ -14,8 +14,8 @@ print.bma = function(obj){
 #' @param type Type of summary. Options are "dir_probs", "dir_BF", "term_probs", "term_odds", "model_probs", "model_odds", and "est" (defaults to "term_probs"). See "Details".
 #' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
 #' @details Here is information about the different summary types.
-#' * dir_probs: Posterior probabilities from tests of whether each coefficient is negative (β<0), positive (β>0), or zero (β=0). FINISH WITH EXTRA DETAILS
-#' * dir_BF: Bayes factors for tests of whether each coefficient is negative (β<0) or positive (β>0). The comparison hypothesis (the denominator) is the null hypothesis that β=0.
+#' * dir_probs: Posterior probabilities from tests of whether each coefficient is negative (β<0), positive (β>0), or zero (β=0). Coefficients for factor contrast codes are excluded because they are not easily interpretable. The point null hypothesis has the same prior probability as in Bayesian model averaging; the two directional hypotheses have equal prior probabilities (each equal to half the prior probability for term inclusion in BMA).
+#' * dir_odds: Bayes factors, prior odds, and posterior odds from tests of whether each coefficient is negative (β<0) or positive (β>0). The comparison hypothesis (the denominator) is the null hypothesis that β=0. Coefficients for factor contrast codes are excluded because they are not easily interpretable. Two directional hypotheses have equal prior odds, each equal to half the prior odds for term inclusion in BMA.
 #' * term_probs: Prior and posterior probabilities from tests of whether each model term should be included (β≠0) or omitted (β=0).
 #' * term_odds: Bayes factors, prior odds, and posterior odds from tests of whether each model term should be included (β≠0) or omitted (β=0).
 #' * model_probs: Prior and posterior probabilities for each model.
@@ -26,7 +26,9 @@ print.bma = function(obj){
 #' @method summary bma
 summary.bma = function(obj, type = "term_probs", pretty = TRUE){
   if(type == "term_probs"){
-    tab = data.frame("p(β≠0)" = obj$prior_term_probs,
+    tab = data.frame("p(β=0)" = 1 - obj$prior_term_probs,
+                     "p(β=0|D)" = 1 - obj$post_term_probs,
+                     "p(β≠0)" = obj$prior_term_probs,
                      "p(β≠0|D)" = obj$post_term_probs,
                      check.names = FALSE # prevent names from getting messed up
     )
@@ -40,40 +42,27 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
     row.names(tab) = obj$model_info$term_names
   } else if(type == "est"){
     tab = coef(obj)[,c("mean", "sd", "2.5 %", "97.5 %")]
-  } else if(type == "dir_BF"){
-    # get applicable terms (terms with same names as coefficients)
-    to_use = intersect(obj$coef_names, obj$term_names)
-    # Bayes factors for the encompassing hypothesis (H1) vs. point null (H0)
-    term_odds = summary(obj, type = "term_odds", pretty = FALSE)
-    log_BF10 = log(term_odds[to_use, "post_odds"]) - log(term_odds[to_use, "prior_odds"])
-    # Bayes factors for directional hypotheses (H2 and H3) vs. the encompassing hypothesis (H1)
-    # we use the Savage-Dickey style encompassing prior approach (BF = post/prior)
-    # because the prior is symmetric around 0, both prior direction probabilities are 0.5
-    log_BF21 = log(coef(obj)[to_use,"p(β<0|D,β≠0)"]) - log(0.5)
-    log_BF31 = log(coef(obj)[to_use,"p(β>0|D,β≠0)"]) - log(0.5)
-    # Bayes factors for directional hypotheses (H2 and H3) vs. the point null (H0)
-    BF20 = exp(log_BF21 + log_BF10)
-    BF30 = exp(log_BF31 + log_BF10)
-    tab = data.frame("β<0 vs. β=0" = BF20,
-                     "β>0 vs. β=0" = BF30,
-                     check.names = FALSE # prevent names from getting messed up
-                     )
-    row.names(tab) = to_use
+  } else if(type == "dir_odds"){
+    tab = dir_odds(obj)
   } else if(type == "dir_probs"){
     # compute posterior probabilities of directional hypotheses and the point null
     # we assume that the two dir hypotheses and point null are the only hypotheses
-    # we will also assume equal prior odds (we might revise this later)
-    dir_BF = summary(obj, type = "dir_BF", pretty = FALSE)
-    BF20 = dir_BF[,"β<0 vs. β=0"]
-    BF30 = dir_BF[,"β>0 vs. β=0"]
-    BF00 = 1
-    tab = data.frame("p(β<0|D)" = bound_probs(BF20/(BF20 + BF30 + 1)),
-                     "p(β>0|D)" = bound_probs(BF30/(BF20 + BF30 + 1)),
-                     "p(β=0|D)" = bound_probs(1/(BF20 + BF30 + 1)),
+    # the prior probability of the point null hypothesis is the same as for BMA (i.e. it's 1 - term_prob)
+    # the remaining prior probability (i.e. term_prob) is split evenly between the two directional hypotheses
+    dir_odds = dir_odds(obj)
+    post_probs20 = dir_odds[,"post_odds (β<0)"]/(dir_odds[,"post_odds (β<0)"] + dir_odds[,"post_odds (β>0)"] + 1)
+    post_probs30 = dir_odds[,"post_odds (β>0)"]/(dir_odds[,"post_odds (β<0)"] + dir_odds[,"post_odds (β>0)"] + 1)
+
+    # put the results in a nice table
+    tab = data.frame("p(β=0)" = 1 - obj$prior_term_probs[row.names(dir_odds)],
+                     "p(β=0|D)" = bound_probs(1 - post_probs20 - post_probs30),
+                     "p(β<0)" = 0.5*obj$prior_term_probs[row.names(dir_odds)],
+                     "p(β<0|D)" = bound_probs(post_probs20),
+                     "p(β>0)" = 0.5*obj$prior_term_probs[row.names(dir_odds)],
+                     "p(β>0|D)" = bound_probs(post_probs30),
                      check.names = FALSE # prevent names from getting messed up
                      )
-    row.names(tab) = row.names(dir_BF)
-
+    row.names(tab) = row.names(dir_odds)
   } else if(type == "model_probs"){
     tab = data.frame("p(M)" = obj$prior_model_probs,
                      "p(M | D)" = obj$post_model_probs,
@@ -94,7 +83,7 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
   if(pretty){
     if(type %in% c("term_probs", "model_probs", "dir_probs")){
       tab = tab |> format_prob()
-    } else if(type %in% c("term_odds", "model_odds", "dir_BF")){
+    } else if(type %in% c("term_odds", "model_odds", "dir_odds")){
       tab = tab |> signif(digits = 3) |> format(scientific = TRUE)
     } else if(type == "est"){
       tab = tab |> signif(digits = 3)
@@ -102,6 +91,42 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
   }
   # return output
   cat("Reminder: all results are conditional on modeling assumptions.")
+  return(tab)
+}
+
+#' Compute Bayes factors, posterior odds etc. for directional hypotheses (with the point null hypothesis as the denominator).
+#' @param obj A "bma" object.
+#' @details This function is designed to be used in the BMA "summary" method with "dir_odds" or "dir_probs". It is not designed to be used by the analyst (and is therefore not exported).
+dir_odds = function(obj){
+  # get applicable terms (terms with same names as coefficients, thus excluding factor contrast codes etc.)
+  to_use = intersect(obj$coef_names, obj$term_names)
+  # log Bayes factors for the encompassing hypothesis (H1) vs. point null (H0)
+  prior_odds10 = obj$prior_term_probs[to_use]/(1 - obj$prior_term_probs[to_use])
+  post_odds10 = obj$post_term_probs[to_use]/(1 - obj$post_term_probs[to_use])
+  log_BF10 = log(post_odds10) - log(prior_odds10)
+  # log Bayes factors for directional hypotheses (H2 and H3) vs. the encompassing hypothesis (H1)
+  # we use the Savage-Dickey style encompassing prior approach (BF = post/prior)
+  # because the prior is symmetric around 0, both prior directional probabilities are 0.5
+  log_BF21 = log(coef(obj)[to_use,"p(β<0|D,β≠0)"]) - log(0.5)
+  log_BF31 = log(coef(obj)[to_use,"p(β>0|D,β≠0)"]) - log(0.5)
+  # Bayes factors for directional hypotheses (H2 and H3) vs. the point null (H0)
+  BF20 = exp(log_BF21 + log_BF10)
+  BF30 = exp(log_BF31 + log_BF10)
+
+  # compute prior odds (half of prior odds for term inclusion)
+  prior_odds20 = 0.5*prior_odds10
+  prior_odds30 = prior_odds20
+
+  # put results in a table
+  tab = data.frame("prior_odds (β<0)" = prior_odds20,
+                   "post_odds (β<0)" = BF20*prior_odds20,
+                   "BF (β<0)" = BF20,
+                   "prior_odds (β>0)" = prior_odds30,
+                   "post_odds (β>0)" = BF30*prior_odds30,
+                   "BF (β>0)" = BF30,
+                   check.names = FALSE # prevent names from getting messed up
+  )
+  row.names(tab) = to_use
   return(tab)
 }
 
@@ -143,7 +168,6 @@ coef.bma = function(obj){
     # posterior means from models that include the coef
     mu = sapply(obj$fit_list[incl], function(x){coef(x)[coef_name]})
     # posterior SD's from models that include the coef
-    print(coef_name)
     sigma = sapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()})
     # Bayesian model averaging (Hoeting, Madigan, Raftery, & Volinsky, 1999)
     if(sum(incl) > 1){ # more than one model includes the coef
