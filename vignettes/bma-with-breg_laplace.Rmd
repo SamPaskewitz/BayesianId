@@ -27,7 +27,6 @@ head(penguins)
 mass_breg_full = breg_laplace(body_mass ~ island*sex + flipper_len + bill_len,
                               data = na.omit(penguins),
                               prior_scale = 0.707)
-mass_breg_full$log_evidence
 ```
 
 ```{r check_full_model}
