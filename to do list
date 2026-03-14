@@ -16,6 +16,12 @@ Is it possible to give a properly Bayesian interpretation to the idea of "severe
 
 - the directional probabilities in "coef.bma", the hypothesis probabilities in "summary.bma(type = 'dir_probs')", and the term probabilities in "summary.bma(type = 'term_probs')" are probably quite confusing for a new person; fix this through proper documentation etc.
 
+- "prepare_data" still has trouble with character variables (that are not explicitly coded as factors): fix this and write an associated test
+
+- remove extra files from the package
+
+- rename model families to be more concise and easier to understand
+
 ***** DOCUMENTATION ETC *****
 
 - add a license
@@ -43,6 +49,8 @@ Is it possible to give a properly Bayesian interpretation to the idea of "severe
 - add random effects to existing models (possibly only supported by "breg_mcmc" until I figure out a good way to marginal likelihood from "breg_laplace" objects)
 
 ***** IDEAS FOR THE FUTURE *****
+
+- write better/more consistent tests for breg_mcmc (and get rid of unneeded ones)
 
 - write an error message in "bma" for mixed effects models fit by REML
 

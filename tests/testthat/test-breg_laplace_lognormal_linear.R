@@ -54,3 +54,7 @@ test_that("plot method runs", {
 test_that("show_stancode runs", {
   expect_no_error(show_stancode(fit))
 })
+
+test_that("runs with intercept-only model", {
+  expect_no_error(update(fit, formula = y ~ 1))
+})

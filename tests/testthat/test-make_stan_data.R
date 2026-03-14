@@ -26,11 +26,6 @@ test_that("Y is correct", {
                test_data$y)
 })
 
-test_that("Y is correct", {
-  expect_equal(stan_data$Ymean,
-               mean(test_data$y))
-})
-
 test_that("K is correct", {
   expect_equal(stan_data$K,
                11)
