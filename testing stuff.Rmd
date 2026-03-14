@@ -9,11 +9,13 @@ library(BayesianId)
 ```
 
 ```{r}
-set.seed(2012)
+set.seed(1212)
 test_data = data.frame(x1 = rnorm(100), x2 = rnorm(100), f = rep(c("a", "b"), times = 50) |> as.factor()) |>
-  dplyr::mutate(y = exp(1 + 1.5*x1 + 0.3*(f == "a") + rnorm(100)))
+  dplyr::mutate(mu = 1 + 1.5*x1 + 0.3*(f == "a")) |>
+  dplyr::mutate(lambda = exp(mu)) |>
+  dplyr::mutate(y = rpois(100, lambda))
 
-fit = breg_laplace(y ~ x1 + x2 + f, data = test_data, family = "lognormal_linear")
+fit = breg_laplace(y ~ x1 + x2 + f, data = test_data, family = "poisson", prior_scale = 100) # large prior scale -> results should be similar to MLE
 
 plot(fit, xvar = "x1")
 ```
