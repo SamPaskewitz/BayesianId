@@ -27,35 +27,33 @@ namespace model_normal_linear_est_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 22> locations_array__ =
+static constexpr std::array<const char*, 21> locations_array__ =
   {" (found before start of program)",
-  " (in 'normal_linear_est', line 12, column 2 to column 10)",
-  " (in 'normal_linear_est', line 13, column 2 to column 14)",
-  " (in 'normal_linear_est', line 14, column 2 to column 22)",
-  " (in 'normal_linear_est', line 19, column 4 to column 54)",
-  " (in 'normal_linear_est', line 18, column 19 to line 20, column 3)",
-  " (in 'normal_linear_est', line 18, column 2 to line 20, column 3)",
-  " (in 'normal_linear_est', line 22, column 2 to column 62)",
-  " (in 'normal_linear_est', line 23, column 2 to column 26)",
+  " (in 'normal_linear_est', line 11, column 2 to column 10)",
+  " (in 'normal_linear_est', line 12, column 2 to column 14)",
+  " (in 'normal_linear_est', line 13, column 2 to column 22)",
+  " (in 'normal_linear_est', line 18, column 4 to column 54)",
+  " (in 'normal_linear_est', line 17, column 19 to line 19, column 3)",
+  " (in 'normal_linear_est', line 17, column 2 to line 19, column 3)",
+  " (in 'normal_linear_est', line 21, column 2 to column 62)",
+  " (in 'normal_linear_est', line 22, column 2 to column 26)",
   " (in 'normal_linear_est', line 2, column 2 to column 17)",
   " (in 'normal_linear_est', line 3, column 9 to column 10)",
   " (in 'normal_linear_est', line 3, column 2 to column 14)",
-  " (in 'normal_linear_est', line 4, column 2 to column 13)",
+  " (in 'normal_linear_est', line 4, column 2 to column 17)",
+  " (in 'normal_linear_est', line 5, column 9 to column 10)",
+  " (in 'normal_linear_est', line 5, column 12 to column 13)",
   " (in 'normal_linear_est', line 5, column 2 to column 17)",
   " (in 'normal_linear_est', line 6, column 9 to column 10)",
-  " (in 'normal_linear_est', line 6, column 12 to column 13)",
-  " (in 'normal_linear_est', line 6, column 2 to column 17)",
-  " (in 'normal_linear_est', line 7, column 9 to column 10)",
-  " (in 'normal_linear_est', line 7, column 2 to column 23)",
-  " (in 'normal_linear_est', line 8, column 2 to column 17)",
-  " (in 'normal_linear_est', line 9, column 2 to column 28)",
-  " (in 'normal_linear_est', line 13, column 9 to column 10)"};
+  " (in 'normal_linear_est', line 6, column 2 to column 23)",
+  " (in 'normal_linear_est', line 7, column 2 to column 17)",
+  " (in 'normal_linear_est', line 8, column 2 to column 28)",
+  " (in 'normal_linear_est', line 12, column 9 to column 10)"};
 #include <stan_meta_header.hpp>
 class model_normal_linear_est final : public model_base_crtp<model_normal_linear_est> {
 private:
   int N;
   Eigen::Matrix<double,-1,1> Y_data__;
-  double Ymean;
   int K;
   Eigen::Matrix<double,-1,-1> X_data__;
   Eigen::Matrix<double,-1,1> Xcol_scale_data__;
@@ -117,24 +115,18 @@ public:
         }
       }
       current_statement__ = 12;
-      context__.validate_dims("data initialization", "Ymean", "double",
-        std::vector<size_t>{});
-      Ymean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 12;
-      Ymean = context__.vals_r("Ymean")[(1 - 1)];
-      current_statement__ = 13;
       context__.validate_dims("data initialization", "K", "int",
         std::vector<size_t>{});
       K = std::numeric_limits<int>::min();
-      current_statement__ = 13;
+      current_statement__ = 12;
       K = context__.vals_i("K")[(1 - 1)];
-      current_statement__ = 13;
+      current_statement__ = 12;
       stan::math::check_greater_or_equal(function__, "K", K, 1);
-      current_statement__ = 14;
+      current_statement__ = 13;
       stan::math::validate_non_negative_index("X", "N", N);
-      current_statement__ = 15;
+      current_statement__ = 14;
       stan::math::validate_non_negative_index("X", "K", K);
-      current_statement__ = 16;
+      current_statement__ = 15;
       context__.validate_dims("data initialization", "X", "double",
         std::vector<size_t>{static_cast<size_t>(N), static_cast<size_t>(K)});
       X_data__ = Eigen::Matrix<double,-1,-1>::Constant(N, K,
@@ -142,26 +134,26 @@ public:
       new (&X) Eigen::Map<Eigen::Matrix<double,-1,-1>>(X_data__.data(), N, K);
       {
         std::vector<local_scalar_t__> X_flat__;
-        current_statement__ = 16;
+        current_statement__ = 15;
         X_flat__ = context__.vals_r("X");
-        current_statement__ = 16;
+        current_statement__ = 15;
         pos__ = 1;
-        current_statement__ = 16;
+        current_statement__ = 15;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 16;
+          current_statement__ = 15;
           for (int sym2__ = 1; sym2__ <= N; ++sym2__) {
-            current_statement__ = 16;
+            current_statement__ = 15;
             stan::model::assign(X, X_flat__[(pos__ - 1)],
               "assigning variable X", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 16;
+            current_statement__ = 15;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 17;
+      current_statement__ = 16;
       stan::math::validate_non_negative_index("Xcol_scale", "K", K);
-      current_statement__ = 18;
+      current_statement__ = 17;
       context__.validate_dims("data initialization", "Xcol_scale", "double",
         std::vector<size_t>{static_cast<size_t>(K)});
       Xcol_scale_data__ = Eigen::Matrix<double,-1,1>::Constant(K,
@@ -170,35 +162,35 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(Xcol_scale_data__.data(), K);
       {
         std::vector<local_scalar_t__> Xcol_scale_flat__;
-        current_statement__ = 18;
+        current_statement__ = 17;
         Xcol_scale_flat__ = context__.vals_r("Xcol_scale");
-        current_statement__ = 18;
+        current_statement__ = 17;
         pos__ = 1;
-        current_statement__ = 18;
+        current_statement__ = 17;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 18;
+          current_statement__ = 17;
           stan::model::assign(Xcol_scale, Xcol_scale_flat__[(pos__ - 1)],
             "assigning variable Xcol_scale", stan::model::index_uni(sym1__));
-          current_statement__ = 18;
+          current_statement__ = 17;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 19;
+      current_statement__ = 18;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 19;
+      current_statement__ = 18;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 20;
+      current_statement__ = 19;
       context__.validate_dims("data initialization", "prior_scale", "double",
         std::vector<size_t>{});
       prior_scale = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 20;
+      current_statement__ = 19;
       prior_scale = context__.vals_r("prior_scale")[(1 - 1)];
-      current_statement__ = 20;
+      current_statement__ = 19;
       stan::math::check_greater_or_equal(function__, "prior_scale",
         prior_scale, 0);
-      current_statement__ = 21;
+      current_statement__ = 20;
       stan::math::validate_non_negative_index("b", "K", K);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);

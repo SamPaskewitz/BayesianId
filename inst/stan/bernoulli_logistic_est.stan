@@ -1,7 +1,6 @@
 data {
   int<lower=1> N;  // total number of observations
   array[N] int Y;  // response variable
-  real Ymean; // sample mean of response variable
   int<lower=1> K;  // number of population-level effects
   matrix[N, K] X;  // population-level design matrix (no intercept, numeric vars centered)
   vector[K] Xcol_scale; // factors for converting scaled effects

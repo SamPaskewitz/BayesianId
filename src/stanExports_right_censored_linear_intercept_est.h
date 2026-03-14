@@ -27,35 +27,33 @@ namespace model_right_censored_linear_intercept_est_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 22> locations_array__ =
+static constexpr std::array<const char*, 21> locations_array__ =
   {" (found before start of program)",
-  " (in 'right_censored_linear_intercept_est', line 17, column 2 to column 10)",
-  " (in 'right_censored_linear_intercept_est', line 18, column 2 to column 22)",
-  " (in 'right_censored_linear_intercept_est', line 23, column 4 to column 46)",
-  " (in 'right_censored_linear_intercept_est', line 24, column 4 to column 51)",
-  " (in 'right_censored_linear_intercept_est', line 22, column 19 to line 25, column 3)",
-  " (in 'right_censored_linear_intercept_est', line 22, column 2 to line 25, column 3)",
-  " (in 'right_censored_linear_intercept_est', line 27, column 2 to column 26)",
+  " (in 'right_censored_linear_intercept_est', line 16, column 2 to column 10)",
+  " (in 'right_censored_linear_intercept_est', line 17, column 2 to column 22)",
+  " (in 'right_censored_linear_intercept_est', line 22, column 4 to column 46)",
+  " (in 'right_censored_linear_intercept_est', line 23, column 4 to column 51)",
+  " (in 'right_censored_linear_intercept_est', line 21, column 19 to line 24, column 3)",
+  " (in 'right_censored_linear_intercept_est', line 21, column 2 to line 24, column 3)",
+  " (in 'right_censored_linear_intercept_est', line 26, column 2 to column 26)",
   " (in 'right_censored_linear_intercept_est', line 2, column 2 to column 17)",
   " (in 'right_censored_linear_intercept_est', line 3, column 9 to column 10)",
   " (in 'right_censored_linear_intercept_est', line 3, column 2 to column 14)",
-  " (in 'right_censored_linear_intercept_est', line 4, column 2 to column 13)",
-  " (in 'right_censored_linear_intercept_est', line 5, column 2 to column 17)",
-  " (in 'right_censored_linear_intercept_est', line 6, column 2 to column 28)",
-  " (in 'right_censored_linear_intercept_est', line 7, column 2 to column 22)",
-  " (in 'right_censored_linear_intercept_est', line 8, column 2 to column 21)",
-  " (in 'right_censored_linear_intercept_est', line 9, column 2 to column 12)",
-  " (in 'right_censored_linear_intercept_est', line 10, column 8 to column 14)",
-  " (in 'right_censored_linear_intercept_est', line 10, column 2 to column 32)",
-  " (in 'right_censored_linear_intercept_est', line 13, column 9 to column 15)",
-  " (in 'right_censored_linear_intercept_est', line 13, column 2 to column 24)",
-  " (in 'right_censored_linear_intercept_est', line 14, column 2 to column 26)"};
+  " (in 'right_censored_linear_intercept_est', line 4, column 2 to column 17)",
+  " (in 'right_censored_linear_intercept_est', line 5, column 2 to column 28)",
+  " (in 'right_censored_linear_intercept_est', line 6, column 2 to column 22)",
+  " (in 'right_censored_linear_intercept_est', line 7, column 2 to column 21)",
+  " (in 'right_censored_linear_intercept_est', line 8, column 2 to column 12)",
+  " (in 'right_censored_linear_intercept_est', line 9, column 8 to column 14)",
+  " (in 'right_censored_linear_intercept_est', line 9, column 2 to column 32)",
+  " (in 'right_censored_linear_intercept_est', line 12, column 9 to column 15)",
+  " (in 'right_censored_linear_intercept_est', line 12, column 2 to column 24)",
+  " (in 'right_censored_linear_intercept_est', line 13, column 2 to column 26)"};
 #include <stan_meta_header.hpp>
 class model_right_censored_linear_intercept_est final : public model_base_crtp<model_right_censored_linear_intercept_est> {
 private:
   int N;
   Eigen::Matrix<double,-1,1> Y_data__;
-  double Ymean;
   int prior_only;
   double prior_scale;
   int Nncens;
@@ -119,64 +117,58 @@ public:
         }
       }
       current_statement__ = 11;
-      context__.validate_dims("data initialization", "Ymean", "double",
-        std::vector<size_t>{});
-      Ymean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 11;
-      Ymean = context__.vals_r("Ymean")[(1 - 1)];
-      current_statement__ = 12;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 12;
+      current_statement__ = 11;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 13;
+      current_statement__ = 12;
       context__.validate_dims("data initialization", "prior_scale", "double",
         std::vector<size_t>{});
       prior_scale = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 13;
+      current_statement__ = 12;
       prior_scale = context__.vals_r("prior_scale")[(1 - 1)];
-      current_statement__ = 13;
+      current_statement__ = 12;
       stan::math::check_greater_or_equal(function__, "prior_scale",
         prior_scale, 0);
-      current_statement__ = 14;
+      current_statement__ = 13;
       context__.validate_dims("data initialization", "Nncens", "int",
         std::vector<size_t>{});
       Nncens = std::numeric_limits<int>::min();
-      current_statement__ = 14;
+      current_statement__ = 13;
       Nncens = context__.vals_i("Nncens")[(1 - 1)];
-      current_statement__ = 14;
+      current_statement__ = 13;
       stan::math::check_greater_or_equal(function__, "Nncens", Nncens, 1);
-      current_statement__ = 15;
+      current_statement__ = 14;
       context__.validate_dims("data initialization", "Ncens", "int",
         std::vector<size_t>{});
       Ncens = std::numeric_limits<int>::min();
-      current_statement__ = 15;
+      current_statement__ = 14;
       Ncens = context__.vals_i("Ncens")[(1 - 1)];
-      current_statement__ = 15;
+      current_statement__ = 14;
       stan::math::check_greater_or_equal(function__, "Ncens", Ncens, 1);
-      current_statement__ = 16;
+      current_statement__ = 15;
       context__.validate_dims("data initialization", "Ymax", "double",
         std::vector<size_t>{});
       Ymax = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 16;
+      current_statement__ = 15;
       Ymax = context__.vals_r("Ymax")[(1 - 1)];
-      current_statement__ = 17;
+      current_statement__ = 16;
       stan::math::validate_non_negative_index("which_ncens", "Nncens", Nncens);
-      current_statement__ = 18;
+      current_statement__ = 17;
       context__.validate_dims("data initialization", "which_ncens", "int",
         std::vector<size_t>{static_cast<size_t>(Nncens)});
       which_ncens = std::vector<int>(Nncens, std::numeric_limits<int>::min());
-      current_statement__ = 18;
+      current_statement__ = 17;
       which_ncens = context__.vals_i("which_ncens");
-      current_statement__ = 19;
+      current_statement__ = 18;
       stan::math::validate_non_negative_index("Yncens", "Nncens", Nncens);
-      current_statement__ = 20;
+      current_statement__ = 19;
       Yncens_data__ = Eigen::Matrix<double,-1,1>::Constant(Nncens,
                         std::numeric_limits<double>::quiet_NaN());
       new (&Yncens)
         Eigen::Map<Eigen::Matrix<double,-1,1>>(Yncens_data__.data(), Nncens);
-      current_statement__ = 21;
+      current_statement__ = 20;
       stan::model::assign(Yncens,
         stan::model::rvalue(Y, "Y", stan::model::index_multi(which_ncens)),
         "assigning variable Yncens");

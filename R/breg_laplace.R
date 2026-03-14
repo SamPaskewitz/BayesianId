@@ -29,7 +29,7 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
   stan_model_to_use = stanmodels[[paste0(model_name, "_est")]]
 
   # ** set up initialization (particularly important with censored data) **
-  if(family %in% c("normal_linear", "right_censored_linear")){
+  if(family %in% c("normal_linear", "right_censored_linear", "lognormal_linear")){
     init = list(sigma = sd(stan_data$Y), b0 = mean(stan_data$Y))
   } else{
     init = list(b0 = 0.0)

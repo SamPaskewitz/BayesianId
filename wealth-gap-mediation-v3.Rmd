@@ -1,0 +1,154 @@
+---
+title: "Mediation Analysis 3.0"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse) # for general data wrangling and plotting (includes ggplot2)
+library(bayesplot) # for plotting
+library(patchwork) # for combining plots
+
+library(BayesianId) # for Bayesian model averaging
+```
+
+## Set Up Data
+
+```{r}
+wg_med_data = foreign::read.spss("../data/NORC Data Full Sample.sav", to.data.frame = TRUE) |> 
+  select(wgtoday_BW, Racial_Progress_Scale, INCOME, Ideology, Race, WEIGHT1) |> # select relevant columns
+na.omit() |> # remove rows with missing data
+rename(wealthgap = wgtoday_BW, progress = Racial_Progress_Scale, income_category = INCOME, ideology = Ideology, race = Race, sample_weight = WEIGHT1) # rename variables
+
+# recode income to lower end of each bracket (so that it's a numeric variable)
+income_codes = c(0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 75, 85, 100, 125, 150, 175, 200)
+names(income_codes) = c("Less than $5,000", "$5,000 to $9,999", "$10,000 to $14,999", "$15,000 to $19,999", "$20,000 to $24,999", "$25,000 to $29,999", "$30,000 to $34,999", "$35,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $74,999", "$75,000 to $84,999", "$85,000 to $99,999", "$100,000 to $124,999", "$125,000 to $149,999", "$150,000 to $174,999", "$175,000 to $199,999", "$200,000 or more")
+#print(income_codes)
+wg_med_data = wg_med_data |> mutate(income = income_codes[income_category])
+
+# recode race from numbers to labels
+wg_med_data = wg_med_data |> mutate(race = factor(race)) # make race a factor
+race_codes = c("White", "Black", "Hispanic", "Asian-Pacific Islander")
+wg_med_data = wg_med_data |> mutate(race = factor(race_codes[race]))
+
+# rescale wealth gap estimates to be between 0 and 1 instead of 0 and 100
+wg_med_data$wealthgap = wg_med_data$wealthgap/100
+```
+
+## Test Path 1 (m ~ x vs. m ~ 1)
+# m = progress
+# x = income + ideology + race
+# y = wealthgap
+
+##### Fit full model
+```{r}
+path1_full_model = breg_laplace(progress ~ income + ideology + race,
+                                data = wg_med_data,
+                                family = "normal_linear")
+```
+
+#### Do Bayesian model averaging (BMA)
+```{r}
+path1_bma = bma(path1_full_model)
+```
+
+#### Get posterior term inclusion probabilities
+```{r}
+path1_tests = summary(path1_bma, type = "term_probs")
+path1_tests
+```
+
+```{r}
+summary(path1_bma, type = "term_odds")
+```
+
+```{r}
+summary(path1_bma, type = "model_odds")
+```
+
+
+
+```{r}
+summary(path1_bma, type = "model_probs")
+```
+```{r}
+summary(path1_bma, type = "est")
+```
+
+```{r}
+contrast(path1_bma, factors = "race", ref = "White")
+```
+
+## Test Path 2 (y ~ m + x)
+
+##### Fit full model
+```{r}
+path2_full_model = breg_laplace(wealthgap ~ progress + income + ideology + race,
+                                data = wg_med_data,
+                                family = "right_censored_linear",
+                                prior_scale = 0.35)
+```
+
+Plot the distribution of the real data and the distribution of simulated data from the model.
+```{r}
+plot(path2_full_model)
+```
+Do the same for a non-censored model (i.e. basic linear regression).
+```{r}
+update(path2_full_model, family = "normal_linear") |> plot()
+```
+
+#### Do Bayesian model averaging (BMA)
+```{r}
+path2_bma = bma(path2_full_model)
+```
+
+#### Get posterior term inclusion probabilities
+```{r}
+path2_tests = summary(path2_bma, type = "term_probs")
+path2_tests
+```
+
+```{r}
+summary(path2_bma, type = "est")
+```
+
+```{r}
+contrast(path2_bma, factors = "race", ref = "White")
+```
+
+```{r}
+path2_full_model$data$race |> contrasts()
+# Possibly rearrange levels for more interesting Helmert contrasts:
+# White vs average of others
+# Black vs other two
+# Hispanic vs API
+
+# Or do manual White vs. Each Other Group contrast codes and accept that you have a broader prior on the mean for White
+```
+
+## Estimate Censored Values of "wealthgap"
+
+We'll take a simple approach. Because the full model has a very high posterior probability (0.982), to start we will only use it.
+```{r}
+summary(path2_bma, type = "model_probs")["~ progress + income + ideology + race",]
+```
+To keep it simple, we'll start by only using the posterior means of the parameter estimates.
+```{r}
+b0_mean = path2_full_model$post_mean[1]
+b_mean = matrix(path2_full_model$post_mean[-1], ncol = 1)
+wg_med_data = wg_med_data |> 
+  mutate(wealthgap_pred = b0_mean + path2_full_model$stan_data$X %*% b_mean,
+         censored = wealthgap == max(wealthgap))
+```
+
+Plot predicted vs. actual values.
+```{r}
+wg_med_data |> ggplot(aes(x = wealthgap, y = wealthgap_pred, color = censored)) + geom_point() + theme_bw() + xlim(c(0, 1)) + ylim(c(0, 1))
+```
+
+How many predicted values are greater than 1?
+```{r}
+table(wg_med_data$wealthgap_pred > 1)
+```
+
+This is surprising: I expected that the predicted values would be largely greater than 1 (the censoring limit).

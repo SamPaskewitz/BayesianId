@@ -27,24 +27,22 @@ namespace model_bernoulli_logistic_intercept_est_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 11> locations_array__ =
+static constexpr std::array<const char*, 10> locations_array__ =
   {" (found before start of program)",
-  " (in 'bernoulli_logistic_intercept_est', line 9, column 2 to column 10)",
-  " (in 'bernoulli_logistic_intercept_est', line 14, column 4 to column 43)",
-  " (in 'bernoulli_logistic_intercept_est', line 13, column 19 to line 15, column 3)",
-  " (in 'bernoulli_logistic_intercept_est', line 13, column 2 to line 15, column 3)",
+  " (in 'bernoulli_logistic_intercept_est', line 8, column 2 to column 10)",
+  " (in 'bernoulli_logistic_intercept_est', line 13, column 4 to column 43)",
+  " (in 'bernoulli_logistic_intercept_est', line 12, column 19 to line 14, column 3)",
+  " (in 'bernoulli_logistic_intercept_est', line 12, column 2 to line 14, column 3)",
   " (in 'bernoulli_logistic_intercept_est', line 2, column 2 to column 17)",
   " (in 'bernoulli_logistic_intercept_est', line 3, column 8 to column 9)",
   " (in 'bernoulli_logistic_intercept_est', line 3, column 2 to column 17)",
-  " (in 'bernoulli_logistic_intercept_est', line 4, column 2 to column 13)",
-  " (in 'bernoulli_logistic_intercept_est', line 5, column 2 to column 17)",
-  " (in 'bernoulli_logistic_intercept_est', line 6, column 2 to column 28)"};
+  " (in 'bernoulli_logistic_intercept_est', line 4, column 2 to column 17)",
+  " (in 'bernoulli_logistic_intercept_est', line 5, column 2 to column 28)"};
 #include <stan_meta_header.hpp>
 class model_bernoulli_logistic_intercept_est final : public model_base_crtp<model_bernoulli_logistic_intercept_est> {
 private:
   int N;
   std::vector<int> Y;
-  double Ymean;
   int prior_only;
   double prior_scale;
 public:
@@ -86,24 +84,18 @@ public:
       current_statement__ = 7;
       Y = context__.vals_i("Y");
       current_statement__ = 8;
-      context__.validate_dims("data initialization", "Ymean", "double",
-        std::vector<size_t>{});
-      Ymean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 8;
-      Ymean = context__.vals_r("Ymean")[(1 - 1)];
-      current_statement__ = 9;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 9;
+      current_statement__ = 8;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 10;
+      current_statement__ = 9;
       context__.validate_dims("data initialization", "prior_scale", "double",
         std::vector<size_t>{});
       prior_scale = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 10;
+      current_statement__ = 9;
       prior_scale = context__.vals_r("prior_scale")[(1 - 1)];
-      current_statement__ = 10;
+      current_statement__ = 9;
       stan::math::check_greater_or_equal(function__, "prior_scale",
         prior_scale, 0);
     } catch (const std::exception& e) {

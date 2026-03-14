@@ -6,7 +6,7 @@ Is it possible to give a properly Bayesian interpretation to the idea of "severe
 
 - write tests for bma with "lm" and other objects
 
-- double check ALL of the math
+- double check ALL of the math and write it out in the documentation
 
 ***** UX AND BUG FIXING *****
 
@@ -37,8 +37,6 @@ Is it possible to give a properly Bayesian interpretation to the idea of "severe
 - add ordered logistic regression (for ordinal data)
 
 - add Poisson regression
-
-- add log-normal linear regression
 
 - better treatment of default prior scales (c.f. BayesFactor, or do something better)
 

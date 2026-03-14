@@ -91,7 +91,7 @@ breg_mcmc = function(formula, data, family = "normal_linear", center = TRUE, pri
     n_coef = ncol(stan_data$X)
     par_names = c(par_names, paste0("b[",1:n_coef,"]"))
   }
-  if(family %in% c("normal_linear", "right_censored_linear")){
+  if(family %in% c("normal_linear", "right_censored_linear", "lognormal_linear")){
     par_names = c(par_names, "sigma")
   }
   draws_matrix = as.matrix(stanfit)[,par_names]

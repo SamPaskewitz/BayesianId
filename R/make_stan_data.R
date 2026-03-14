@@ -66,7 +66,6 @@ make_stan_data = function(formula_info, data, family = "normal_linear", prior_sc
     # ** collect function output **
     stan_data = list(N = nrow(data),
                      Y = Y,
-                     Ymean = mean(Y),
                      K = ncol(X),
                      X = X,
                      Xcol_scale = Xcol_scale,
@@ -90,7 +89,6 @@ make_stan_data = function(formula_info, data, family = "normal_linear", prior_sc
     # ***** INTERCEPT-ONLY *****
     stan_data = list(N = nrow(data),
                      Y = Y,
-                     Ymean = mean(Y),
                      prior_only = FALSE,
                      prior_scale = prior_scale)
 

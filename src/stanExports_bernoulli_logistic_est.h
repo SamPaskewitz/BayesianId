@@ -27,33 +27,31 @@ namespace model_bernoulli_logistic_est_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 20> locations_array__ =
+static constexpr std::array<const char*, 19> locations_array__ =
   {" (found before start of program)",
-  " (in 'bernoulli_logistic_est', line 12, column 2 to column 10)",
-  " (in 'bernoulli_logistic_est', line 13, column 2 to column 14)",
-  " (in 'bernoulli_logistic_est', line 18, column 4 to column 53)",
-  " (in 'bernoulli_logistic_est', line 17, column 19 to line 19, column 3)",
-  " (in 'bernoulli_logistic_est', line 17, column 2 to line 19, column 3)",
-  " (in 'bernoulli_logistic_est', line 21, column 2 to column 61)",
+  " (in 'bernoulli_logistic_est', line 11, column 2 to column 10)",
+  " (in 'bernoulli_logistic_est', line 12, column 2 to column 14)",
+  " (in 'bernoulli_logistic_est', line 17, column 4 to column 53)",
+  " (in 'bernoulli_logistic_est', line 16, column 19 to line 18, column 3)",
+  " (in 'bernoulli_logistic_est', line 16, column 2 to line 18, column 3)",
+  " (in 'bernoulli_logistic_est', line 20, column 2 to column 61)",
   " (in 'bernoulli_logistic_est', line 2, column 2 to column 17)",
   " (in 'bernoulli_logistic_est', line 3, column 8 to column 9)",
   " (in 'bernoulli_logistic_est', line 3, column 2 to column 17)",
-  " (in 'bernoulli_logistic_est', line 4, column 2 to column 13)",
+  " (in 'bernoulli_logistic_est', line 4, column 2 to column 17)",
+  " (in 'bernoulli_logistic_est', line 5, column 9 to column 10)",
+  " (in 'bernoulli_logistic_est', line 5, column 12 to column 13)",
   " (in 'bernoulli_logistic_est', line 5, column 2 to column 17)",
   " (in 'bernoulli_logistic_est', line 6, column 9 to column 10)",
-  " (in 'bernoulli_logistic_est', line 6, column 12 to column 13)",
-  " (in 'bernoulli_logistic_est', line 6, column 2 to column 17)",
-  " (in 'bernoulli_logistic_est', line 7, column 9 to column 10)",
-  " (in 'bernoulli_logistic_est', line 7, column 2 to column 23)",
-  " (in 'bernoulli_logistic_est', line 8, column 2 to column 17)",
-  " (in 'bernoulli_logistic_est', line 9, column 2 to column 28)",
-  " (in 'bernoulli_logistic_est', line 13, column 9 to column 10)"};
+  " (in 'bernoulli_logistic_est', line 6, column 2 to column 23)",
+  " (in 'bernoulli_logistic_est', line 7, column 2 to column 17)",
+  " (in 'bernoulli_logistic_est', line 8, column 2 to column 28)",
+  " (in 'bernoulli_logistic_est', line 12, column 9 to column 10)"};
 #include <stan_meta_header.hpp>
 class model_bernoulli_logistic_est final : public model_base_crtp<model_bernoulli_logistic_est> {
 private:
   int N;
   std::vector<int> Y;
-  double Ymean;
   int K;
   Eigen::Matrix<double,-1,-1> X_data__;
   Eigen::Matrix<double,-1,1> Xcol_scale_data__;
@@ -99,24 +97,18 @@ public:
       current_statement__ = 9;
       Y = context__.vals_i("Y");
       current_statement__ = 10;
-      context__.validate_dims("data initialization", "Ymean", "double",
-        std::vector<size_t>{});
-      Ymean = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 10;
-      Ymean = context__.vals_r("Ymean")[(1 - 1)];
-      current_statement__ = 11;
       context__.validate_dims("data initialization", "K", "int",
         std::vector<size_t>{});
       K = std::numeric_limits<int>::min();
-      current_statement__ = 11;
+      current_statement__ = 10;
       K = context__.vals_i("K")[(1 - 1)];
-      current_statement__ = 11;
+      current_statement__ = 10;
       stan::math::check_greater_or_equal(function__, "K", K, 1);
-      current_statement__ = 12;
+      current_statement__ = 11;
       stan::math::validate_non_negative_index("X", "N", N);
-      current_statement__ = 13;
+      current_statement__ = 12;
       stan::math::validate_non_negative_index("X", "K", K);
-      current_statement__ = 14;
+      current_statement__ = 13;
       context__.validate_dims("data initialization", "X", "double",
         std::vector<size_t>{static_cast<size_t>(N), static_cast<size_t>(K)});
       X_data__ = Eigen::Matrix<double,-1,-1>::Constant(N, K,
@@ -124,26 +116,26 @@ public:
       new (&X) Eigen::Map<Eigen::Matrix<double,-1,-1>>(X_data__.data(), N, K);
       {
         std::vector<local_scalar_t__> X_flat__;
-        current_statement__ = 14;
+        current_statement__ = 13;
         X_flat__ = context__.vals_r("X");
-        current_statement__ = 14;
+        current_statement__ = 13;
         pos__ = 1;
-        current_statement__ = 14;
+        current_statement__ = 13;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 14;
+          current_statement__ = 13;
           for (int sym2__ = 1; sym2__ <= N; ++sym2__) {
-            current_statement__ = 14;
+            current_statement__ = 13;
             stan::model::assign(X, X_flat__[(pos__ - 1)],
               "assigning variable X", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 14;
+            current_statement__ = 13;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 15;
+      current_statement__ = 14;
       stan::math::validate_non_negative_index("Xcol_scale", "K", K);
-      current_statement__ = 16;
+      current_statement__ = 15;
       context__.validate_dims("data initialization", "Xcol_scale", "double",
         std::vector<size_t>{static_cast<size_t>(K)});
       Xcol_scale_data__ = Eigen::Matrix<double,-1,1>::Constant(K,
@@ -152,35 +144,35 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(Xcol_scale_data__.data(), K);
       {
         std::vector<local_scalar_t__> Xcol_scale_flat__;
-        current_statement__ = 16;
+        current_statement__ = 15;
         Xcol_scale_flat__ = context__.vals_r("Xcol_scale");
-        current_statement__ = 16;
+        current_statement__ = 15;
         pos__ = 1;
-        current_statement__ = 16;
+        current_statement__ = 15;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 16;
+          current_statement__ = 15;
           stan::model::assign(Xcol_scale, Xcol_scale_flat__[(pos__ - 1)],
             "assigning variable Xcol_scale", stan::model::index_uni(sym1__));
-          current_statement__ = 16;
+          current_statement__ = 15;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 17;
+      current_statement__ = 16;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 17;
+      current_statement__ = 16;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 18;
+      current_statement__ = 17;
       context__.validate_dims("data initialization", "prior_scale", "double",
         std::vector<size_t>{});
       prior_scale = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 18;
+      current_statement__ = 17;
       prior_scale = context__.vals_r("prior_scale")[(1 - 1)];
-      current_statement__ = 18;
+      current_statement__ = 17;
       stan::math::check_greater_or_equal(function__, "prior_scale",
         prior_scale, 0);
-      current_statement__ = 19;
+      current_statement__ = 18;
       stan::math::validate_non_negative_index("b", "K", K);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);

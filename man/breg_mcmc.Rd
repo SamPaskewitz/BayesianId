@@ -53,20 +53,18 @@ ADD THIS
 }
 \subsection{Prior Distributions}{
 The residual variance (\eqn{\sigma^2}) has a non-informative Jefferys prior.
-The code does not directly put priors on the intercept (\eqn{\beta_0}) or regression coefficients (\eqn{\beta_1, \beta_2, \ldots}). Instead it gives priors to standardized versions of the intercept (\eqn{\delta_0}) and coefficients (\eqn{\delta_1, \delta_2, \ldots}):
-\deqn{\delta_0 \sim \text{Cauchy}(0, r)}
+The intercept (\eqn{\beta_0}) has a non-informative uniform prior.
+The code does not directly put priors on the regression coefficients (\eqn{\beta_1, \beta_2, \ldots}). Instead it gives priors to standardized coefficients (\eqn{\delta_1, \delta_2, \ldots}):
 \deqn{\delta_i \sim \text{Cauchy}(0, r) \text{ for } i = 1, 2, \ldots}
 where \eqn{r} is given by the prior_scale function argument.
 }
 
 For models based on a normal likelihood (or related models, e.g. with censored data), these standardized parameters are defined as follows:
-\deqn{\delta_0 = \frac{\beta_0 - \bar{y}}{\sigma}}
 \deqn{\delta_i = \frac{\beta_i \text{SD}(x_i)}{\sigma} \text{ if } x_i \text{ is a real or integer predictor}}
 \deqn{\delta_i = \frac{\beta_i}{\sigma} \text{ if } x_i \text{ is a contrast code for a factor}}
 Note that the denominator for these standardized coefficients is not \eqn{\text{SD}(y)} (as in the standardized coefficients ordinarily reported), but instead \eqn{\sigma} (the residual standard deviation). The \eqn{\delta}'s are thus more closely related to Cohen's d.
 
 For logistic, binomial, and ordered logistic regression models the standardized parameters are defined as:
-\deqn{\delta_0 = \frac{\beta_0 - \text{logit}(\bar{y})}{1.81}}
 \deqn{\delta_i = \frac{\beta_i \text{SD}(x_i)}{1.81} \text{ if } x_i \text{ is a real or integer predictor}}
 \deqn{\delta_i = \frac{\beta_i}{1.81} \text{ if } x_i \text{ is a contrast code for a factor}}
 Why divide by 1.81? The latent variable interpretation of logistic regression (and related models) states that:

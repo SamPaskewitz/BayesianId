@@ -9,6 +9,16 @@ library(BayesianId)
 ```
 
 ```{r}
+set.seed(2012)
+test_data = data.frame(x1 = rnorm(100), x2 = rnorm(100), f = rep(c("a", "b"), times = 50) |> as.factor()) |>
+  dplyr::mutate(y = exp(1 + 1.5*x1 + 0.3*(f == "a") + rnorm(100)))
+
+fit = breg_laplace(y ~ x1 + x2 + f, data = test_data, family = "lognormal_linear")
+
+plot(fit, xvar = "x1")
+```
+
+```{r}
 data("penguins")
 test_data = na.omit(penguins) %>% dplyr::rename(y = sex, x1 = flipper_len, x2 = bill_len, f1 = island)
 
@@ -32,10 +42,6 @@ fit_mcmc = breg_mcmc(y ~ x1 + x2 + f1,
                    data = test_data,
                    family = "right_censored_linear"
                    )
-```
-
-```{r}
-predict(fit_glm, type = "response") |> names()
 ```
 
 ```{r}
