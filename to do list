@@ -22,33 +22,31 @@ Is it possible to give a properly Bayesian interpretation to the idea of "severe
 
 ***** DOCUMENTATION ETC *****
 
-- add a license
-
 - double check function documentation and update as needed
 
-- create a vignette showing basic usage
+- create a vignette showing how to use "breg_laplace" and "breg_mcmc"
+
+- create a vignette explaining how to do Bayesian model averaging and interpret the results
 
 - go through and implement warnings/"stops"
 
-- make fixes to "DESCRIPTION"
-
-- TLDR for hypothesis testing: "What's the probability that there is an effect?"
-
-- TLDR for estimation: "If there is an effect, how big is it?"
-
 ***** STAN SUPPORT (BREG) *****
-
-- add robust linear regression (with Student's t distribution for error)
-
-- add ordered logistic regression (for ordinal data)
 
 - better treatment of default prior scales (c.f. BayesFactor, or do something better)
 
-- add random effects to existing models (possibly only supported by "breg_mcmc" until I figure out a good way to marginal likelihood from "breg_laplace" objects)
+- add random effects to existing models (possibly only supported by "breg_mcmc" until I figure out a good way to compute marginal likelihood from "breg_laplace" objects)
 
 ***** IDEAS FOR THE FUTURE *****
 
-- write better/more consistent tests for breg_mcmc (and get rid of unneeded ones)
+- add more models to "breg":
+  - ordered logistic regression (for ordinal data)
+  - robust linear regression (with Student's t distribution for error)
+  - categorical regression (with softmax)
+  - negative binomial regression
+
+- write better/more consistent unit tests for breg_mcmc (and get rid of unneeded ones)
+
+- support informative priors/replication BFs
 
 - write an error message in "bma" for mixed effects models fit by REML
 

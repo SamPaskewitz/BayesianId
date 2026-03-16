@@ -1,24 +1,16 @@
 Package: BayesianId
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Regression analysis that actually answers your questions (using Bayesian model averaging).
 Version: 0.1.0
 Authors@R: c(
     person(
-      "Jane", "Doe",
-      email = "jane@example.com",
+      "Paskewitz", "Samuel",
+      email = "samuel.paskewitz@yale.edu",
       role = c("aut", "cre")
     )
   )
-Description: This is a regression package designed to straightforwardly tell you the probabilities of various hypotheses given data, in particular whether a predictor variables affects a predicted variable. In other words, the package gives you the posterior probabilities of hypotheses about model parameters. This is what researchers really want deep down (in their "Bayesian id", Gigerenzer, 2004), but what p-values and all that frequentist garbage cannot provide.
-    Continuation lines should be indented. ** FINISH DESCRIPTION **
-    I envision the following workflow
-    1) Verbally articulate competing hypotheses; collect relevant data
-    2) Express your hypotheses in terms of regression model parameters, and specify prior probabilities
-    3) Use diagnostic plots to decide on the details of the model (in particular the likelihood used)
-    4) Automatically compute all relevant restricted models, obeying the principle of marginality
-    5) Compute Bayes factors for the restricted and full models
-    6) Use these Bayes factors and the prior probabilities of hypotheses about model parameters to compute posterior probabilities of model parameters
-License: What license is it under?
+Description: The main purpose of this package is to provide the data analyst with the posterior probabilities of hypotheses through Bayesian model averaging of nested regression model. The package provides pre-compiled Stan regression models for this purpose, which can be fit using either the Laplace approximation or Markov chain Monte Carlo sampling. You can also use regression models fit by maximum likelihood (e.g. "glm") with the BIC approximation.
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports:
