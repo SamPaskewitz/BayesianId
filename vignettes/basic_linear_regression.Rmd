@@ -1,0 +1,143 @@
+---
+title: "Basic Linear Regression"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Basic Linear Regression}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(BayesianId)
+library(tidyverse)
+```
+
+This vignette will show you how to do basic linear regression with a single predictor/independent variable (x) and a single predicted/dependent variable (y).
+
+First, we will simulate some data.
+```{r simulate_data}
+set.seed(1212) # set random seed for consistency
+beta0 = 1.0 # true intercept
+beta1 = 0.5 # true slope
+sigma = 0.7 # true residual/error SD
+n = 50 # sample size
+sim_data = data.frame(x = rnorm(n)) |>
+  mutate(y = rnorm(n = n, mean = beta0 + beta1*x, sd = sigma))
+```
+
+Let's plot it:
+```{r}
+sim_data |> ggplot(aes(x = x, y = y)) + geom_point() + theme_classic()
+```
+We can see that there's a linear relationship.
+
+## Fitting the Model
+
+First, we fit the basic linear regression model. We'll use the function breg_laplace, which does Bayesian estimation using the Laplace (multivariate normal) approximation to the posterior distribution. We could also use breg_mcmc for Markov chain Monte Carlo sampling, but that's much slower.
+```{r fit_model}
+linear_model = breg_laplace(y ~ x, 
+                            data = sim_data,
+                            family = "normal_linear" # do basic linear regression
+                            )
+```
+
+## Graphical Model Checking
+
+Now we need to check the model using posterior predictive plots. First we'll use the basic plot method to show a kernel density estimate (basically a smooth histogram) of the real data (y) and several simulated data sets from the fitted model (y_rep).
+```{r post_pred_plot}
+plot(linear_model)
+```
+The simulated data from the fitted model (y_rep, light lines) looks pretty similar to the real data (y, dark line): this suggests that basic linear regression is a good fit for this data set.
+
+We should also look at a posterior predictive scatterplot. To do this, we use the "xvar" argument of "plot". Running the code multiple times will produce slightly different plots, because a new simulated data set (y_rep) is produced each time.
+```{r post_pred_scatterplot}
+plot(linear_model, xvar = "x")
+```
+Again, the real data (y, small dark points) and simulated data (y_rep, large light points) look similar. This makes us more confident that basic linear regression is reasonable for the data set.
+
+## Estimation/Posterior Distribution
+We can use "summary" to show estimates, just like we're used to with other R regression objects.
+```{r summary}
+summary(linear_model)
+```
+The column "mean" shows the posterior mean, which is a point estimate (single "best guess"). The column "sd" shows the posterior standard deviation, which is a measure of certainty about the estimates. It's kind of like a Bayesian version of the standard error (though of course the techinical interpretation is different). The last two columns give the lower and upper limits of a 95% posterior credible interval, i.e. given the data and model assumptions we think there's a 95% probability that the parameter is within these boundaries.
+
+The function "posterior_interval" gives you a posterior credible interval of any desired size (specified with the argument "prob"). For example, here's a 99% interval:
+```{r post_ci}
+posterior_interval(linear_model, prob = 0.99)
+```
+Be careful NOT to use posterior credible intervals for hypothesis testing, e.g. looking at whether the interval includes 0. This is not valid for Bayesian statistics.
+
+
+To get specific information about parameter estimates/the posterior distribution, you can use the same functions as in other (frequentist) regression objects such as "lm" or "glm". These produce the Bayesian analogue of whatever they do for frequentist models.
+
+"coef" gives the posterior means (point estimates).
+```{r coef}
+coef(linear_model)
+```
+
+"vcov" gives the posterior variance-covariance matrix.
+```{r vcov}
+vcov(linear_model)
+```
+
+## Hypothesis Testing
+Hypothesis testing is done using Bayes factors. The breg_laplace and breg_mcmc functions automatically specify reasonable default prior distributions that give sensible Bayes factors; you don't need to manually fiddle around with the prior like you would with rstanarm or brms.
+
+#### The BMA Object
+The first step for hypothesis testing is to create a BMA object using the "bma" function.
+```{r, bma}
+linear_bma = bma(linear_model)
+```
+The "bma" function takes the specified model (in this case "linear_model") and fits all possible submodels, i.e. regression models with predictors deleted. In this case we only have one predictor (x), so the only other model that is fit is the one that omits x, i.e. an intercept-only model. "BMA" stands for "Bayesian Model Averaging" and is a very powerful approach towards inference. However a full explanation of BMA requires us to do multiple regression (i.e. have multiple predictor variables), so we won't go into detail more in this vignette.
+
+You can see the formulas, prior odds, posterior odds, and Bayes factors for each model using the "summary" function with "type = 'model_odds'".
+```{r model_odds}
+summary(linear_bma, type = "model_odds")
+```
+The first row ("~ x") represents the full linear regression model which we fit earlier, where x is a predictor. The second row ("~ 1") represents the intercept-only model where x is omitted from the model. The "prior_odds", "post_odds", and "BF" respectively give the prior odds, posterior odds, and Bayes factor of each model relative to the full model. You can see that both models have equal prior odds, but the full model ("~ x") has much higher posterior odds and the Bayes factor favors it. By default the models have equal prior odds, but this can be adjusted in the "bma" function.
+
+We can also use "summary" to get the posterior probabilities of the models, which are just the normalized posterior odds.
+```{r model_probs}
+summary(linear_bma, type = "model_probs")
+```
+Clearly there is overwhelming evidence for the full model ("~ x").
+
+#### Testing Effect Existence
+The most basic test we can do is whether a predictor should be included in the model at all. This test involves the classic point null hypothesis ($H_0: \beta_1 = 0$) and the unrestricted alternative hypothesis ($H_1: \beta_1 \neq 0$).
+
+When we only have one predictor, each of these hypotheses is equivalent to one of the models:
+$$H_0 \Leftrightarrow \text{"~ 1''}$$
+$$H_1 \Leftrightarrow \text{"~ x''}$$
+We can use "summary" to give us the prior odds, posterior odds, and Bayes factors:
+```{r term_odds}
+summary(linear_bma, type = "term_odds")
+```
+The column "BF" now give the Bayes factor with $H_1$ in the numerator and $H_0$ in the denominator, so it should be the inverse of the Bayes factor for the intercept-only model ("~ 1", corresponding to $H_0$) reported in "model_odds".
+
+We can also get the prior and posterior probabilities of the hypotheses:
+```{r term_probs}
+summary(linear_bma, "term_probs")
+```
+
+You'll notice that these results are the same as "model_odds" and "model_probs", just formatted differently. Things get a bit more complex when you have multiple predictors, which we'll look at in a different vignette.
+
+#### Testing Effect Direction
+Usually in research our hypotheses are more specific than merely "x and y are related". Often we hypothesize the direction of the relationship, i.e. that the regression slope is either negative ($H_2: \beta_1 < 0$) or positive ($H_3: \beta_1  > 0$). It's therefore interesting to test these two directional hypotheses against each other and against the point null hypothesis of no relationship ($H_0: \beta_1 = 0$).
+
+We can use the "summary" to obtain prior odds, posterior odds, and Bayes factors. In this case the odds and Bayes factors are relative to the null hypothesis ($H_0: \beta_1 = 0$), i.e. $H_0$ is in the denominator.
+```{r dir_odds}
+summary(linear_bma, type = "dir_odds")
+```
+
+We can also get the prior and posterior probabilities of these hypotheses:
+```{r dir_probs}
+summary(linear_bma, type = "dir_probs")
+```

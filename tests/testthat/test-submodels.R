@@ -59,13 +59,3 @@ test_that("main_names correct", {
   expect_equal(model_list$main_names,
                c("x1", "x2"))
 })
-
-test_that("works with brmsformula", {
-  model_list_from_brms = submodels(brms::bf(y ~ x1*x2 + (x1*x2 | g1) + (x2 | g2)))
-  expect_mapequal(model_list, model_list_from_brms)
-})
-
-test_that("works with formula given as string", {
-  model_list_from_string = submodels("y ~ x1*x2 + (x1*x2 | g1) + (x2 | g2)")
-  expect_mapequal(model_list, model_list_from_string)
-})

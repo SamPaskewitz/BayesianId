@@ -9,7 +9,8 @@ breg_laplace(
   data,
   family = "normal_linear",
   center = TRUE,
-  prior_scale = 1
+  prior_scale = 1,
+  resample = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ breg_laplace(
 \item{center}{Should the numeric predictor variables be mean-centered?}
 
 \item{prior_scale}{Scale for the prior distribution on model coefficients (see 'Details').}
+
+\item{resample}{Should posterior draws from the multivariate normal approximation to the posterior be resampled using importance sampling?}
 }
 \value{
 A fitted Bayesian regression model (of class "breg_laplace").

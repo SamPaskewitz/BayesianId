@@ -2,8 +2,8 @@
 #' @param obj A "breg_laplace" object (fitted model).
 #' @param prob Probability of the interval (e.g. 0.9 for a 90\% interval).
 #' @returns Posterior credible intervals.
+#' @aliases posterior_interval
 #' @export
-#' @method posterior_interval breg_laplace
 posterior_interval.breg_laplace = function(obj, prob = 0.9){
   alpha = 1 - prob
   intervals = data.frame(lower = qnorm(p = alpha/2, mean = obj$post_mean, sd = obj$post_sd),

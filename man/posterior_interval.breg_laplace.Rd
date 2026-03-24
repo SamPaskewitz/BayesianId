@@ -2,6 +2,7 @@
 % Please edit documentation in R/breg_laplace_methods.R
 \name{posterior_interval.breg_laplace}
 \alias{posterior_interval.breg_laplace}
+\alias{posterior_interval}
 \title{Compute posterior credible intervals for model parameters (intercept plus fixed effects).}
 \usage{
 \method{posterior_interval}{breg_laplace}(obj, prob = 0.9)

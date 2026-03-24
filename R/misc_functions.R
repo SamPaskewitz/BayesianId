@@ -1,8 +1,8 @@
 #' Use bridge sampling to compute the marginal likelihood of a model fit by "optimizing".
 #' CURRENTLY THIS DOESN'T WORK
-#' @param draws_matrix
-#' @param stanmodel
-#' @param stan_data
+#' @param draws_matrix **
+#' @param stanmodel **
+#' @param stan_data **
 bridge_sampler_optim = function(draws_matrix, stanmodel, stan_data){
   empty_stanfit = sampling(object = stanmodel, chains = 0, data = stan_data) # empty stanfit object for defining log_post_fun
   log_post_fun = function(pars, data){
@@ -120,10 +120,18 @@ format_prob = function(tab){
   return(tab)
 }
 
-#' Fix probabilities that are slightly > 1 (by approx error) to be slightly < 1, and similarly fix probabilities that are slightly < 0 (by approx error) to be slightly > 0.
+#' Fix probabilities that are slightly >= 1 (by approx error) to be slightly < 1, and similarly fix probabilities that are slightly <= 0 (by approx error) to be slightly > 0.
 #' @param probs A vector of probabilities.
 bound_probs = function(probs){
-  probs[probs > 1] = 1 - .Machine$double.eps
-  probs[probs < 0] = .Machine$double.eps
+  probs[probs >= 1] = 1 - .Machine$double.eps
+  probs[probs <= 0] = .Machine$double.eps
   return(probs)
+}
+
+# Fix ratios (odds/Bayes factors) that overflow to Inf or -Inf to be finite.
+#' @param ratios A vector of probabilities.
+bound_ratios = function(ratios){
+  ratios[ratios == Inf] = .Machine$double.xmax
+  ratios[ratios == -Inf] = .Machine$double.xmin
+  return(ratios)
 }

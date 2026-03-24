@@ -34,35 +34,18 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
     )
     row.names(tab) = obj$model_info$term_names
   } else if(type == "term_odds"){
-    tab = data.frame("prior_odds" = obj$prior_term_probs/(1 - obj$prior_term_probs),
-                     "post_odds" = obj$post_term_probs/(1 - obj$post_term_probs),
+    tab = data.frame("prior_odds" = bound_ratios(obj$prior_term_probs/(1 - obj$prior_term_probs)),
+                     "post_odds" = bound_ratios(obj$post_term_probs/(1 - obj$post_term_probs)),
                      check.names = FALSE # prevent names from getting messed up
     )
-    tab[, "BF"] = tab[, "post_odds"]/tab[, "prior_odds"]
+    tab[, "BF"] = bound_ratios(tab[, "post_odds"]/tab[, "prior_odds"])
     row.names(tab) = obj$model_info$term_names
   } else if(type == "est"){
     tab = coef(obj)[,c("mean", "sd", "2.5 %", "97.5 %")]
   } else if(type == "dir_odds"){
-    tab = dir_odds(obj)
+    tab = dir_tests(obj, type = "odds")
   } else if(type == "dir_probs"){
-    # compute posterior probabilities of directional hypotheses and the point null
-    # we assume that the two dir hypotheses and point null are the only hypotheses
-    # the prior probability of the point null hypothesis is the same as for BMA (i.e. it's 1 - term_prob)
-    # the remaining prior probability (i.e. term_prob) is split evenly between the two directional hypotheses
-    dir_odds = dir_odds(obj)
-    post_probs20 = dir_odds[,"post_odds (β<0)"]/(dir_odds[,"post_odds (β<0)"] + dir_odds[,"post_odds (β>0)"] + 1)
-    post_probs30 = dir_odds[,"post_odds (β>0)"]/(dir_odds[,"post_odds (β<0)"] + dir_odds[,"post_odds (β>0)"] + 1)
-
-    # put the results in a nice table
-    tab = data.frame("p(β=0)" = 1 - obj$prior_term_probs[row.names(dir_odds)],
-                     "p(β=0|D)" = bound_probs(1 - post_probs20 - post_probs30),
-                     "p(β<0)" = 0.5*obj$prior_term_probs[row.names(dir_odds)],
-                     "p(β<0|D)" = bound_probs(post_probs20),
-                     "p(β>0)" = 0.5*obj$prior_term_probs[row.names(dir_odds)],
-                     "p(β>0|D)" = bound_probs(post_probs30),
-                     check.names = FALSE # prevent names from getting messed up
-                     )
-    row.names(tab) = row.names(dir_odds)
+    tab = dir_tests(obj, type = "probs")
   } else if(type == "model_probs"){
     tab = data.frame("p(M)" = obj$prior_model_probs,
                      "p(M | D)" = obj$post_model_probs,
@@ -94,38 +77,63 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
   return(tab)
 }
 
-#' Compute Bayes factors, posterior odds etc. for directional hypotheses (with the point null hypothesis as the denominator).
+#' Compute Bayes factors, posterior odds etc. (or posterior/prior probabilities) for directional hypotheses (with the point null hypothesis as the denominator).
 #' @param obj A "bma" object.
-#' @details This function is designed to be used in the BMA "summary" method with "dir_odds" or "dir_probs". It is not designed to be used by the analyst (and is therefore not exported).
-dir_odds = function(obj){
+#' @param type "odds" or "probs"
+#' @details This function is not designed to be used by the analyst and is therefore not exported.
+dir_tests = function(obj, type = "odds"){
   # get applicable terms (terms with same names as coefficients, thus excluding factor contrast codes etc.)
   to_use = intersect(obj$coef_names, obj$term_names)
   # log Bayes factors for the encompassing hypothesis (H1) vs. point null (H0)
   prior_odds10 = obj$prior_term_probs[to_use]/(1 - obj$prior_term_probs[to_use])
   post_odds10 = obj$post_term_probs[to_use]/(1 - obj$post_term_probs[to_use])
-  log_BF10 = log(post_odds10) - log(prior_odds10)
+  log_BF10 = log(bound_ratios(post_odds10/prior_odds10))
   # log Bayes factors for directional hypotheses (H2 and H3) vs. the encompassing hypothesis (H1)
   # we use the Savage-Dickey style encompassing prior approach (BF = post/prior)
   # because the prior is symmetric around 0, both prior directional probabilities are 0.5
   log_BF21 = log(coef(obj)[to_use,"p(β<0|D,β≠0)"]) - log(0.5)
   log_BF31 = log(coef(obj)[to_use,"p(β>0|D,β≠0)"]) - log(0.5)
-  # Bayes factors for directional hypotheses (H2 and H3) vs. the point null (H0)
-  BF20 = exp(log_BF21 + log_BF10)
-  BF30 = exp(log_BF31 + log_BF10)
+  # log Bayes factors for directional hypotheses (H2 and H3) vs. the point null (H0)
+  log_BF20 = log_BF21 + log_BF10
+  log_BF30 = log_BF31 + log_BF10
 
-  # compute prior odds (half of prior odds for term inclusion)
-  prior_odds20 = 0.5*prior_odds10
-  prior_odds30 = prior_odds20
+  # compute log prior odds (prior odds = half of prior odds for term inclusion)
+  log_prior_odds20 = log(0.5) + log(prior_odds10)
+  log_prior_odds30 = log_prior_odds20
+
+  # compute log posterior odds
+  log_post_odds20 = log_BF20 + log_prior_odds20
+  log_post_odds30 = log_BF30 + log_prior_odds30
 
   # put results in a table
-  tab = data.frame("prior_odds (β<0)" = prior_odds20,
-                   "post_odds (β<0)" = BF20*prior_odds20,
-                   "BF (β<0)" = BF20,
-                   "prior_odds (β>0)" = prior_odds30,
-                   "post_odds (β>0)" = BF30*prior_odds30,
-                   "BF (β>0)" = BF30,
-                   check.names = FALSE # prevent names from getting messed up
-  )
+  if(type == "odds"){
+    tab = data.frame("prior_odds (β<0)" = prior_odds20,
+                     "post_odds (β<0)" = exp(log_post_odds20),
+                     "BF (β<0)" = exp(log_BF20),
+                     "prior_odds (β>0)" = prior_odds30,
+                     "post_odds (β>0)" = exp(log_post_odds30),
+                     "BF (β>0)" = exp(log_BF30),
+                     check.names = FALSE # prevent names from getting messed up
+    )
+  } else if(type == "probs"){
+    # compute log posterior probs
+    post_prob0 <- post_prob2 <- post_prob3 <- rep(0.0, times = length(to_use))
+    for(i in 1:length(to_use)){
+      log_prob_denom = lse(c(log_post_odds20[i], log_post_odds30[i], 0))
+      post_prob0[i] = bound_probs(exp(0 - log_prob_denom))
+      post_prob2[i] = bound_probs(exp(log_post_odds20[i] - log_prob_denom))
+      post_prob3[i] = bound_probs(exp(log_post_odds30[i] - log_prob_denom))
+    }
+
+    tab = data.frame("p(β=0)" = 1/(prior_odds10 + 1),
+                     "p(β=0|D)" = post_prob0,
+                     "p(β<0)" = 0.5*prior_odds10/(prior_odds10 + 1),
+                     "p(β<0|D)" = post_prob2,
+                     "p(β>0)" = 0.5*prior_odds10/(prior_odds10 + 1),
+                     "p(β>0|D)" = post_prob3,
+                     check.names = FALSE # prevent names from getting messed up
+                     )
+  }
   row.names(tab) = to_use
   return(tab)
 }
