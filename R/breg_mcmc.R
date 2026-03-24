@@ -106,13 +106,13 @@ breg_mcmc = function(formula, data, family = "normal_linear", center = TRUE, pri
   }
 
   # ** compute variance-covariance matrix **
-  Sigma = as.matrix(stanfit)[,c("(Intercept)", coef_names)] |> cov()
+  Sigma = as.matrix(stanfit)[,c("(Intercept)", coef_names),drop=FALSE] |> cov()
 
   # ** assemble a "breg_mcmc" object **
   output = list(stanfit = stanfit,
                 draws_matrix = draws_matrix,
-                post_mean = as.matrix(stanfit)[, c("(Intercept)", coef_names)] |> colMeans(), # posterior mean
-                post_sd = as.matrix(stanfit)[, c("(Intercept)", coef_names)] |> apply(2, sd), # posterior SD
+                post_mean = as.matrix(stanfit)[, c("(Intercept)", coef_names), drop=FALSE] |> colMeans(), # posterior mean
+                post_sd = as.matrix(stanfit)[, c("(Intercept)", coef_names), drop=FALSE] |> apply(2, sd), # posterior SD
                 Sigma = Sigma, # posterior covariance matrix
                 log_evidence = bridgesampling::bridge_sampler(stanfit, silent = TRUE)$logml,
                 model_name = model_name,

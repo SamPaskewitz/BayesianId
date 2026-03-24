@@ -1,3 +1,26 @@
+#' Use bridge sampling to compute the marginal likelihood of a model fit by "optimizing".
+#' CURRENTLY THIS DOESN'T WORK
+#' @param draws_matrix
+#' @param stanmodel
+#' @param stan_data
+bridge_sampler_optim = function(draws_matrix, stanmodel, stan_data){
+  empty_stanfit = sampling(object = stanmodel, chains = 0, data = stan_data) # empty stanfit object for defining log_post_fun
+  log_post_fun = function(pars, data){
+    upars = unconstrain_pars(empty_stanfit, pars)
+    lp = log_prob(empty_stanfit, upars)
+    return(lp)
+  }
+  parameters = colnames(draws_matrix)
+  lb = rep(-Inf, length(parameters)); names(lb) = parameters
+  ub = rep(Inf, length(parameters)); names(ub) = parameters
+  bridge_out = bridgesampling::bridge_sampler(samples = draws_matrix,
+                                              log_posterior = log_post_fun,
+                                              silent = TRUE,
+                                              lb = lb,
+                                              ub = ub)
+  return(bridge_out)
+}
+
 #' Log-sum-exp trick (stable computation of the log of a sum of exponentials).
 #' @param a A vector of numbers.
 #' @returns log-sum-exp of the vector a.

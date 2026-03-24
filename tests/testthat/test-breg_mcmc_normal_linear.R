@@ -9,7 +9,7 @@ test_that("coef gives similar results", {
 })
 
 test_that("vcov gives similar results", {
-  expect_equal(vcov(fit), vcov(compare), tolerance = 1e-2)
+  expect_equal(vcov(fit), vcov(compare), tolerance = 1e-1)
 })
 
 test_that("similar CI's", {

@@ -5,7 +5,7 @@ data {
   matrix[N, K] X;  // population-level design matrix (no intercept, numeric vars centered)
   vector[K] Xcol_scale; // factors for converting scaled effects
   int prior_only;  // should the likelihood be ignored?
-  real<lower=0> prior_scale; // scale of prior distribution on standarized coefficients (delta's)
+  real<lower=0> prior_scale; // scale of prior distribution on standarized coefficients (delta)
 }
 parameters {
   real b0;  // actual intercept

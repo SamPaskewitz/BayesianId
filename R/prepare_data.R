@@ -33,6 +33,6 @@ prepare_data = function(formula_info, data, center = TRUE){
         data[,x_numeric_names] = data[,x_numeric_names] |> scale(center = TRUE, scale = FALSE) |> as.data.frame()
       }
 
-      return(data[,c(formula_info$x_names, formula_info$y_name)])
+      return(data[,c(formula_info$x_names, formula_info$y_name), drop = FALSE])
   }
 }

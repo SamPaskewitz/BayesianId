@@ -34,14 +34,20 @@ head(penguins)
 ```
 
 ```{r full_model}
-mass_breg_full = breg_laplace(body_mass ~ island*sex + flipper_len + bill_len,
+mass_breg_full = breg_laplace(#body_mass ~ island*sex + flipper_len + bill_len,
+                              body_mass ~ sex,
                               data = na.omit(penguins),
                               prior_scale = 0.707)
 ```
 
 ```{r check_full_model}
-plot(mass_breg_full, xvar = "flipper_len")
+plot(mass_breg_full, xvar = "bill_len")
 ```
+
+```{r}
+plot(mass_breg_full, group = "sex")
+```
+
 
 ```{r create_bma_object}
 tic = Sys.time()

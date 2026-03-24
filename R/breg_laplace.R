@@ -4,10 +4,11 @@
 #' @param family A string describing the response distribution and link function to be used in the model (see 'Details').
 #' @param center Should the numeric predictor variables be mean-centered?
 #' @param prior_scale Scale for the prior distribution on model coefficients (see 'Details').
+#' @param resample Should posterior draws from the multivariate normal approximation to the posterior be resampled using importance sampling?
 #' @returns A fitted Bayesian regression model (of class "breg_laplace").
 #' @details Currently this uses the Newton algorithm for optimization, because in my experience it more reliably finds the maximum than LBFGS, despite being slower.
 #' @export
-breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0){
+breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0, resample = FALSE){
   # ** get formula info **
   formula_info = parse_formula(formula)
 
@@ -44,6 +45,7 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
                                 init = init,
                                 draws = 10001,
                                 hessian = TRUE,
+                                importance_resampling = TRUE,
                                 algorithm = "Newton")
 
   # ** rename parameters **
@@ -61,12 +63,21 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
   # ** compute the posterior covariance matrix **
   Sigma = solve(-optim_fit$hessian[c("(Intercept)", coef_names), c("(Intercept)", coef_names), drop = FALSE])
 
-  # ** compute log evidence (log marginal likelihood) using the Laplace approximation **
-  n_par = nrow(optim_fit$hessian)
-  log_evidence = optim_fit$value - 0.5*determinant(optim_fit$hessian, logarithm = TRUE)$modulus[1] + 0.5*n_par*log(2*pi)
+  # ** do importance resampling (optionally) **
+  if(resample){
+    set.seed(1212) # set seed for consistency
+    resample_index = sample(1:10001, size = 10001, replace = TRUE, prob = exp(optim_fit$log_p - optim_fit$log_g))
+    draws_matrix = optim_fit$theta_tilde[resample_index,]
+  } else{
+    draws_matrix = optim_fit$theta_tilde
+  }
+
+  # ** compute log evidence (log marginal likelihood) with the Laplace approximation **
+    n_par = nrow(optim_fit$hessian)
+    log_evidence = optim_fit$value - 0.5*determinant(optim_fit$hessian, logarithm = TRUE)$modulus[1] + 0.5*n_par*log(2*pi)
 
   # ** assemble a "breg_laplace" object **
-  output = list(draws_matrix = optim_fit$theta_tilde,
+  output = list(draws_matrix = draws_matrix,
                 post_mean = optim_fit$par[c("(Intercept)", coef_names)], # posterior mean
                 post_sd = diag(Sigma) |> sqrt(), # posterior SD
                 Sigma = Sigma, # posterior covariance matrix
