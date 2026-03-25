@@ -107,10 +107,10 @@ dir_tests = function(obj, type = "odds"){
 
   # put results in a table
   if(type == "odds"){
-    tab = data.frame("prior_odds (β<0)" = prior_odds20,
+    tab = data.frame("prior_odds (β<0)" = exp(log_prior_odds20),
                      "post_odds (β<0)" = exp(log_post_odds20),
                      "BF (β<0)" = exp(log_BF20),
-                     "prior_odds (β>0)" = prior_odds30,
+                     "prior_odds (β>0)" = exp(log_prior_odds30),
                      "post_odds (β>0)" = exp(log_post_odds30),
                      "BF (β>0)" = exp(log_BF30),
                      check.names = FALSE # prevent names from getting messed up
@@ -219,6 +219,7 @@ coef.bma = function(obj){
 #' @md
 #' @importFrom emmeans emmeans
 #' @importFrom emmeans contrast
+#' @export contrast
 #' @export
 #' @method contrast bma
 contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){

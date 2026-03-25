@@ -3,6 +3,8 @@
 #' @param prob Probability of the interval (e.g. 0.9 for a 90\% interval).
 #' @returns Posterior credible intervals.
 #' @aliases posterior_interval
+#' @importFrom rstantools posterior_interval
+#' @export posterior_interval
 #' @export
 posterior_interval.breg_laplace = function(obj, prob = 0.9){
   alpha = 1 - prob

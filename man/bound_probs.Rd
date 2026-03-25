@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_functions.R
 \name{bound_probs}
 \alias{bound_probs}
-\title{Fix probabilities that are slightly > 1 (by approx error) to be slightly < 1, and similarly fix probabilities that are slightly < 0 (by approx error) to be slightly > 0.}
+\title{Fix probabilities that are slightly >= 1 (by approx error) to be slightly < 1, and similarly fix probabilities that are slightly <= 0 (by approx error) to be slightly > 0.}
 \usage{
 bound_probs(probs)
 }
@@ -10,5 +10,5 @@ bound_probs(probs)
 \item{probs}{A vector of probabilities.}
 }
 \description{
-Fix probabilities that are slightly > 1 (by approx error) to be slightly < 1, and similarly fix probabilities that are slightly < 0 (by approx error) to be slightly > 0.
+Fix probabilities that are slightly >= 1 (by approx error) to be slightly < 1, and similarly fix probabilities that are slightly <= 0 (by approx error) to be slightly > 0.
 }
