@@ -10,6 +10,7 @@ print.breg = function(obj){
 
 #' Show summary information about a "breg" object.
 #' @param obj A "breg" object (fitted model).
+#' @aliases summary
 #' @export
 #' @method summary breg
 summary.breg = function(obj){
@@ -51,6 +52,7 @@ terms.breg = function(obj){
 #' @param obj A "breg" object (fitted model).
 #' @returns The model data frame.
 #' @details Note that this will return any variables that have been mean-centered in the model fitting process as mean-centered.
+#' @aliases model.frame
 #' @export
 #' @method model.frame breg
 model.frame.breg = function(obj){
@@ -144,6 +146,7 @@ posterior_predict.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sam
 #' If "xvar" is not specified and "y" is numeric, then you get kernel density estimates of the distribution of the real data ("y", darker line) and the simulated data ("yrep", lighter lines, one for each simulated data set).
 #'
 #' If "group" is specified then there will be a subplot for each level of the grouping variable (using the "_grouped" version of the appropriate bayesplot function).
+#' @aliases plot
 #' @export
 plot.breg = function(obj, group = NA, xvar = NA){
   # simulate data from the posterior predictive distribution
@@ -187,6 +190,7 @@ plot.breg = function(obj, group = NA, xvar = NA){
 #' @param compute_sd Indicates whether predictive standard deviations should be computed.
 #' @returns If compute_sd is FALSE, a vector of posterior predictive means. If compute_sd is TRUE, a list with the posterior predictive means and standard deviations.
 #' @details This method is designed to be analogous to the "predict" method of lm and glm model objects. The "posterior_predict" method samples from the posterior predictive distribution; "predict" summarizes these samples to produce point predictions (means) and optionally their standard deviations (roughly analogous to predictive standard errors, but Bayesian).
+#' @aliases predict
 #' @export
 #' @method predict breg
 predict.breg = function(obj, newdata = NULL, compute_sd = FALSE){

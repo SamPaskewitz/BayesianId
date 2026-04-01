@@ -1,0 +1,148 @@
+---
+title: "Introduction to Bayesian Model Averaging"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Bayesian Model Averaging with the Laplace Approximation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+BayesianId is a regression package designed to straightforwardly tell you the probabilities of hypotheses given data. In other words, it gives you the posterior probabilities of hypotheses about model parameters. These hypothesis probabilities are what researchers really want instead of p-values (in their "Bayesian id", Gigerenzer, 2004).
+  The basic workflow for BayesianId is as follows
+  1) Fit a model with all the predictors (independent variables) that you think might be important. This is the full model.
+  2) Use plots of data against model predictions to assess the full model (distributional assumptions etc., NOT the set of predictors) and revise it if needed. For example, you might change from using basic linear regression to using log-linear regression.
+  3) Use the "bma" function with the (possibly revised) full model to perform Bayesian model averaging. First, the code fits models with all possible subsets of predictors. Then it computes how probable each model is given the data, which is based on how well each model predicted the data. You can then make inferences based on the whole set of models - weighted by their probabilities - instead of just one "best" model.
+  4) Analyze the "bma" object to make inferences about model parameters, which is what people typically care about.
+  To better understand how BayesianId uses Bayesian model averaging for interpretable inference, please see the relevant vignette.
+  BayesianId comes with two functions (breg_laplace and breg_mcmc) for estimating commonly used regression models (linear regression, logistic regression, ordinal logistic regression etc.). These run precompiled Stan code to estimate the models using either the Laplace approximation (which is much faster but potentially less accurate) or Markov chain Monte Carlo simulation (which is much slower but potentially more accurate). There is a vignette explaining how both functions (breg_laplace and breg_mcmc) are used. In most cases, I recommend using these built in functions for Bayesian model averaging.
+  However if the model you want to estimate is not supported yet by breg_laplace/breg_mcmc, you do Bayesian model averaging with most models that have been estimated using maximum likelihood estimation (e.g. from the lm or glm functions). This uses the BIC approximation to compute model probabilities for Bayesian model averaging. Plugging in maximum likelihood estimates like this gives you "quick and dirty" approximate Bayesian inference that is still better than using p-values.
+
+```{r setup}
+library(BayesianId)
+library(tidyverse)
+```
+
+This vignette will show you how to do linear regression with multiple predictor/independent variables (x1 and x2) using Bayesian model averaging (BMA).
+
+First, we will simulate some data.
+- y is our predicted/dependent variable
+- x1 is a numeric predictor/independent variable
+- x2 is a factor (categorical predictor/independent variable) with two levels
+
+In the simulation below, x1 is truly related to y (it has a non-zero regression coefficient/slope), while x2 is not truly related to y (its slope is zero).
+```{r simulate_data}
+set.seed(1212) # set random seed for consistency
+beta0 = 1.0 # true intercept
+beta1 = 0.5 # true slope for x1
+beta2 = 0.0 # true slope for x2 (no effect)
+sigma = 0.7 # true residual/error SD
+n = 50 # sample size
+sim_data = data.frame(x1 = rnorm(n),
+                      x2 = sample(c("group a", "group b"), size = n, replace = TRUE) |> as.factor()) |>
+  mutate(y = rnorm(n = n, mean = beta0 + beta1*x1 + beta2*(x2 == "group b"), sd = sigma))
+
+head(sim_data) # look at the first few rows
+```
+## Fitting the Model
+First, we fit the full regression model, i.e. the model that includes all predictors (in this case both x1 and x2). We'll use the function breg_laplace, which does Bayesian estimation using the Laplace (multivariate normal) approximation to the posterior distribution. We could also use breg_mcmc for Markov chain Monte Carlo sampling, but that's much slower.
+```{r full_model}
+full_model = breg_laplace(y ~ x1 + x2,
+                          data = sim_data,
+                          prior_scale = 0.707)
+```
+
+## Graphical Model Checking
+
+Now we need to check the model using posterior predictive plots. First we'll use the basic plot method to show a kernel density estimate (basically a smooth histogram) of the real data (y) and several simulated data sets from the fitted model (y_rep).
+```{r post_pred_plot}
+plot(full_model)
+```
+The simulated data from the fitted model (y_rep, light lines) looks pretty similar to the real data (y, dark line): this suggests that basic linear regression is a good fit for this data set.
+
+We should also look at a posterior predictive scatterplot of y vs. x1 (the numeric predictor). To do this, we use the "xvar" argument of "plot". Running the code multiple times will produce slightly different plots, because a new simulated data set (y_rep) is produced each time.
+```{r post_pred_scatterplot}
+plot(full_model, xvar = "x1")
+```
+
+We can also make a posterior predictive density plot separated by levels of the factor (x2) using the "group" argument.
+```{r post_pred_groups}
+plot(full_model, xvar = "x1", group = "x2")
+```
+
+Finally we can make scatterplots of y vs. x1 for each level of x2.
+```{r post_pred_scatter_plot_groups}
+plot(full_model, xvar = "x1", group = "x2")
+```
+All of these posterior predictive plots look good: the simulated data resembles the real data.
+
+## Bayesian Model Averaging (BMA)
+We do NOT make any inferences using the full model alone. The full model assumes that all of the predictors (both x1 and x2) are related to the predicted variable (y), i.e. that they both have non-zero regression coefficients. This may not be the case.
+
+Instead, we make all of our inferences using Bayesian model averaging (BMA). This involves fitting all of the relevant submodels (including subsets of the predictors), computing the posterior probabilities of these submodels (using Bayes factors), and then using these results for estimation and hypothesis testing.
+
+#### Understanding the Submodels
+To illustrate the concept of nested submodels, we can use the "submodels" function as shown below (it is not necessary to manually use this function when doing an actual analysis). You will see a table with 4 rows, each labeled with a model formula. Each row represents one of the 4 submodels. The two columns (labeled "x1" and "x2") indicate whether each model includes the relevant predictor. The top row ("~ x1 + x2") is the full model. It includes both predictors (x1 and x2), so both columns are labeled "TRUE". The second row ("~ x1") is the submodel that includes x1 but not x2. The third row ("~ x2") is the submodel that includes x2 but not x1. Finally, the fourth row ("~ 1") is the submodel that does not include either predictor, only the intercept.
+```{r}
+submodels(y ~ x1 + x2)$included_table
+```
+
+#### Creating a BMA Object
+The first step is to create a BMA object, which takes the full model and fits all other the submodels shown in the table above. We do this using the "bma" function.
+```{r create_bma_object}
+tic = Sys.time()
+bma_object = bma(full_model)
+toc = Sys.time()
+print(toc - tic)
+```
+
+#### Model Probabilities
+The first thing to look at are the prior and posterior model probabilities. We can do this using the 'summary' function with the argument 'type = "model_probs"'. This produces a table with 4 rows, each one corresponding to one of the submodels (with the full model on top).
+```{r model_probs}
+summary(bma_object, type = "model_probs")
+```
+
+By asking for "model_odds", you get the prior odds, posterior odds, and Bayes factors for each model (the denominator of each of these ratios is the full model).
+```{r model_odds}
+summary(bma_object, type = "model_odds")
+```
+
+## Hypothesis Testing: Term Inclusion
+The most basic hypothesis you can test is whether a term should be included in the model, i.e. whether an effect exists (beta = 0 vs. beta != 0). To compute the probabilities of these hypotheses, we simply add up the probabilities of the corresponding models. Using "summary" on a bma object with "type = 'term_probs'" produces a convenient table.
+```{r term_probs}
+summary(bma_object, type = "term_probs")
+```
+We can see here that there is a high posterior probability that x1 has an effect/should be included in the model, while we're less sure about x2 (although it's more probable that it should be omitted).
+
+You can also get prior odds, posterior odds, and Bayes factors if desired (the denominator of all these ratios is the point null hypothesis that beta = 0).
+```{r term_odds}
+summary(bma_object, type = "term_odds")
+```
+
+## Directional: Hypothesis Testing
+Usually we don't hypothesize merely that an effect exists (i.e. that the term should be included in the model), but that it goes in a particular direction (i.e. beta < 0 or beta > 0). You can ask "summary" for "dir_probs" to get prior and posterior probabilities for these tests.
+```{r dir_probs}
+summary(bma_object, type = "dir_probs")
+```
+Like with the term inclusion tests, you can also obtain prior odds, posterior odds, and Bayes factors (the denominator of all these ratios is the point null hypothesis that beta = 0).
+```{r dir_odds}
+summary(bma_object, type = "dir_odds")
+```
+
+## Estimates of Regression Coefficients
+You can also use 'summary' on a bma object to get estimates (posterior mean, SD, and 95% posterior credible interval) of regression coefficients. These estimates are conditioned on the coefficient existing, i.e. being non-zero.
+```{r est}
+summary(bma_object, type = "est")
+```
+
+You can use "plot" to plot the posterior distibutions of regression coefficients (it currently only works for numeric predictors, not factors).
+```{r plot_x1}
+plot(bma_object, coef = "x1")
+```
+
