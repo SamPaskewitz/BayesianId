@@ -41,7 +41,8 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
     tab[, "BF"] = bound_ratios(tab[, "post_odds"]/tab[, "prior_odds"])
     row.names(tab) = obj$model_info$term_names
   } else if(type == "est"){
-    tab = coef(obj)[,c("mean", "sd", "2.5 %", "97.5 %")]
+    tab = rbind(coef(obj)[intersect(obj$coef_names, obj$term_names), c("mean", "sd", "2.5 %", "97.5 %")],
+                show_emmeans(obj, factors = obj$term_names[obj$is_factor]))
   } else if(type == "dir_odds"){
     tab = dir_tests(obj, type = "odds")
   } else if(type == "dir_probs"){
@@ -200,29 +201,9 @@ coef.bma = function(obj){
   return(est_table)
 }
 
-#' Get BMA estimates of contrasts (for interpreting factors).
-#' @param obj A "bma" object.
-#' @param factors The names(s) of the factor or factors for which to compute contrasts. If multiple factor names are listed, then the corresponding interaction contrasts are computed. See the examples below.
-#' @param ref Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces.
-#' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
-#' @returns A table (data frame) with the following information:
-#' * mean: posterior mean
-#' * sd: posterior standard deviation
-#' * 2.5 %: lower end of 95% posterior credible interval
-#' * 97.5 %: upper end of 95% posterior credible interval
-#' * p(c<0|D,c≠0): posterior probability that the contrast is negative (if non-zero)
-#' * p(c>0|D,c≠0): posterior probability that the contrast is positive (if non-zero)
-#' @details
-#' This is based on the 'contrast' method of the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA). The contrasts computed are based on the 'trt.vs.ctrl' method.
-#' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors.
-#' Posterior credible intervals are computed using a normal approximation.
-#' @md
-#' @importFrom emmeans emmeans
-#' @importFrom emmeans contrast
-#' @export contrast
-#' @export
-#' @method contrast bma
-contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){
+#' Get a list of emmeans objects for submodels that include all the factors in the "factors" argument, along with their re-normalized probabilities (pi).
+#' This function is designed only for use internally (within the package), so it is not exported.
+emmeans_by_model = function(obj, factors){
   # check that "factors" is of type "character"
   if(!is.character(factors)){
     stop("The argument 'factors' should be of type 'character'.")
@@ -241,8 +222,98 @@ contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){
   pi = exp(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl])))
   # compute emmeans for all selected models
   emmeans_list = lapply(obj$fit_list[incl], function(x){emmeans(x, specs = factors)})
+  return(list(emmeans_list = emmeans_list, pi = pi, incl = incl))
+}
+
+#' Get BMA estimates of factor level means (for interpreting factors).
+#' @param obj A "bma" object.
+#' @param factors The names(s) of the factor or factors for which to compute means.
+#' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
+#' @returns A table (data frame) with the following information:
+#' * mean: posterior mean
+#' * sd: posterior standard deviation
+#' * 2.5 %: lower end of 95% posterior credible interval
+#' * 97.5 %: upper end of 95% posterior credible interval
+#' @details
+#' This is based on the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA).
+#' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors.
+#' Posterior credible intervals are computed using a normal approximation.
+#' @md
+#' @importFrom emmeans emmeans
+#' @export
+show_emmeans = function(obj, factors, pretty = TRUE){
+  # get emmeans for all selected models
+  em_list = emmeans_by_model(obj, factors)
+  emmeans_list = em_list$emmeans_list
+  pi = em_list$pi
+  incl = em_list$incl
+  # set up table for BMA factor means
+  if(length(factors) == 1){
+    row_names = summary(emmeans_list[[1]])[ , factors]
+  } else{
+    row_names = apply(summary(emmeans_list[[1]])[ , factors], 1, paste, collapse = ".")
+  }
+  nm = length(row_names)
+  means_table = data.frame(row.names = row_names, mean = rep(0.0, nm), sd = rep(1.0, nm), "2.5 %" = rep(0.0, nm), "97.5 %" = rep(0.0, nm), check.names = FALSE)
+  # Bayesian model averaging (Hoeting, Madigan, Raftery, & Volinsky, 1999)
+  for(i in 1:nrow(means_table)){
+    if(sum(incl) > 1){ # multiple models include the factors
+      mu = sapply(emmeans_list, function(x){summary(x)$emmean[i]})
+      sigma = sapply(emmeans_list, function(x){summary(x)$SE[i]})
+      means_table[i, "mean"] = sum(mu*pi)
+      means_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + mu^2)) - means_table[i, "mean"]^2)
+      means_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
+      means_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
+    } else{ # only one model includes the factors
+      mu = emmeans_list[[1]]$estimate
+      sigma = emmeans_list[[1]]$SE
+      means_table[i, "mean"] = mu
+      means_table[i, "sd"] = sigma
+      means_table[i, "2.5 %"] = qnorm(p = 0.025, mean = mu, sd = sigma)
+      means_table[i, "97.5 %"] = qnorm(p = 0.975, mean = mu, sd = sigma)
+    }
+  }
+  # make output "pretty" if desired
+  if(pretty){
+    means_table = means_table |> signif(digits = 5)
+  }
+  return(means_table)
+}
+
+#' Get BMA estimates of contrasts (for interpreting factors).
+#' @param obj A "bma" object.
+#' @param factors The names(s) of the factor or factors for which to compute contrasts. If multiple factor names are listed, then the corresponding interaction contrasts are computed. See the examples below.
+#' @param ref Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces. Optionally you can input "grand_mean" to use the average over all levels as the reference (i.e. compute effect contrasts).
+#' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
+#' @returns A table (data frame) with the following information:
+#' * mean: posterior mean
+#' * sd: posterior standard deviation
+#' * 2.5 %: lower end of 95% posterior credible interval
+#' * 97.5 %: upper end of 95% posterior credible interval
+#' * p(c<0|D,c≠0): posterior probability that the contrast is negative (if non-zero)
+#' * p(c>0|D,c≠0): posterior probability that the contrast is positive (if non-zero)
+#' @details
+#' This is based on the 'contrast' method of the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA). The contrasts computed are based on the 'trt.vs.ctrl' method unless the argument 'ref' is set to 'grand_mean', in which case they are based on the 'eff' method.
+#' All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors.
+#' Posterior credible intervals are computed using a normal approximation.
+#' @md
+#' @importFrom emmeans emmeans
+#' @importFrom emmeans contrast
+#' @export contrast
+#' @export
+#' @method contrast bma
+contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){
+  # get emmeans for all selected models
+  em_list = emmeans_by_model(obj, factors)
+  emmeans_list = em_list$emmeans_list
+  pi = em_list$pi
+  incl = em_list$incl
   # compute contrasts for all selected models
-  contrast_list = lapply(emmeans_list, function(x){contrast(x, method = "trt.vs.ctrl", ref = ref, infer = FALSE) |> as.data.frame()})
+  if(ref == "grand_mean"){
+    contrast_list = lapply(emmeans_list, function(x){contrast(x, method = "eff", infer = FALSE) |> as.data.frame()})
+  } else{
+    contrast_list = lapply(emmeans_list, function(x){contrast(x, method = "trt.vs.ctrl", ref = ref, infer = FALSE) |> as.data.frame()})
+  }
   nc = nrow(contrast_list[[1]])
   # set up table for BMA contrasts
   contrast_table = data.frame(row.names = contrast_list[[1]]$contrast, mean = rep(0.0, nc), sd = rep(1.0, nc), "2.5 %" = rep(0.0, nc), "97.5 %" = rep(0.0, nc), check.names = FALSE)

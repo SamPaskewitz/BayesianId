@@ -1,0 +1,102 @@
+---
+title: "Bayesian ANOVA"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Bayesian ANOVA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(BayesianId)
+library(dplyr)
+```
+
+This vignette will show you how to use BayesianId for the Bayesian equivalent of a 2 x 3 ANOVA. You should probably go through the "intro-to-bma" vignette before reading this one.
+
+First we will simulate some data. There are two factors called "f1" and "f2". "f1" has two levels, which are labeled "a" and "b". "f2" has three levels, which are labeled "c", "d", and "e". There are 10 simulated people in each cell of the design. The predicted (dependent) variable is called "y". There are main effects of f1 and f2, but no interaction.
+```{r simulate_data}
+set.seed(1212) # set random seed for consistency
+sim_data = data.frame(f1 = c("a", "b") |> rep(times = 3*10) |> as.factor(),
+                      f2 = c("c", "d", "e") |> rep(each = 2*10) |> as.factor()) |>
+  mutate(y = rnorm(60, mean = case_when(f1 == "a" ~  1, f1 == "b" ~ 2) + case_when(f2 %in% c("c", "d") ~ 0, f2 == "e" ~ 4), sd = 1))
+
+table(sim_data$f1, sim_data$f2)
+```
+## Fitting the Model
+We first fit the full model using the Laplace approximation. ** ADD DISCUSSION OF PRIOR SCALE
+```{r full_model}
+full_model = breg_laplace(y ~ f1*f2,
+                          data = sim_data)
+```
+
+## Graphical Model Checking
+To check whether a basic linear model is appropriate for the data, we will use posterior predictive density plots. Using the "group" argument, we can make separate plots that divide the data based on the two factors.
+
+```{r post_pred_plot_by_f1}
+plot(full_model, group = "f1")
+```
+
+```{r post_pred_plot_by_f2}
+plot(full_model, group = "f2")
+```
+
+The simulated data (yrep) looks similar to the real data (y) within each panel, so our linear model is reasonable.
+
+## Bayesian Model Averaging (BMA)
+
+#### Understanding the Submodels
+
+```{r}
+submodels(y ~ f1*f2)$included_table
+```
+
+#### Creating a BMA Object
+The first step is to create a BMA object, which takes the full model and fits all other the submodels shown in the table above. We do this using the "bma" function.
+
+** FINISH THE VIGNETTE
+```{r create_bma_object}
+tic = Sys.time()
+bma_object = bma(full_model,
+                 prior_intr_condprobs = list("f1:f2" = 0.5) |> unlist())
+toc = Sys.time()
+print(toc - tic)
+```
+
+#### Model Probabilities
+
+```{r model_probs}
+summary(bma_object, type = "model_probs")
+```
+
+
+## Hypothesis Testing: Term Inclusion
+
+```{r term_probs}
+summary(bma_object, type = "term_probs")
+```
+
+```{r term_odds}
+summary(bma_object, type = "term_odds")
+```
+
+## Estimating Contrasts
+
+```{r}
+contrast(bma_object, factors = "f1")
+```
+
+```{r}
+contrast(bma_object, factors = "f2")
+```
+
+```{r}
+contrast(bma_object, factors = c("f1", "f2"))
+```
