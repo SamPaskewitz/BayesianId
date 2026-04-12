@@ -265,8 +265,8 @@ show_emmeans = function(obj, factors, pretty = TRUE){
       means_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
       means_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
     } else{ # only one model includes the factors
-      mu = emmeans_list[[1]]$estimate
-      sigma = emmeans_list[[1]]$SE
+      mu = summary(emmeans_list[[1]])$emmean[i]
+      sigma = summary(emmeans_list[[1]])$SE[i]
       means_table[i, "mean"] = mu
       means_table[i, "sd"] = sigma
       means_table[i, "2.5 %"] = qnorm(p = 0.025, mean = mu, sd = sigma)
@@ -328,8 +328,8 @@ contrast.bma = function(obj, factors, ref = 1, pretty = TRUE){
       contrast_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
       contrast_table[i, "p(c<0|D,c≠0)"] = pmix(q = 0, pi = pi, mu = mu, sigma = sigma)
     } else{ # only one model includes the factors
-      mu = contrast_list[[1]]$estimate
-      sigma = contrast_list[[1]]$SE
+      mu = contrast_list[[1]]$estimate[i]
+      sigma = contrast_list[[1]]$SE[i]
       contrast_table[i, "mean"] = mu
       contrast_table[i, "sd"] = sigma
       contrast_table[i, "2.5 %"] = qnorm(p = 0.025, mean = mu, sd = sigma)

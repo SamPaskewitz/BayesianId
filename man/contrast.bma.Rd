@@ -11,7 +11,7 @@
 
 \item{factors}{The names(s) of the factor or factors for which to compute contrasts. If multiple factor names are listed, then the corresponding interaction contrasts are computed. See the examples below.}
 
-\item{ref}{Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces.}
+\item{ref}{Integer or character specifying which level/level combination to use as the reference. If there are multiple factors, then combine factor level names in order, separated by spaces. Optionally you can input "grand_mean" to use the average over all levels as the reference (i.e. compute effect contrasts).}
 
 \item{pretty}{Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.}
 }
@@ -30,7 +30,7 @@ A table (data frame) with the following information:
 Get BMA estimates of contrasts (for interpreting factors).
 }
 \details{
-This is based on the 'contrast' method of the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA). The contrasts computed are based on the 'trt.vs.ctrl' method.
+This is based on the 'contrast' method of the emmeans package. That package is used to compute the expected marginal means and posterior standard deviations, which are then combined using Bayesian model averaging (BMA). The contrasts computed are based on the 'trt.vs.ctrl' method unless the argument 'ref' is set to 'grand_mean', in which case they are based on the 'eff' method.
 All estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include all of the relevant factors.
 Posterior credible intervals are computed using a normal approximation.
 }

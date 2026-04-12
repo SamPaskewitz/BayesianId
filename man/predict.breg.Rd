@@ -2,6 +2,7 @@
 % Please edit documentation in R/breg_methods_and_utilities.R
 \name{predict.breg}
 \alias{predict.breg}
+\alias{predict}
 \title{Predicted values (means and optionally SD's) based on a fitted model.}
 \usage{
 \method{predict}{breg}(obj, newdata = NULL, compute_sd = FALSE)

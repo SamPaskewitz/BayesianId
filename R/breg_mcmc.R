@@ -9,6 +9,7 @@
 #' @param chains Number of MCMC chains (see rstan documentation).
 #' @param iter Number of MCMC iterations (see rstan documentation).
 #' @param warmup Number of warmup/burnin iterations (see rstan documentation).
+#' @param n_trials Number of trials per observation for binomial regression (optional).
 #' @returns A fitted Bayesian regression model (of class "breg").
 #' @details
 #' \subsection{Available Models}{
@@ -40,7 +41,7 @@
 #' }
 #' @md
 #' @export
-breg_mcmc = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0, seed = NA, chains = 4, iter = 10000, warmup = floor(iter/4)){
+breg_mcmc = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0, seed = NA, chains = 4, iter = 10000, warmup = floor(iter/4), n_trials = NULL){
   # ** get formula info **
   formula_info = parse_formula(formula)
 
@@ -50,7 +51,7 @@ breg_mcmc = function(formula, data, family = "normal_linear", center = TRUE, pri
                       center = center)
 
   # ** set up Stan data **
-  stan_data = make_stan_data(formula_info = formula_info, data = data, family = family, prior_scale = prior_scale)
+  stan_data = make_stan_data(formula_info = formula_info, data = data, family = family, prior_scale = prior_scale, n_trials = n_trials)
 
   # ** pick the Stan model to use **
   # NOTE: later this will be more elaborate to deal with mixed effects models etc.

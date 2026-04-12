@@ -2,6 +2,7 @@
 % Please edit documentation in R/breg_methods_and_utilities.R
 \name{model.frame.breg}
 \alias{model.frame.breg}
+\alias{model.frame}
 \title{Return the data frame used for fitting the model.}
 \usage{
 \method{model.frame}{breg}(obj)

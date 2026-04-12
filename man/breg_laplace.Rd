@@ -10,7 +10,8 @@ breg_laplace(
   family = "normal_linear",
   center = TRUE,
   prior_scale = 1,
-  resample = FALSE
+  resample = FALSE,
+  n_trials = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ breg_laplace(
 \item{prior_scale}{Scale for the prior distribution on model coefficients (see 'Details').}
 
 \item{resample}{Should posterior draws from the multivariate normal approximation to the posterior be resampled using importance sampling?}
+
+\item{n_trials}{Number of trials per observation for binomial regression (optional).}
 }
 \value{
 A fitted Bayesian regression model (of class "breg_laplace").

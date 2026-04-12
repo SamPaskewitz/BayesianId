@@ -98,6 +98,9 @@ simulate.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sample.int(.
   if("Ymax" %in% names(obj$stan_data)){
     stan_data$Ymax = obj$stan_data$Ymax
   }
+  if("N_trials" %in% names(obj$stan_data)){
+    stan_data$N_trials = obj$stan_data$N_trials
+  }
 
   # sample from the posterior predictive distribution
   stanfit = rstan::gqs(object = stan_model_to_use,
@@ -141,7 +144,7 @@ posterior_predict.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sam
 #'
 #' If "xvar" is specified, then the data is represented as a scatterplot with "xvar" on the x-axis and both "y" (the real data) and "yrep" (points from one simulated data set) on the y-axis. This plot uses "ppc_intervals" from bayesplot, but with the intervals removed (and only one data set) because I find them visually distracting.
 #'
-#' If "xvar" is not specified and "y" is binary or categorical, then you get a bar plot showing the actual data counts along with the median count from the simulated data. This uses "ppc_bars" with the intervals removed (again, I find them visually distracting).
+#' If "xvar" is not specified and "y" is binary, count, or categorical, then you get a bar plot showing the actual data counts along with the median count from the simulated data. This uses "ppc_bars" with the intervals removed (again, I find them visually distracting).
 #'
 #' If "xvar" is not specified and "y" is numeric, then you get kernel density estimates of the distribution of the real data ("y", darker line) and the simulated data ("yrep", lighter lines, one for each simulated data set).
 #'
@@ -161,7 +164,7 @@ plot.breg = function(obj, group = NA, xvar = NA){
 
   # select type of post pred plot
   if(is.na(xvar)){
-    if(obj$model_name %in% c("bernoulli_logistic")){
+    if(obj$model_name %in% c("bernoulli_logistic", "binomial_logistic", "poisson")){
       if(is.na(group)){
         pt = bayesplot::ppc_bars(y = y, yrep = Y_tilde_samples, prob = 0)
       } else{

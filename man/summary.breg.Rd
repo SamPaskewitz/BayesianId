@@ -2,6 +2,7 @@
 % Please edit documentation in R/breg_methods_and_utilities.R
 \name{summary.breg}
 \alias{summary.breg}
+\alias{summary}
 \title{Show summary information about a "breg" object.}
 \usage{
 \method{summary}{breg}(obj)

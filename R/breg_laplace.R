@@ -5,10 +5,11 @@
 #' @param center Should the numeric predictor variables be mean-centered?
 #' @param prior_scale Scale for the prior distribution on model coefficients (see 'Details').
 #' @param resample Should posterior draws from the multivariate normal approximation to the posterior be resampled using importance sampling?
+#' @param n_trials Number of trials per observation for binomial regression (optional).
 #' @returns A fitted Bayesian regression model (of class "breg_laplace").
 #' @details Currently this uses the Newton algorithm for optimization, because in my experience it more reliably finds the maximum than LBFGS, despite being slower.
 #' @export
-breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0, resample = FALSE){
+breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, prior_scale = 1.0, resample = FALSE, n_trials = NULL){
   # ** get formula info **
   formula_info = parse_formula(formula)
 
@@ -18,7 +19,7 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
                       center = center)
 
   # ** set up Stan data **
-  stan_data = make_stan_data(formula_info = formula_info, data = data, family = family, prior_scale = prior_scale)
+  stan_data = make_stan_data(formula_info = formula_info, data = data, family = family, prior_scale = prior_scale, n_trials = n_trials)
 
   # ** pick the Stan model to use **
   # NOTE: later this will be more elaborate to deal with mixed effects models etc.
@@ -46,7 +47,8 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
                                 draws = 10001,
                                 hessian = TRUE,
                                 importance_resampling = TRUE,
-                                algorithm = "Newton")
+                                algorithm = ifelse(model_name == "binomial_logistic", "LBFGS", "Newton"))
+  # for some reason, the Newton algorithm doesn't work for binomial regression
 
   # ** rename parameters **
   names(optim_fit$par)[names(optim_fit$par) == "b0"] = "(Intercept)"

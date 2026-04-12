@@ -2,6 +2,7 @@
 % Please edit documentation in R/breg_methods_and_utilities.R
 \name{plot.breg}
 \alias{plot.breg}
+\alias{plot}
 \title{Create a posterior predictive plot for diagnostic purposes.}
 \usage{
 \method{plot}{breg}(obj, group = NA, xvar = NA)
@@ -21,7 +22,7 @@ The type of plot created depends on the predicted/dependent variable ("y") and w
 
 If "xvar" is specified, then the data is represented as a scatterplot with "xvar" on the x-axis and both "y" (the real data) and "yrep" (points from one simulated data set) on the y-axis. This plot uses "ppc_intervals" from bayesplot, but with the intervals removed (and only one data set) because I find them visually distracting.
 
-If "xvar" is not specified and "y" is binary or categorical, then you get a bar plot showing the actual data counts along with the median count from the simulated data. This uses "ppc_bars" with the intervals removed (again, I find them visually distracting).
+If "xvar" is not specified and "y" is binary, count, or categorical, then you get a bar plot showing the actual data counts along with the median count from the simulated data. This uses "ppc_bars" with the intervals removed (again, I find them visually distracting).
 
 If "xvar" is not specified and "y" is numeric, then you get kernel density estimates of the distribution of the real data ("y", darker line) and the simulated data ("yrep", lighter lines, one for each simulated data set).
 

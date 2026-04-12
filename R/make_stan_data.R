@@ -3,6 +3,7 @@
 #' @param data A data frame
 #' @param family ****
 #' @param prior_scale ****
+#' @param n_trials ****
 #' @returns A list with the following elements:
 #' data: a modified data frame that is ready for regression
 #' x_numeric_names: names of data variables that are numeric
@@ -11,7 +12,7 @@
 #' * DESCRIBE THE CONTRAST CODES ETC
 #'
 
-make_stan_data = function(formula_info, data, family = "normal_linear", prior_scale = 1){
+make_stan_data = function(formula_info, data, family = "normal_linear", prior_scale = 1, n_trials = NULL){
   # ** convert Y to an integer vector if needed **
   if(family %in% c("bernoulli_logistic")){
     Y = as.integer(data[, formula_info$lhs]) - 1
@@ -103,6 +104,11 @@ make_stan_data = function(formula_info, data, family = "normal_linear", prior_sc
                          which_ncens = which_ncens)
       )
     }
+  }
+
+  # add n_trials if relevant
+  if(family == "binomial_logistic"){
+    stan_data$N_trials = n_trials
   }
 
   return(stan_data)

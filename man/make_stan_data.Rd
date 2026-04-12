@@ -4,7 +4,13 @@
 \alias{make_stan_data}
 \title{***}
 \usage{
-make_stan_data(formula_info, data, family = "normal_linear", prior_scale = 1)
+make_stan_data(
+  formula_info,
+  data,
+  family = "normal_linear",
+  prior_scale = 1,
+  n_trials = NULL
+)
 }
 \arguments{
 \item{formula_info}{**}
@@ -14,6 +20,8 @@ make_stan_data(formula_info, data, family = "normal_linear", prior_scale = 1)
 \item{family}{****}
 
 \item{prior_scale}{****}
+
+\item{n_trials}{****}
 }
 \value{
 A list with the following elements:

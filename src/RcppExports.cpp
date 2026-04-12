@@ -16,6 +16,10 @@ RcppExport SEXP _rcpp_module_boot_stan_fit4bernoulli_logistic_est_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4bernoulli_logistic_intercept_est_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4bernoulli_logistic_intercept_sim_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4bernoulli_logistic_sim_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4binomial_logistic_est_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4binomial_logistic_intercept_est_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4binomial_logistic_intercept_sim_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4binomial_logistic_sim_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4lognormal_linear_est_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4lognormal_linear_intercept_est_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4lognormal_linear_intercept_sim_mod();
@@ -38,6 +42,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4bernoulli_logistic_intercept_est_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4bernoulli_logistic_intercept_est_mod, 0},
     {"_rcpp_module_boot_stan_fit4bernoulli_logistic_intercept_sim_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4bernoulli_logistic_intercept_sim_mod, 0},
     {"_rcpp_module_boot_stan_fit4bernoulli_logistic_sim_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4bernoulli_logistic_sim_mod, 0},
+    {"_rcpp_module_boot_stan_fit4binomial_logistic_est_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4binomial_logistic_est_mod, 0},
+    {"_rcpp_module_boot_stan_fit4binomial_logistic_intercept_est_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4binomial_logistic_intercept_est_mod, 0},
+    {"_rcpp_module_boot_stan_fit4binomial_logistic_intercept_sim_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4binomial_logistic_intercept_sim_mod, 0},
+    {"_rcpp_module_boot_stan_fit4binomial_logistic_sim_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4binomial_logistic_sim_mod, 0},
     {"_rcpp_module_boot_stan_fit4lognormal_linear_est_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4lognormal_linear_est_mod, 0},
     {"_rcpp_module_boot_stan_fit4lognormal_linear_intercept_est_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4lognormal_linear_intercept_est_mod, 0},
     {"_rcpp_module_boot_stan_fit4lognormal_linear_intercept_sim_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4lognormal_linear_intercept_sim_mod, 0},

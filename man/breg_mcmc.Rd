@@ -13,7 +13,8 @@ breg_mcmc(
   seed = NA,
   chains = 4,
   iter = 10000,
-  warmup = floor(iter/4)
+  warmup = floor(iter/4),
+  n_trials = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ breg_mcmc(
 \item{iter}{Number of MCMC iterations (see rstan documentation).}
 
 \item{warmup}{Number of warmup/burnin iterations (see rstan documentation).}
+
+\item{n_trials}{Number of trials per observation for binomial regression (optional).}
 }
 \value{
 A fitted Bayesian regression model (of class "breg").
