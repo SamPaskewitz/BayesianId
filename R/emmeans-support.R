@@ -6,7 +6,8 @@ recover_data.breg <- function(object, ...) {
   attr(data, "call") = object$call
   attr(data, "terms") = terms(object) |> delete.response()
   attr(data, "predictors") = object$formula_info$x_names
-  attr(data, "responses") = object$formula_info$y_name
+  attr(data, "responses") = character()
+  #attr(data, "responses") = object$formula_info$y_name
   return(data)
 }
 
