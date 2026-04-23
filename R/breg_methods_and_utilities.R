@@ -164,6 +164,7 @@ plot.breg = function(obj, group = NA, xvar = NA){
 
   # select type of post pred plot
   if(is.na(xvar)){
+    # discrete data (y)
     if(obj$model_name %in% c("bernoulli_logistic", "binomial_logistic", "poisson")){
       if(is.na(group)){
         pt = bayesplot::ppc_bars(y = y, yrep = Y_tilde_samples, prob = 0)
@@ -171,6 +172,7 @@ plot.breg = function(obj, group = NA, xvar = NA){
         pt = bayesplot::ppc_bars_grouped(y = y, yrep = Y_tilde_samples, group = obj$data[,group], prob = 0)
       }
     } else{
+      # continuous data (y)
       if(is.na(group)){
         pt = bayesplot::ppc_dens_overlay(y = y, yrep = Y_tilde_samples)
       } else{

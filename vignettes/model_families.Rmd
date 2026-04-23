@@ -1,0 +1,286 @@
+---
+title: "Model Families"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Model Families}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(BayesianId)
+library(dplyr)
+```
+
+This vignette will explain the different model families (i.e. types of regression model) available for the breg_laplace and breg_mcmc functions, and give examples of how to use each of them.
+
+## Linear Regression (Continuous Data)
+This is the classic linear regression model that you probably learned about in your first statistics course. Linear regression is often suitable for cases where the predicted/dependent variable ($y$) is either continuous, or close to continuous. If $y$ is strictly positive and strongly right-skewed, try log-linear regression (see below).
+
+### Examples of When to Use
+The predicted variable ($y$) is:
+
+- height
+- skin conductance
+- a numeric rating on a very wide visual analogue scale (e.g. 100 response categories), so that it is nearly continuous, where hardly anyone responds at the upper or lower limit
+
+### Math
+The predicted/dependent variable ($y$) has a conditionally normal distribution: 
+$$y | \beta_0, \vec{\beta}, \vec{x}, \sigma \sim \text{normal}(\beta_0 + \beta_1 x_1 + \cdots, \sigma)$$
+The conditional expected value (regression line) is simply the linear combination of the predictors ($x_1, \cdots = \vec{x}$ and the regression coefficients ($\vec{\beta} = \beta_1, \cdots$), plus the intercept ($\beta_0$):
+$$E[y | \beta_0, \vec{\beta}, \vec{x}] = \beta_0 + \beta_1 x_1 + \cdots$$
+
+### Simulate Data
+```{r}
+set.seed(1212)
+beta0 = 0.2
+beta1 = 1.0
+  
+linear_sim_data = data.frame(x = rnorm(n = 50)) |>
+  mutate(y = rnorm(n = 50, beta0 + beta1*x, sd = 0.8))
+head(linear_sim_data)
+```
+
+### Fitting the Model
+```{r}
+linear_fit = breg_laplace(y ~ x, 
+                          data = linear_sim_data,
+                          family = "normal_linear")
+```
+
+#### Posterior Predictive Plots
+```{r}
+plot(linear_fit)
+```
+
+```{r}
+plot(linear_fit, xvar = "x")
+```
+
+
+## Right-Censored Linear Regression (Continuous Data with an Upper Bound)
+Right-censored linear regression is a variant of linear regression that you can use when there is some maximum value (upper bound) for recording the predicted/dependent variable ($y$).
+
+### Examples of When to Use
+The predicted variable ($y$) is:
+
+- height, but where everyone taller than 6 feet is marked as ``> 6 ft'' instead of with their specific height
+- a numeric rating on visual analogue scale like that described above, but where (due to some oversight in the experimental design) only the bottom half of the scale is used
+
+### Math
+Define $y^*$ as the value of $y$ that would have been recorded if not for the censoring (i.e. upper limit on recording). We use a linear regression model for $y^*$:
+$$y^* | \beta_0, \vec{\beta}, \vec{x}, \sigma \sim \text{normal}(\beta_0 + \beta_1 x_1 + \cdots, \sigma)$$
+The actually observed variable ($y$) is equal to $y^*$ if below the censoring limit ($y_\text{max}$), or equal to the limit if above it:
+$$y = \begin{cases} y^* & \text{if } y^* < y_\text{max} \\
+y_\text{max} & \text{if } y^* \geq y_\text{max}
+\end{cases}$$
+
+### Simulate Data
+```{r}
+set.seed(1212)
+beta0 = 0.2
+beta1 = 1.0
+y_max = 1.5
+  
+rcens_sim_data = data.frame(x = rnorm(n = 50)) |>
+  mutate(y = rnorm(n = 50, beta0 + beta1*x, sd = 0.8)) |>
+  mutate(y = ifelse(y < y_max, y, y_max))
+head(rcens_sim_data)
+```
+
+### Fitting the Model
+```{r}
+rcens_fit = breg_laplace(y ~ x, 
+                         data = rcens_sim_data,
+                         family = "right_censored_linear")
+```
+
+#### Posterior Predictive Plots
+```{r}
+plot(rcens_fit)
+```
+
+```{r}
+plot(rcens_fit, xvar = "x")
+```
+
+## Log-Linear Regression (Right-Skewed, Positive Continuous Data)
+Often your predicted/dependent variable ($y$) is strictly positive ($y > 0$) and strongly right-skewed. In these cases log-linear regression might make more sense than linear regression.
+
+### Examples of When to Use
+The predicted variable ($y$) is:
+
+- response time
+
+### Math
+Log-linear regression is just another name for doing linear regression with a logarithmic transformation of $y$:
+$$\log(y) | \beta_0, \vec{\beta}, \vec{x}, \sigma \sim \text{normal}(\beta_0 + \beta_1 x_1 + \cdots, \sigma)$$
+
+$$y | \beta_0, \vec{\beta}, \vec{x}, \sigma \sim \text{log-normal}(\beta_0 + \beta_1 x_1 + \cdots, \sigma)$$
+It was therefore not strictly necessary of course to program log-linear regression into **BayesianId** (we could have just explicitly log-transformed $y$). However explicitly programming log-linear regression makes it more convenient to produce plots etc. on the original scale of the data, rather the log-transformed scale (this is something I learned from **brms**).
+
+### Simulate Data
+```{r}
+set.seed(1212)
+beta0 = 0.2
+beta1 = 1.0
+  
+loglinear_sim_data = data.frame(x = rnorm(n = 50)) |>
+  mutate(y = exp(rnorm(n = 50, beta0 + beta1*x, sd = 0.8)))
+head(loglinear_sim_data)
+```
+
+### Fitting the Model
+```{r}
+loglinear_fit = breg_laplace(y ~ x,
+                             data = loglinear_sim_data,
+                             family = "lognormal_linear")
+```
+
+#### Posterior Predictive Plots
+```{r}
+plot(loglinear_fit)
+```
+
+```{r}
+plot(loglinear_fit, xvar = "x")
+```
+
+## Logistic Regression (Binary Data)
+Logistic regression is suitable for binary data, i.e. your predicted (dependent) variable falls into two categories.
+
+### Examples of When to Use
+The predicted variable ($y$) is:
+
+- agreement or disagreement with a single statement
+- choosing to take the smaller/sooner option on a single trial delay discounting task
+
+### Math
+Logistic regression is a generalized linear model (GLM) with:
+
+- The logit as the link function
+$$\beta_0 + \beta_1 x_1 + \cdots = \text{logit}\big( E[y | \beta_0, \vec{\beta}, \vec{x}] \big)$$
+
+- The logistic as the inverse link function
+$$E[y | \beta_0, \vec{\beta}, \vec{x}] = \text{logistic}(\beta_0 + \beta_1 x_1 + \cdots)$$
+
+- A Bernoulli noise distribution
+$$y | \beta_0, \vec{\beta}, \vec{x} \sim \text{Bernoulli}\big( \text{logistic}(\beta_0 + \beta_1 x_1 + \cdots) \big)$$
+
+### Simulate Data
+```{r}
+logistic_sim_data = data.frame(x = rnorm(n = 50)) |>
+  mutate(y = rbinom(n = 50, size = 1, prob = plogis(beta0 + beta1*x)) |> as.factor())
+head(logistic_sim_data)
+```
+
+### Fitting the Model
+```{r}
+logistic_fit = breg_laplace(y ~ x, 
+                            data = logistic_sim_data,
+                            family = "bernoulli_logistic")
+```
+
+#### Posterior Predictive Plots
+```{r}
+plot(logistic_fit)
+```
+
+```{r}
+plot(logistic_fit, xvar = "x")
+```
+
+## Binomial Regression (Bounded Count Data)
+Binomial regression is suitable for bounded count data. Your predicted (dependent) variable is the number of times something happens out of a set number of trials, so the number of trials is the upper bound.
+
+### Examples of When to Use
+The predicted variable ($y$) is:
+
+- the number of correct responses on a memory test (with a fixed number of trials)
+
+### Math
+Binomial regression is a generalized linear model (GLM) with:
+
+- A scaled logit as the link function (where $k = \text{the number of trials}$):
+$$\beta_0 + \beta_1 x_1 + \cdots = \tfrac{1}{k} \; \text{logit}\big( E[y | \beta_0, \vec{\beta}, \vec{x}] \big)$$
+
+- A scaled logistic as the inverse link function
+$$E[y | \beta_0, \vec{\beta}, \vec{x}] = k \; \text{logistic}(\beta_0 + \beta_1 x_1 + \cdots)$$
+
+- A binomial noise distribution
+$$y | \beta_0, \vec{\beta}, \vec{x} \sim \text{binomial}\big( k \; \text{logistic}(\beta_0 + \beta_1 x_1 + \cdots) \big)$$
+
+### Simulate Data
+```{r}
+binomial_sim_data = data.frame(x = rnorm(n = 50)) |>
+  mutate(y = rbinom(n = 50, size = 10, prob = plogis(beta0 + beta1*x)))
+head(binomial_sim_data)
+```
+
+### Fitting the Model
+```{r}
+binomial_fit = breg_laplace(y ~ x, 
+                            data = binomial_sim_data,
+                            family = "binomial_logistic",
+                            n_trials = 10)
+```
+
+#### Posterior Predictive Plots
+```{r}
+plot(binomial_fit)
+```
+
+```{r}
+plot(binomial_fit, xvar = "x")
+```
+
+## Poisson Regression (Unbounded Count Data)
+Poisson regression is suitable for unbounded count data, i.e. when your predicted (dependent) variable is the number of times something happens and doesn't have an upper limit. Often, the data will be the number of times a certain event occurs within a fixed period of time.
+
+### Examples of When to Use
+The predicted variable ($y$) is:
+
+- the number of fish caught in a one hour fishing simulation
+- the number of hamburgers eaten in a week
+
+### Math
+Poisson regression is a generalized linear model (GLM) with:
+
+- The natural log as the link function
+$$\beta_0 + \beta_1 x_2 + \cdots = \log\big( E[y | \beta_0, \vec{\beta}, \vec{x}] \big)$$
+
+- The natural exponential as the inverse link function
+$$E[y | \beta_0, \vec{\beta}, \vec{x}] = \text{exp}(\beta_0 + \beta_1 x_1 + \cdots)$$
+
+- Poisson as the noise distribution
+$$y | \vec{\beta}, \vec{x} \sim \text{Poisson}\big( \text{exp}(\beta_0 + \beta_1 x_1 + \cdots) \big)$$
+
+### Simulate Data
+```{r}
+poisson_sim_data = data.frame(x = rnorm(n = 50)) |>
+  mutate(y = rpois(n = 50, lambda = exp(beta0 + beta1*x)))
+head(poisson_sim_data)
+```
+
+### Fitting the Model
+```{r}
+poisson_fit = breg_laplace(y ~ x, 
+                           data = poisson_sim_data,
+                           family = "poisson")
+```
+
+#### Posterior Predictive Plots
+```{r}
+plot(poisson_fit)
+```
+
+```{r}
+plot(poisson_fit, xvar = "x")
+```
