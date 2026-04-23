@@ -135,3 +135,8 @@ bound_ratios = function(ratios){
   ratios[ratios == -Inf] = .Machine$double.xmin
   return(ratios)
 }
+
+#' Check if a number is an integer (not the integer data type, but actually an integer); this is based on the example in the documentation for "is.integer".
+is.wholenumber <- function(x, tol = .Machine$double.eps^0.5){
+  abs(x - round(x)) < tol
+}

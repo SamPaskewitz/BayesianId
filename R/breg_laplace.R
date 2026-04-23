@@ -21,6 +21,9 @@ breg_laplace = function(formula, data, family = "normal_linear", center = TRUE, 
   # ** set up Stan data **
   stan_data = make_stan_data(formula_info = formula_info, data = data, family = family, prior_scale = prior_scale, n_trials = n_trials)
 
+  # ** check data **
+  check_data(stan_data, family, n_trials)
+
   # ** pick the Stan model to use **
   # NOTE: later this will be more elaborate to deal with mixed effects models etc.
   model_name = family
