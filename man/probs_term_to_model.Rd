@@ -22,8 +22,3 @@ Convert term inclusion probabilities into model probablities.
 \details{
 Prior probabilities for main effects are assumed to be independent of each other. Prior probabilities for two-way interactions are conditional on the inclusion of both relevant main effects, those for three-way interactions on the inclusion of relevant main effects and two-way interactions, etc.
 }
-\examples{
-* ADD THESE, ESPECIALLY TO SHOW HOW INTERACTIONS WORK
-
-
-}

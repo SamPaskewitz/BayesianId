@@ -1,17 +1,4 @@
-#' ***
-#' @param formula_info **
-#' @param data A data frame
-#' @param family ****
-#' @param prior_scale ****
-#' @param n_trials ****
-#' @returns A list with the following elements:
-#' data: a modified data frame that is ready for regression
-#' x_numeric_names: names of data variables that are numeric
-#' x_factor_names: names of data variables that are factors
-#' @details
-#' * DESCRIBE THE CONTRAST CODES ETC
-#'
-
+#' Set up a list of data for Stan.
 make_stan_data = function(formula_info, data, family = "normal_linear", prior_scale = 1, n_trials = NULL){
   # ** convert Y to an integer vector if needed **
   if(family %in% c("bernoulli_logistic")){

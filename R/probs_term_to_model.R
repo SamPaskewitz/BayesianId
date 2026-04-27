@@ -5,10 +5,6 @@
 #' @param model_info Information about submodels, returned by using the function "submodels" on "formula(full_model)".
 #' @returns A named vector of model probabilities (names = model formulas).
 #' @details Prior probabilities for main effects are assumed to be independent of each other. Prior probabilities for two-way interactions are conditional on the inclusion of both relevant main effects, those for three-way interactions on the inclusion of relevant main effects and two-way interactions, etc.
-#' @examples
-#' * ADD THESE, ESPECIALLY TO SHOW HOW INTERACTIONS WORK
-#'
-#'
 
 probs_term_to_model = function(main_probs, intr_condprobs, model_info){
   # check that "term_probs" has the correct names in the correct order

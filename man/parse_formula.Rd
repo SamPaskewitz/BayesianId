@@ -6,12 +6,6 @@
 \usage{
 parse_formula(formula)
 }
-\arguments{
-\item{formula}{** REVISE}
-}
-\value{
-A list containing the following elements: lhs = left hand side, fixed = fixed effects, random = random effects, fixed_main = fixed effects that are not interactions, fixed_interaction = fixed effects that are interactions.
-}
 \description{
 Parse a regression model formula into its component parts.
 }

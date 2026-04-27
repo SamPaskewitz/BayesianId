@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_stan_data.R
 \name{make_stan_data}
 \alias{make_stan_data}
-\title{***}
+\title{Set up a list of data for Stan.}
 \usage{
 make_stan_data(
   formula_info,
@@ -12,26 +12,6 @@ make_stan_data(
   n_trials = NULL
 )
 }
-\arguments{
-\item{formula_info}{**}
-
-\item{data}{A data frame}
-
-\item{family}{****}
-
-\item{prior_scale}{****}
-
-\item{n_trials}{****}
-}
-\value{
-A list with the following elements:
-data: a modified data frame that is ready for regression
-x_numeric_names: names of data variables that are numeric
-x_factor_names: names of data variables that are factors
-}
 \description{
-***
-}
-\details{
-* DESCRIBE THE CONTRAST CODES ETC
+Set up a list of data for Stan.
 }

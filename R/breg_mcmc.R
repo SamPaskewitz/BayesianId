@@ -9,19 +9,20 @@
 #' @param chains Number of MCMC chains (see rstan documentation).
 #' @param iter Number of MCMC iterations (see rstan documentation).
 #' @param warmup Number of warmup/burnin iterations (see rstan documentation).
-#' @param n_trials Number of trials per observation for binomial regression (optional).
-#' @returns A fitted Bayesian regression model (of class "breg").
+#' @param n_trials Number of trials per observation for binomial regression (not needed for other model families).
+#' @returns A fitted Bayesian regression model (of classes "breg" and "breg_mcmc").
 #' @details
-#' \subsection{Available Models}{
-#' * normal_linear: ADD DETAILS
-#' * right_censored_linear:
-#' * bernoulli_logistic:
+#' \subsection{More Information}{
+#' More information is contained in the following vignettes:
+#'- model_families.Rmd: a list of the available types of model and a description of when to use each
+#' - basic_linear_regression.Rmd: shows the methods available for "breg" objects
+#' - intro-to-bma.Rmd: gives an explanation and example of how to use Bayesian model averaging (BMA) for variable estimation/selection
 #' }
-#' \subsection{The Fitted Model Object}{
-#' ADD THIS
+#' \subsection{Computational Details}{
+#' This function uses Stan's Markov chain Monte Carlo (MCMC) algorithm to sample from the posterior distribution of model parameters. It uses the same Stan files as breg_laplace.
 #' }
 #' \subsection{Prior Distributions}{
-#' The residual variance (\eqn{\sigma^2}) has a non-informative Jefferys prior.
+#' The residual variance (\eqn{\sigma^2}) has a non-informative Jeffereys prior.
 #' The intercept (\eqn{\beta_0}) has a non-informative uniform prior.
 #' The code does not directly put priors on the regression coefficients (\eqn{\beta_1, \beta_2, \ldots}). Instead it gives priors to standardized coefficients (\eqn{\delta_1, \delta_2, \ldots}):
 #' \deqn{\delta_i \sim \text{Cauchy}(0, r) \text{ for } i = 1, 2, \ldots}
@@ -37,7 +38,7 @@
 #' \deqn{\delta_i = \frac{\beta_i}{1.81} \text{ if } x_i \text{ is a contrast code for a factor}}
 #' Why divide by 1.81? The latent variable interpretation of logistic regression (and related models) states that:
 #' \deqn{y = 1 \text{ if } u > 0}
-#' where \eqn{u} is a latent variable with a standard logistic distribution. The standard logistic distribution has the following standard deviation: \eqn{\text{SD}(u) = \pi/\sqrt{3} \approx 1.81}. Thus the standardization above is consistent with the standardization for normal models: it is a generalization of Cohen's d to the latent scale. ** GIVE REFS
+#' where \eqn{u} is a latent variable with a standard logistic distribution. The standard logistic distribution has the following standard deviation: \eqn{\text{SD}(u) = \pi/\sqrt{3} \approx 1.81}. Thus the standardization above is consistent with the standardization for normal models: it is a generalization of Cohen's d to the latent scale.
 #' }
 #' @md
 #' @export

@@ -7,7 +7,7 @@
 submodels(formula)
 }
 \arguments{
-\item{formula}{An object of class formula or brmsformula (or one that can be coerced to that classes): A symbolic description of the full model, i.e. the model including all terms being considered. This could also be a string representing the formula.}
+\item{formula}{An object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.}
 }
 \value{
 A list containing the following elements:
@@ -19,10 +19,14 @@ included_table = same info as "included" except in a data frame
 n_models = number of models
 n_terms = number of fixed effects
 term_names = names of fixed effects. The models are listed in each component of the output in the same order, with the full model given first.
+intr_names = names of interactions
+main_names = names of main effects
+n_intr = number of interactions
+n_main = number of main effects
 }
 \description{
 Find all the submodels (full model plus restricted models) given a regression model formula.
 }
 \details{
-This function ignores random effects; appropriate random effects for submodels can be obtained using the "add_random_effects" function. GIVE FURTHER DETAILS**
+Given a formula for the full model (i.e. the model including all predictors of possible interest), this function returns information about all submodels. By "submodel" we mean a model that includes a subset of the original predictors. The principle of marginality is automatically respected, i.e. a model with an interaction is only included if all corresponding main effects (and lower order interactions, if applicable) are also included. This function is mainly designed for internal use within the package to figure out which models are to be fit for Bayesian model averaging.
 }

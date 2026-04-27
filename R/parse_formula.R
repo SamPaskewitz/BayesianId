@@ -1,7 +1,4 @@
 #' Parse a regression model formula into its component parts.
-#' @param formula ** REVISE
-#' @returns A list containing the following elements: lhs = left hand side, fixed = fixed effects, random = random effects, fixed_main = fixed effects that are not interactions, fixed_interaction = fixed effects that are interactions.
-#'
 parse_formula = function(formula){
   # Get the complete left hand side (split around "~", then take part 1)
   lhs = strsplit(as.character(formula), "\\s*\\~\\s*")[[2]]

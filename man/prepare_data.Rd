@@ -6,16 +6,6 @@
 \usage{
 prepare_data(formula_info, data, center = TRUE)
 }
-\arguments{
-\item{formula_info}{**}
-
-\item{data}{A data frame.}
-
-\item{center}{****}
-}
-\value{
-**
-}
 \description{
 Prepare data for being converted to a design matrix: convert character variables to factors, give appropriate contrasts for Bayesian inference, and optionally mean-center numeric predictors.
 }
