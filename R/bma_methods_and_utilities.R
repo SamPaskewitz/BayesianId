@@ -11,15 +11,17 @@ print.bma = function(obj){
 
 #' Summarize information about a "bma" object.
 #' @param obj A "bma" object.
-#' @param type Type of summary. Options are "dir_probs", "dir_BF", "term_probs", "term_odds", "model_probs", "model_odds", and "est" (defaults to "term_probs"). See "Details".
+#' @param type Type of summary. See "Details" for options.
 #' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
 #' @details Here is information about the different summary types.
 #' * dir_probs: Posterior probabilities from tests of whether each coefficient is negative (β<0), positive (β>0), or zero (β=0). Coefficients for factor contrast codes are excluded because they are not easily interpretable. The point null hypothesis has the same prior probability as in Bayesian model averaging; the two directional hypotheses have equal prior probabilities (each equal to half the prior probability for term inclusion in BMA).
 #' * dir_odds: Bayes factors, prior odds, and posterior odds from tests of whether each coefficient is negative (β<0) or positive (β>0). The comparison hypothesis (the denominator) is the null hypothesis that β=0. Coefficients for factor contrast codes are excluded because they are not easily interpretable. Two directional hypotheses have equal prior odds, each equal to half the prior odds for term inclusion in BMA.
 #' * term_probs: Prior and posterior probabilities from tests of whether each model term should be included (β≠0) or omitted (β=0).
-#' * term_odds: Bayes factors, prior odds, and posterior odds from tests of whether each model term should be included (β≠0) or omitted (β=0).
+#' * term_odds: Prior and posterior odds from tests of whether each model term should be included (β≠0) or omitted (β=0).
+#' * term_bf: Bayes factors from tests of whether each model term should be included (β≠0) or omitted (β=0).
 #' * model_probs: Prior and posterior probabilities for each model.
-#' * model_odds: Bayes factors, prior odds, and posterior odds for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
+#' * model_odds: Prior and posterior odds for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
+#' model_bf: Bayes factors for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
 #' * est: Estimates (posterior mean, SD, and 95% credible interval) for model coefficients. These are computed using a mixture of normals approximation.
 #' @md
 #' @export
@@ -32,14 +34,19 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
                      "p(β≠0|D)" = obj$post_term_probs,
                      check.names = FALSE # prevent names from getting messed up
     )
-    row.names(tab) = obj$model_info$term_names
+    row.names(tab) = obj$term_names
   } else if(type == "term_odds"){
-    tab = data.frame("prior_odds" = bound_ratios(obj$prior_term_probs/(1 - obj$prior_term_probs)),
-                     "post_odds" = bound_ratios(obj$post_term_probs/(1 - obj$post_term_probs)),
+    tab = data.frame("prior_odds (β≠0 vs β=0)" = obj$prior_term_odds,
+                     "post_odds (β≠0 vs β=0)" = obj$post_term_odds,
                      check.names = FALSE # prevent names from getting messed up
     )
-    tab[, "BF"] = bound_ratios(tab[, "post_odds"]/tab[, "prior_odds"])
-    row.names(tab) = obj$model_info$term_names
+    row.names(tab) = obj$term_names
+  } else if(type == "term_bfs"){
+    tab = data.frame("BF (β≠0 vs β=0)" = obj$term_bfs,
+                     "BF (β=0 vs β≠0)" = bound_ratios(1/obj$term_bfs),
+                     check.names = FALSE # prevent names from getting messed up
+                     )
+    row.names(tab) = obj$term_names
   } else if(type == "est"){
     tab = rbind(coef(obj)[intersect(obj$coef_names, obj$term_names), c("mean", "sd", "2.5 %", "97.5 %")],
                 show_emmeans(obj, factors = obj$term_names[obj$is_factor]))
@@ -47,6 +54,8 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
     tab = dir_tests(obj, type = "odds")
   } else if(type == "dir_probs"){
     tab = dir_tests(obj, type = "probs")
+  } else if(type == "dir_bfs"){
+    tab = dir_tests(obj, type = "bf")
   } else if(type == "model_probs"){
     tab = data.frame("p(M)" = obj$prior_model_probs,
                      "p(M | D)" = obj$post_model_probs,
@@ -56,9 +65,13 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
     } else if(type == "model_odds"){
       tab = data.frame("prior_odds" = obj$prior_model_odds,
                        "post_odds" = obj$post_model_odds,
-                       "BF" = obj$model_bfs,
                        check.names = FALSE # prevent names from getting messed up
       )
+      row.names(tab) = obj$model_info$model_names
+    } else if(type == "model_bfs"){
+      tab = data.frame("BF" = obj$model_bf,
+                       check.names = FALSE # prevent names from getting messed up
+                       )
       row.names(tab) = obj$model_info$model_names
     } else{
     stop("Summary type not recognized. Please use 'help(summary.bma)' for options.")
@@ -67,7 +80,7 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
   if(pretty){
     if(type %in% c("term_probs", "model_probs", "dir_probs")){
       tab = tab |> format_prob()
-    } else if(type %in% c("term_odds", "model_odds", "dir_odds")){
+    } else if(type %in% c("term_odds", "term_bfs", "model_odds", "model_bfs", "dir_odds", "dir_bfs")){
       tab = tab |> signif(digits = 3) |> format(scientific = TRUE)
     } else if(type == "est"){
       tab = tab |> signif(digits = 3)
@@ -80,7 +93,7 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
 
 #' Compute Bayes factors, posterior odds etc. (or posterior/prior probabilities) for directional hypotheses (with the point null hypothesis as the denominator).
 #' @param obj A "bma" object.
-#' @param type "odds" or "probs"
+#' @param type "odds, "bf", or "probs"
 #' @details This function is not designed to be used by the analyst and is therefore not exported.
 dir_tests = function(obj, type = "odds"){
   # get applicable terms (terms with same names as coefficients, thus excluding factor contrast codes etc.)
@@ -108,12 +121,15 @@ dir_tests = function(obj, type = "odds"){
 
   # put results in a table
   if(type == "odds"){
-    tab = data.frame("prior_odds (β<0)" = exp(log_prior_odds20),
-                     "post_odds (β<0)" = exp(log_post_odds20),
-                     "BF (β<0)" = exp(log_BF20),
-                     "prior_odds (β>0)" = exp(log_prior_odds30),
-                     "post_odds (β>0)" = exp(log_post_odds30),
-                     "BF (β>0)" = exp(log_BF30),
+    tab = data.frame("prior_odds (β<0 vs β=0)" = exp(log_prior_odds20),
+                     "post_odds (β<0 vs β=0)" = exp(log_post_odds20),
+                     "prior_odds (β>0 vs β=0)" = exp(log_prior_odds30),
+                     "post_odds (β>0 vs β=0)" = exp(log_post_odds30),
+                     check.names = FALSE # prevent names from getting messed up
+    )
+  } else if(type == "bf") {
+    tab = data.frame("BF (β<0 vs. β=0)" = exp(log_BF20),
+                     "BF (β>0 vs. β=0)" = exp(log_BF30),
                      check.names = FALSE # prevent names from getting messed up
     )
   } else if(type == "probs"){

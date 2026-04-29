@@ -120,7 +120,10 @@ We can use "summary" to give us the prior odds, posterior odds, and Bayes factor
 ```{r term_odds}
 summary(linear_bma, type = "term_odds")
 ```
-The column "BF" now give the Bayes factor with $H_1$ in the numerator and $H_0$ in the denominator, so it should be the inverse of the Bayes factor for the intercept-only model ("~ 1", corresponding to $H_0$) reported in "model_odds".
+We can also get Bayes factors for term inclusion:
+```{r term_bfs}
+summary(linear_bma, type = "term_bfs")
+```
 
 We can also get the prior and posterior probabilities of the hypotheses:
 ```{r term_probs}
@@ -136,6 +139,10 @@ We can use the "summary" to obtain prior odds, posterior odds, and Bayes factors
 ```{r dir_odds}
 summary(linear_bma, type = "dir_odds")
 ```
+```{r}
+summary(linear_bma, type = "dir_bfs")
+```
+
 
 We can also get the prior and posterior probabilities of these hypotheses:
 ```{r dir_probs}

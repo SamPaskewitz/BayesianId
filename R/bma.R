@@ -65,9 +65,16 @@ bma = function(full_model,
   # convert model posterior probs to term posterior probs
   post_term_probs = probs_model_to_term(post_model_probs, model_info)
 
+  # convert term prior and posterior probs to odds
+  prior_term_odds = bound_ratios(prior_term_probs/(1 - prior_term_probs))
+  post_term_odds = bound_ratios(post_term_probs/(1 - post_term_probs))
+
   # put results together
-  output = list(prior_term_probs = prior_term_probs,
+  output = list(prior_term_odds = prior_term_odds,
+                prior_term_probs = prior_term_probs,
+                post_term_odds = post_term_odds,
                 post_term_probs = post_term_probs,
+                term_bfs = bound_ratios(post_term_odds/prior_term_odds),
                 prior_model_odds = prior_model_odds,
                 prior_model_probs = prior_model_probs,
                 post_model_odds = post_model_odds,
