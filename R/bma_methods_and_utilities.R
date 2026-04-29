@@ -13,6 +13,7 @@ print.bma = function(obj){
 #' @param obj A "bma" object.
 #' @param type Type of summary. See "Details" for options.
 #' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
+#' @param n_models_shown Only show the models with the highest posterior probability (for "model_odds", "model_bfs", or "model_probs"). Set to NULL to show all models.
 #' @details Here is information about the different summary types.
 #' * dir_probs: Posterior probabilities from tests of whether each coefficient is negative (β<0), positive (β>0), or zero (β=0). Coefficients for factor contrast codes are excluded because they are not easily interpretable. The point null hypothesis has the same prior probability as in Bayesian model averaging; the two directional hypotheses have equal prior probabilities (each equal to half the prior probability for term inclusion in BMA).
 #' * dir_odds: Bayes factors, prior odds, and posterior odds from tests of whether each coefficient is negative (β<0) or positive (β>0). The comparison hypothesis (the denominator) is the null hypothesis that β=0. Coefficients for factor contrast codes are excluded because they are not easily interpretable. Two directional hypotheses have equal prior odds, each equal to half the prior odds for term inclusion in BMA.
@@ -26,7 +27,7 @@ print.bma = function(obj){
 #' @md
 #' @export
 #' @method summary bma
-summary.bma = function(obj, type = "term_probs", pretty = TRUE){
+summary.bma = function(obj, type = "term_probs", pretty = TRUE, n_models_shown = 8){
   if(type == "term_probs"){
     tab = data.frame("p(β=0)" = 1 - obj$prior_term_probs,
                      "p(β=0|D)" = 1 - obj$post_term_probs,
@@ -76,6 +77,13 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE){
     } else{
     stop("Summary type not recognized. Please use 'help(summary.bma)' for options.")
     }
+  # reduce the number of models shown (if applicable, optionally)
+  if(!is.null(n_models_shown)){
+    if(type %in% c("model_odds", "model_bfs", "model_probs")){
+      kth_highest_prob = sort(bma_object$post_model_probs, decreasing = TRUE)[n_models_shown]
+      tab = tab[obj$post_model_probs >= kth_highest_prob, ]
+    }
+  }
   # make output pretty (optionally)
   if(pretty){
     if(type %in% c("term_probs", "model_probs", "dir_probs")){

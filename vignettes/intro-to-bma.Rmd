@@ -33,10 +33,10 @@ This vignette will show you how to do linear regression with multiple predictor/
 
 First, we will simulate some data.
 - y is our predicted/dependent variable
-- x1 is a numeric predictor/independent variable
+- x1 is a numeric predictor/independent variables
 - x2 is a factor (categorical predictor/independent variable) with two levels
 
-In the simulation below, x1 is truly related to y (it has a non-zero regression coefficient/slope), while x2 is not truly related to y (its slope is zero).
+In the simulation below, x1 is truly related to y (it has a non-zero regression coefficient/slope), while x2 is not truly related to y.
 ```{r simulate_data}
 set.seed(1212) # set random seed for consistency
 beta0 = 1.0 # true intercept
@@ -51,7 +51,7 @@ sim_data = data.frame(x1 = rnorm(n),
 head(sim_data) # look at the first few rows
 ```
 ## Fitting the Model
-First, we fit the full regression model, i.e. the model that includes all predictors (in this case both x1 and x2). We'll use the function breg_laplace, which does Bayesian estimation using the Laplace (multivariate normal) approximation to the posterior distribution. We could also use breg_mcmc for Markov chain Monte Carlo sampling, but that's much slower.
+First, we fit the full regression model, i.e. the model that includes all predictors (in this case x1 and x2). We'll use the function breg_laplace, which does Bayesian estimation using the Laplace (multivariate normal) approximation to the posterior distribution. We could also use breg_mcmc for Markov chain Monte Carlo sampling, but that's much slower.
 ```{r full_model}
 full_model = breg_laplace(y ~ x1 + x2,
                           data = sim_data,
@@ -83,7 +83,7 @@ plot(full_model, xvar = "x1", group = "x2")
 All of these posterior predictive plots look good: the simulated data resembles the real data.
 
 ## Bayesian Model Averaging (BMA)
-We do NOT make any inferences using the full model alone. The full model assumes that all of the predictors (both x1 and x2) are related to the predicted variable (y), i.e. that they both have non-zero regression coefficients. This may not be the case.
+We do NOT make any inferences using the full model alone. The full model assumes that all of the predictors (x1 and x2) are related to the predicted variable (y), i.e. that they both have non-zero regression coefficients. This may not be the case.
 
 Instead, we make all of our inferences using Bayesian model averaging (BMA). This involves fitting all of the relevant submodels (including subsets of the predictors), computing the posterior probabilities of these submodels (using Bayes factors), and then using these results for estimation and hypothesis testing.
 
@@ -108,9 +108,12 @@ The first thing to look at are the prior and posterior model probabilities. We c
 summary(bma_object, type = "model_probs")
 ```
 
-By asking for "model_odds", you get the prior odds, posterior odds, and Bayes factors for each model (the denominator of each of these ratios is the full model).
+You can use "summary" get the prior odds, posterior odds, and Bayes factors for each model (the denominator of each of these ratios is the full model).
 ```{r model_odds}
 summary(bma_object, type = "model_odds")
+```
+```{r model_bfs}
+summary(bma_object, type = "model_bfs")
 ```
 
 ## Hypothesis Testing: Term Inclusion
@@ -124,6 +127,9 @@ You can also get prior odds, posterior odds, and Bayes factors if desired (the d
 ```{r term_odds}
 summary(bma_object, type = "term_odds")
 ```
+```{r term_bfs}
+summary(bma_object, type = "term_bfs")
+```
 
 ## Directional: Hypothesis Testing
 Usually we don't hypothesize merely that an effect exists (i.e. that the term should be included in the model), but that it goes in a particular direction (i.e. beta < 0 or beta > 0). You can ask "summary" for "dir_probs" to get prior and posterior probabilities for these tests.
@@ -133,6 +139,9 @@ summary(bma_object, type = "dir_probs")
 Like with the term inclusion tests, you can also obtain prior odds, posterior odds, and Bayes factors (the denominator of all these ratios is the point null hypothesis that beta = 0).
 ```{r dir_odds}
 summary(bma_object, type = "dir_odds")
+```
+```{r dir_bfs}
+summary(bma_object, type = "dir_bfs")
 ```
 
 ## Estimates of Regression Coefficients
