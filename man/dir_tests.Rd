@@ -9,7 +9,7 @@ dir_tests(obj, type = "odds")
 \arguments{
 \item{obj}{A "bma" object.}
 
-\item{type}{"odds" or "probs"}
+\item{type}{"odds, "bf", or "probs"}
 }
 \description{
 Compute Bayes factors, posterior odds etc. (or posterior/prior probabilities) for directional hypotheses (with the point null hypothesis as the denominator).

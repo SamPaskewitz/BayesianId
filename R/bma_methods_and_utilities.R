@@ -13,7 +13,7 @@ print.bma = function(obj){
 #' @param obj A "bma" object.
 #' @param type Type of summary. See "Details" for options.
 #' @param pretty Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.
-#' @param n_models_shown Only show the models with the highest posterior probability (for "model_odds", "model_bfs", or "model_probs"). Set to NULL to show all models.
+#' @param max_models_shown Maximum number of models to show (for "model_odds", "model_bfs", or "model_probs"). If less than the number of models, those models with the lowest posterior probability will be omitted. Set to NULL to show all models.
 #' @details Here is information about the different summary types.
 #' * dir_probs: Posterior probabilities from tests of whether each coefficient is negative (β<0), positive (β>0), or zero (β=0). Coefficients for factor contrast codes are excluded because they are not easily interpretable. The point null hypothesis has the same prior probability as in Bayesian model averaging; the two directional hypotheses have equal prior probabilities (each equal to half the prior probability for term inclusion in BMA).
 #' * dir_odds: Bayes factors, prior odds, and posterior odds from tests of whether each coefficient is negative (β<0) or positive (β>0). The comparison hypothesis (the denominator) is the null hypothesis that β=0. Coefficients for factor contrast codes are excluded because they are not easily interpretable. Two directional hypotheses have equal prior odds, each equal to half the prior odds for term inclusion in BMA.
@@ -22,12 +22,12 @@ print.bma = function(obj){
 #' * term_bf: Bayes factors from tests of whether each model term should be included (β≠0) or omitted (β=0).
 #' * model_probs: Prior and posterior probabilities for each model.
 #' * model_odds: Prior and posterior odds for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
-#' model_bf: Bayes factors for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
+#' * model_bf: Bayes factors for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
 #' * est: Estimates (posterior mean, SD, and 95% credible interval) for model coefficients. These are computed using a mixture of normals approximation.
 #' @md
 #' @export
 #' @method summary bma
-summary.bma = function(obj, type = "term_probs", pretty = TRUE, n_models_shown = 8){
+summary.bma = function(obj, type = "term_probs", pretty = TRUE, max_models_shown = 8){
   if(type == "term_probs"){
     tab = data.frame("p(β=0)" = 1 - obj$prior_term_probs,
                      "p(β=0|D)" = 1 - obj$post_term_probs,
@@ -78,10 +78,13 @@ summary.bma = function(obj, type = "term_probs", pretty = TRUE, n_models_shown =
     stop("Summary type not recognized. Please use 'help(summary.bma)' for options.")
     }
   # reduce the number of models shown (if applicable, optionally)
-  if(!is.null(n_models_shown)){
+  if(!is.null(max_models_shown)){
     if(type %in% c("model_odds", "model_bfs", "model_probs")){
-      kth_highest_prob = sort(bma_object$post_model_probs, decreasing = TRUE)[n_models_shown]
-      tab = tab[obj$post_model_probs >= kth_highest_prob, ]
+      n_models = length(obj$fit_list)
+      if(n_models > max_models_shown){
+        kth_highest_prob = sort(bma_object$post_model_probs, decreasing = TRUE)[max_models_shown]
+        tab = tab[obj$post_model_probs >= kth_highest_prob, , drop = FALSE]
+      }
     }
   }
   # make output pretty (optionally)
@@ -165,20 +168,22 @@ dir_tests = function(obj, type = "odds"){
 
 #' Get BMA estimates of coefficients.
 #' @param obj A "bma" object.
+#' @param cond_on_exist Logical, indicates whether estimates should be conditioned on the assumption of effect existence. See "Details" for more information.
 #' @returns A table (data frame) with the following information:
 #'  * mean: posterior mean
 #'  * sd: posterior standard deviation
 #'  * 2.5 %: lower end of 95% posterior credible interval
 #'  * 97.5 %: upper end of 95% posterior credible interval
-#'  * p(β<0|D,β≠0): posterior probability that the coefficient is negative, if it's non-zero
-#'  * p(β>0|D,β≠0): posterior probability that the coefficient is positive, if it's non-zero
+#'  * p(β<0|D,β≠0): posterior probability that the coefficient is negative, if it's non-zero (only computed if cond_on_exist = TRUE)
+#'  * p(β>0|D,β≠0): posterior probability that the coefficient is positive, if it's non-zero (only computed if cond_on_exist = TRUE)
 #' @details
-#' All estimates (posterior mean, standard deviation, credible intervals, and probability of direction) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
+#' If cond_on_exist = TRUE, then all BMA estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
+#' If cond_on_exist = FALSE then BMA estimates are computed using all models, including those that do not included the term in question. These BMA estimates will therefore be smaller than when cond_on_exist = TRUE, because you are including estimates of exactly zero in the average.
 #' Posterior credible intervals and directional probabilities are computed using a mixture of normals approximation.
 #' @md
 #' @export
 #' @method coef bma
-coef.bma = function(obj){
+coef.bma = function(obj, cond_on_exist = TRUE){
   # figure out coefficient names
   coef_names = obj$coef_names
   n_coef = length(coef_names)
@@ -196,20 +201,32 @@ coef.bma = function(obj){
     coef_name = coef_names[i]
     # Does each model include the coef?
     incl = sapply(obj$fit_list, function(x){coef_name %in% get_coef_names(x)})
-    # post probs for models that include the coef ("pi")
-    pi = exp(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl])))
-    # posterior means from models that include the coef
-    mu = sapply(obj$fit_list[incl], function(x){coef(x)[coef_name]})
-    # posterior SD's from models that include the coef
-    sigma = sapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()})
+    if(cond_on_exist){ # estimates conditioned on effect existence
+      # post probs for models that include the coef ("pi")
+      pi = exp(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl]) - lse(obj$log_model_evidence[incl] + log(obj$prior_model_probs[incl])))
+      # posterior means from models that include the coef
+      mu = sapply(obj$fit_list[incl], function(x){coef(x)[coef_name]})
+      # posterior SD's from models that include the coef
+      sigma = sapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()})
+    } else{ # estimates not conditioned on effect existence
+      n_models = length(obj$fit_list)
+      pi = obj$post_model_probs
+      mu = rep(0.0, times = n_models)
+      mu[incl] = sapply(obj$fit_list[incl], function(x){coef(x)[coef_name]})
+      sigma = rep(0.0, times = n_models)
+      sigma[incl] = sapply(obj$fit_list[incl], function(x){vcov(x)[coef_name, coef_name] |> sqrt()})
+    }
+
     # Bayesian model averaging (Hoeting, Madigan, Raftery, & Volinsky, 1999)
-    if(sum(incl) > 1){ # more than one model includes the coef
+    if(sum(incl) > 1 | !cond_on_exist){ # average over multiple models
       est_table[i, "mean"] = sum(pi*mu)
       est_table[i, "sd"] = sqrt(sum(pi*(sigma^2 + mu^2)) - est_table[i, "mean"]^2)
       est_table[i, "2.5 %"] = qmix(p = 0.025, pi = pi, mu = mu, sigma = sigma)
       est_table[i, "97.5 %"] = qmix(p = 0.975, pi = pi, mu = mu, sigma = sigma)
-      est_table[i, "p(β<0|D,β≠0)"] = pmix(q = 0, pi = pi, mu = mu, sigma = sigma)
-    } else{ # only one model includes the coef
+      if(cond_on_exist){
+        est_table[i, "p(β<0|D,β≠0)"] = pmix(q = 0, pi = pi, mu = mu, sigma = sigma)
+      }
+    } else{ # only use one model
       est_table[i, "mean"] = mu
       est_table[i, "sd"] = sigma
       est_table[i, "2.5 %"] = qnorm(p = 0.025, mean = mu, sd = sigma)
@@ -217,10 +234,12 @@ coef.bma = function(obj){
       est_table[i, "p(β<0|D,β≠0)"] = pnorm(q = 0, mean = mu, sd = sigma)
     }
   }
-  # fix probs that are slightly > 1 (by approx error) to be slightly < 1
-  est_table[, "p(β<0|D,β≠0)"] = bound_probs(est_table[, "p(β<0|D,β≠0)"])
-  # compute p(c>0|D,c≠0)
-  est_table[, "p(β>0|D,β≠0)"] = 1 - est_table[, "p(β<0|D,β≠0)"]
+  if(cond_on_exist){
+    # fix probs that are slightly > 1 (by approx error) to be slightly < 1
+    est_table[, "p(β<0|D,β≠0)"] = bound_probs(est_table[, "p(β<0|D,β≠0)"])
+    # compute the other directional probability
+    est_table[, "p(β>0|D,β≠0)"] = 1 - est_table[, "p(β<0|D,β≠0)"]
+  }
 
   return(est_table)
 }

@@ -30,7 +30,7 @@ breg_laplace(
 \item{n_trials}{Number of trials per observation for binomial regression (not needed for other model families).}
 }
 \value{
-A fitted Bayesian regression model (of class "breg_laplace").
+A fitted Bayesian regression model (of classes "breg" and "breg_laplace").
 }
 \description{
 Fit a Bayesian regression model using the Laplace (multivariate normal) approximation.

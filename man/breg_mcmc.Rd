@@ -39,7 +39,7 @@ breg_mcmc(
 \item{n_trials}{Number of trials per observation for binomial regression (not needed for other model families).}
 }
 \value{
-A fitted Bayesian regression model (of class "breg").
+A fitted Bayesian regression model (of classes "breg" and "breg_mcmc").
 }
 \description{
 Fit a Bayesian regression model using Stan's MCMC algorithm.

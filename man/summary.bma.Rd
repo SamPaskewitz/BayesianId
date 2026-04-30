@@ -4,14 +4,16 @@
 \alias{summary.bma}
 \title{Summarize information about a "bma" object.}
 \usage{
-\method{summary}{bma}(obj, type = "term_probs", pretty = TRUE)
+\method{summary}{bma}(obj, type = "term_probs", pretty = TRUE, n_models_shown = 8)
 }
 \arguments{
 \item{obj}{A "bma" object.}
 
-\item{type}{Type of summary. Options are "dir_probs", "dir_BF", "term_probs", "term_odds", "model_probs", "model_odds", and "est" (defaults to "term_probs"). See "Details".}
+\item{type}{Type of summary. See "Details" for options.}
 
 \item{pretty}{Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.}
+
+\item{n_models_shown}{Only show the models with the highest posterior probability (for "model_odds", "model_bfs", or "model_probs"). Set to NULL to show all models.}
 }
 \description{
 Summarize information about a "bma" object.
@@ -22,9 +24,11 @@ Here is information about the different summary types.
 \item dir_probs: Posterior probabilities from tests of whether each coefficient is negative (β<0), positive (β>0), or zero (β=0). Coefficients for factor contrast codes are excluded because they are not easily interpretable. The point null hypothesis has the same prior probability as in Bayesian model averaging; the two directional hypotheses have equal prior probabilities (each equal to half the prior probability for term inclusion in BMA).
 \item dir_odds: Bayes factors, prior odds, and posterior odds from tests of whether each coefficient is negative (β<0) or positive (β>0). The comparison hypothesis (the denominator) is the null hypothesis that β=0. Coefficients for factor contrast codes are excluded because they are not easily interpretable. Two directional hypotheses have equal prior odds, each equal to half the prior odds for term inclusion in BMA.
 \item term_probs: Prior and posterior probabilities from tests of whether each model term should be included (β≠0) or omitted (β=0).
-\item term_odds: Bayes factors, prior odds, and posterior odds from tests of whether each model term should be included (β≠0) or omitted (β=0).
+\item term_odds: Prior and posterior odds from tests of whether each model term should be included (β≠0) or omitted (β=0).
+\item term_bf: Bayes factors from tests of whether each model term should be included (β≠0) or omitted (β=0).
 \item model_probs: Prior and posterior probabilities for each model.
-\item model_odds: Bayes factors, prior odds, and posterior odds for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
+\item model_odds: Prior and posterior odds for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
+model_bf: Bayes factors for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
 \item est: Estimates (posterior mean, SD, and 95\% credible interval) for model coefficients. These are computed using a mixture of normals approximation.
 }
 }

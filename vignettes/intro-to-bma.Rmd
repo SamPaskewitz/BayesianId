@@ -144,11 +144,20 @@ summary(bma_object, type = "dir_odds")
 summary(bma_object, type = "dir_bfs")
 ```
 
-## Estimates of Regression Coefficients
-You can also use 'summary' on a bma object to get estimates (posterior mean, SD, and 95% posterior credible interval) of regression coefficients. These estimates are conditioned on the coefficient existing, i.e. being non-zero.
+## Estimates
+You can also use 'summary' on a bma object to get estimates (posterior mean, SD, and 95% posterior credible interval) of regression coefficients/factor level means. These estimates are conditioned on the coefficient existing, i.e. being non-zero.
 ```{r est}
 summary(bma_object, type = "est")
 ```
+
+```{r}
+coef(bma_object, cond_on_exist = TRUE)
+```
+
+```{r}
+coef(bma_object, cond_on_exist = FALSE)
+```
+
 
 You can use "plot" to plot the posterior distibutions of regression coefficients (it currently only works for numeric predictors, not factors).
 ```{r plot_x1}
