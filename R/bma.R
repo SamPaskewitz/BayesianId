@@ -5,18 +5,9 @@
 #' @param prior_intr_condprobs Optional: a named vector giving the prior inclusion conditional probabilities for interactions (given that the necessary main effects/lower order interactions are present. By default (if NULL) these are set to 0.5 if there are interactions, are to NULL if there are no interactions.
 #' @returns An object of class "bma".
 #' @details
-#' Fully Bayesian estimation is supported using "breg" (from this package).
-#' Maximum likelihood estimates are supported (with the BIC approximation), so long as they have the following methods:
-#' \itemize{
-#'  \item update
-#'  \item vcov
-#'  \item coef
-#'  \item predict
-#'  \item loglik
-#'  \item nobs
-#' }
-#' ** CHECK AND ADD Additional details...
-#'
+#' Fully Bayesian estimation is supported using "breg" model objects obtained using the "breg_laplace" or "breg_mcmc" functions (from this package).
+#' Most maximum likelihood model fits (e.g. using the built in "glm" function) are supported with the BIC approximation.
+#' See the vignette "intro-to-bma.Rmd" for an explanation of how to use this function and interpret results.
 #' @export
 #'
 bma = function(full_model,
