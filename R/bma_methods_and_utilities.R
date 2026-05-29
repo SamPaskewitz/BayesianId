@@ -19,10 +19,10 @@ print.bma = function(obj){
 #' * dir_odds: Bayes factors, prior odds, and posterior odds from tests of whether each coefficient is negative (β<0) or positive (β>0). The comparison hypothesis (the denominator) is the null hypothesis that β=0. Coefficients for factor contrast codes are excluded because they are not easily interpretable. Two directional hypotheses have equal prior odds, each equal to half the prior odds for term inclusion in BMA.
 #' * term_probs: Prior and posterior probabilities from tests of whether each model term should be included (β≠0) or omitted (β=0).
 #' * term_odds: Prior and posterior odds from tests of whether each model term should be included (β≠0) or omitted (β=0).
-#' * term_bf: Bayes factors from tests of whether each model term should be included (β≠0) or omitted (β=0).
+#' * term_bfs: Bayes factors from tests of whether each model term should be included (β≠0) or omitted (β=0).
 #' * model_probs: Prior and posterior probabilities for each model.
 #' * model_odds: Prior and posterior odds for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
-#' * model_bf: Bayes factors for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
+#' * model_bfs: Bayes factors for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
 #' * est: Estimates (posterior mean, SD, and 95% credible interval) for model coefficients. These are computed using a mixture of normals approximation.
 #' @md
 #' @export
