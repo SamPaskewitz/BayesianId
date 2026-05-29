@@ -77,6 +77,23 @@ qmix = function(p, pi, mu, sigma){
   return(q)
 }
 
+#' Random sampling function for a (univariate) mixture of normals.
+#' @param n The number of values to sample.
+#' @param pi A vector of mixture weights.
+#' @param mu A vector of means.
+#' @param sigma A vector of standard deviations.
+#' @returns A vector of samples.
+#'
+rmix = function(n, pi, mu, sigma){
+  z = sample(1:length(mu),
+             replace = TRUE,
+             prob = pi) # sample mixture components
+  x = rnorm(n,
+            mean = mu[z],
+            sd = sigma[z]) # sample values
+  return(x)
+}
+
 #' Test whether terms are interactions are not.
 #' @param terms A vector of model terms.
 #' @returns A logical vector specifying whether each term is an interaction.
