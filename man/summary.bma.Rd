@@ -4,7 +4,7 @@
 \alias{summary.bma}
 \title{Summarize information about a "bma" object.}
 \usage{
-\method{summary}{bma}(obj, type = "term_probs", pretty = TRUE, n_models_shown = 8)
+\method{summary}{bma}(obj, type = "term_probs", pretty = TRUE, max_models_shown = 8)
 }
 \arguments{
 \item{obj}{A "bma" object.}
@@ -13,7 +13,7 @@
 
 \item{pretty}{Logical. If TRUE, then the output is printed in an easy to read format, but of the "character" data type. If FALSE then the raw numeric output is returned, without rounding etc.}
 
-\item{n_models_shown}{Only show the models with the highest posterior probability (for "model_odds", "model_bfs", or "model_probs"). Set to NULL to show all models.}
+\item{max_models_shown}{Maximum number of models to show (for "model_odds", "model_bfs", or "model_probs"). If less than the number of models, those models with the lowest posterior probability will be omitted. Set to NULL to show all models.}
 }
 \description{
 Summarize information about a "bma" object.
@@ -28,7 +28,7 @@ Here is information about the different summary types.
 \item term_bf: Bayes factors from tests of whether each model term should be included (β≠0) or omitted (β=0).
 \item model_probs: Prior and posterior probabilities for each model.
 \item model_odds: Prior and posterior odds for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
-model_bf: Bayes factors for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
+\item model_bf: Bayes factors for each model. The full model is used as the denominator for model comparison, e.g. the Bayes factor for model i is defined as p(D | full model)/p(D | model i).
 \item est: Estimates (posterior mean, SD, and 95\% credible interval) for model coefficients. These are computed using a mixture of normals approximation.
 }
 }

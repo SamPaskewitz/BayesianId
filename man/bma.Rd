@@ -20,15 +20,7 @@ An object of class "bma".
 Fit nested regression submodels and compute Bayes factors (for Bayesian Model Averaging: BMA).
 }
 \details{
-Fully Bayesian estimation is supported using "breg" (from this package).
-Maximum likelihood estimates are supported (with the BIC approximation), so long as they have the following methods:
-\itemize{
- \item update
- \item vcov
- \item coef
- \item predict
- \item loglik
- \item nobs
-}
-** CHECK AND ADD Additional details...
+Fully Bayesian estimation is supported using "breg" model objects obtained using the "breg_laplace" or "breg_mcmc" functions (from this package).
+Most maximum likelihood model fits (e.g. using the built in "glm" function) are supported with the BIC approximation.
+See the vignette "intro-to-bma.Rmd" for an explanation of how to use this function and interpret results.
 }

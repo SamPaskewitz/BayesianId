@@ -2,6 +2,7 @@
 % Please edit documentation in R/breg_methods_and_utilities.R
 \name{simulate.breg}
 \alias{simulate.breg}
+\alias{simulate}
 \title{Simulate the model to get generated quantities (posterior predictive samples and posterior samples of mu, i.e. "linpred").}
 \usage{
 \method{simulate}{breg}(

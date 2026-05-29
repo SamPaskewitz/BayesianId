@@ -66,6 +66,7 @@ model.frame.breg = function(obj){
 #' @param seed The seed for random number generation. Set this manually if you want reproducible results.
 #' @details This runs the appropriate "_sim" Stan code with the "gqs" rstan function, producing samples of "mu" (the linear predictor) and "Y_tilde" (the posterior predictive distribution). The user will not ordinarily use this function directly. Instead, this function is used for the "posterior_predict" and "posterior_linpred" methods.
 #' @returns A list with the stanfit object (containing the samples) and "N_tilde" (the number of simulated data points).
+#' @aliases simulate
 #' @export
 #' @method simulate breg
 simulate.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sample.int(.Machine$integer.max, size = 1L)){
@@ -125,6 +126,7 @@ show_stancode = function(obj){
 #' @param seed The seed for random number generation. Set this manually if you want reproducible results.
 #' @returns A D x N matrix of samples from the posterior predictive distribution, where D is the number of draws and N is the number of data points.
 #' @importFrom rstantools posterior_predict
+#' @export posterior_predict
 #' @export
 #' @method posterior_predict breg
 posterior_predict.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sample.int(.Machine$integer.max, size = 1L)){
@@ -133,6 +135,23 @@ posterior_predict.breg = function(obj, newdata = NULL, ndraws = NULL, seed = sam
   cnames = paste0("Y_tilde[", 1:sim$N_tilde, "]")
   Y_tilde_samples = all_samples[, cnames] |> drop()
   return(Y_tilde_samples)
+}
+
+#' Draw from the posterior distribution of the linear predictor.
+#' @param obj A "breg" object (fitted model).
+#' @param newdata Optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted data are used.
+#' @param ndraws Number of posterior draws to use, i.e. number of replicated data sets to simulate. Defaults to NULL (use all).
+#' @returns A D x N matrix of samples from the posterior distribution of the linear predictor, where D is the number of draws and N is the number of data points.
+#' @importFrom rstantools posterior_linpred
+#' @export posterior_linpred
+#' @export
+#' @method posterior_linpred breg
+posterior_linpred.breg = function(obj, newdata = NULL, ndraws = NULL){
+  sim = simulate(obj = obj, newdata = newdata, ndraws = ndraws)
+  all_samples = as.matrix(sim$stanfit)
+  cnames = paste0("mu[", 1:sim$N_tilde, "]")
+  mu_samples = all_samples[, cnames] |> drop()
+  return(mu_samples)
 }
 
 #' Create a posterior predictive plot for diagnostic purposes.

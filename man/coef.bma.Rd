@@ -4,10 +4,12 @@
 \alias{coef.bma}
 \title{Get BMA estimates of coefficients.}
 \usage{
-\method{coef}{bma}(obj)
+\method{coef}{bma}(obj, cond_on_exist = TRUE)
 }
 \arguments{
 \item{obj}{A "bma" object.}
+
+\item{cond_on_exist}{Logical, indicates whether estimates should be conditioned on the assumption of effect existence. See "Details" for more information.}
 }
 \value{
 A table (data frame) with the following information:
@@ -16,14 +18,15 @@ A table (data frame) with the following information:
 \item sd: posterior standard deviation
 \item 2.5 \%: lower end of 95\% posterior credible interval
 \item 97.5 \%: upper end of 95\% posterior credible interval
-\item p(β<0|D,β≠0): posterior probability that the coefficient is negative, if it's non-zero
-\item p(β>0|D,β≠0): posterior probability that the coefficient is positive, if it's non-zero
+\item p(β<0|D,β≠0): posterior probability that the coefficient is negative, if it's non-zero (only computed if cond_on_exist = TRUE)
+\item p(β>0|D,β≠0): posterior probability that the coefficient is positive, if it's non-zero (only computed if cond_on_exist = TRUE)
 }
 }
 \description{
 Get BMA estimates of coefficients.
 }
 \details{
-All estimates (posterior mean, standard deviation, credible intervals, and probability of direction) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
+If cond_on_exist = TRUE, then all BMA estimates (posterior mean, standard deviation, and credible intervals) are computed only using models that include the term in question. In other words, they should be interpreted as estimates of the coefficient IF it is included (i.e. is non-zero).
+If cond_on_exist = FALSE then BMA estimates are computed using all models, including those that do not included the term in question. These BMA estimates will therefore be smaller than when cond_on_exist = TRUE, because you are including estimates of exactly zero in the average.
 Posterior credible intervals and directional probabilities are computed using a mixture of normals approximation.
 }
